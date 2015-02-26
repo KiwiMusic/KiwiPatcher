@@ -28,16 +28,15 @@
 		8F19E77F1A9B02D8003CE222 /* Gui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F19E77B1A9B02D8003CE222 /* Gui.cpp */; };
 		8F19E7821A9B2035003CE222 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F19E7811A9B2035003CE222 /* main.cpp */; };
 		8F21B4711A8238BD00670F15 /* Classic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F21B45A1A8238BD00670F15 /* Classic.cpp */; };
-		8F41B4D91A7E3C890067E122 /* Beacon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F41B46E1A7E3C890067E122 /* Beacon.cpp */; };
-		8F41B4DA1A7E3C890067E122 /* Clock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F41B4701A7E3C890067E122 /* Clock.cpp */; };
-		8F41B4DB1A7E3C890067E122 /* Console.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F41B4721A7E3C890067E122 /* Console.cpp */; };
-		8F41B4DE1A7E3C890067E122 /* Instance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F41B47A1A7E3C890067E122 /* Instance.cpp */; };
-		8F41B4DF1A7E3C890067E122 /* Link.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F41B47C1A7E3C890067E122 /* Link.cpp */; };
-		8F41B4E01A7E3C890067E122 /* Object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F41B47E1A7E3C890067E122 /* Object.cpp */; };
-		8F41B4E11A7E3C890067E122 /* Patcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F41B4801A7E3C890067E122 /* Patcher.cpp */; };
-		8F41B4E21A7E3C890067E122 /* Tag.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F41B4821A7E3C890067E122 /* Tag.cpp */; };
 		8F41B50C1A7E3C990067E122 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F41B50B1A7E3C990067E122 /* Accelerate.framework */; };
-		8F67F6191A8B40A800DB2C2D /* Atom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F67F6171A8B40A700DB2C2D /* Atom.cpp */; };
+		8FDA00D11A9EEA180022E9AB /* Console.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FDA00C91A9EEA180022E9AB /* Console.cpp */; };
+		8FDA00D21A9EEA180022E9AB /* Instance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FDA00CB1A9EEA180022E9AB /* Instance.cpp */; };
+		8FDA00D31A9EEA180022E9AB /* Object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FDA00CD1A9EEA180022E9AB /* Object.cpp */; };
+		8FDA00D41A9EEA180022E9AB /* Patcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FDA00CF1A9EEA180022E9AB /* Patcher.cpp */; };
+		8FDA00E71A9EEA380022E9AB /* Atom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FDA00D81A9EEA380022E9AB /* Atom.cpp */; };
+		8FDA00E81A9EEA380022E9AB /* Beacon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FDA00DA1A9EEA380022E9AB /* Beacon.cpp */; };
+		8FDA00EC1A9EEA380022E9AB /* Tag.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FDA00E51A9EEA380022E9AB /* Tag.cpp */; };
+		8FDA00EF1A9EEC300022E9AB /* Clock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FDA00ED1A9EEC300022E9AB /* Clock.cpp */; };
 		8FFC25441A8BCC8200B49898 /* Major.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FFC25421A8BCC8200B49898 /* Major.cpp */; };
 		8FFC255E1A8CB75700B49898 /* Color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FFC254F1A8CB75700B49898 /* Color.cpp */; };
 		8FFC255F1A8CB75700B49898 /* Font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8FFC25511A8CB75700B49898 /* Font.cpp */; };
@@ -113,29 +112,25 @@
 		8F21B45B1A8238BD00670F15 /* Classic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Classic.h; sourceTree = "<group>"; };
 		8F21B45C1A8238BD00670F15 /* Modules.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Modules.h; sourceTree = "<group>"; };
 		8F41B4611A7E3C640067E122 /* KiwiCoreExample */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = KiwiCoreExample; sourceTree = BUILT_PRODUCTS_DIR; };
-		8F41B46C1A7E3C890067E122 /* Kiwi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Kiwi.h; path = ../Kiwi.h; sourceTree = "<group>"; };
-		8F41B46E1A7E3C890067E122 /* Beacon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Beacon.cpp; sourceTree = "<group>"; };
-		8F41B46F1A7E3C890067E122 /* Beacon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Beacon.h; sourceTree = "<group>"; };
-		8F41B4701A7E3C890067E122 /* Clock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Clock.cpp; sourceTree = "<group>"; };
-		8F41B4711A7E3C890067E122 /* Clock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Clock.h; sourceTree = "<group>"; };
-		8F41B4721A7E3C890067E122 /* Console.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Console.cpp; sourceTree = "<group>"; };
-		8F41B4731A7E3C890067E122 /* Console.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Console.h; sourceTree = "<group>"; };
-		8F41B4741A7E3C890067E122 /* Core.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Core.h; sourceTree = "<group>"; };
-		8F41B4751A7E3C890067E122 /* Defs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Defs.h; sourceTree = "<group>"; };
-		8F41B47A1A7E3C890067E122 /* Instance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Instance.cpp; sourceTree = "<group>"; };
-		8F41B47B1A7E3C890067E122 /* Instance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Instance.h; sourceTree = "<group>"; };
-		8F41B47C1A7E3C890067E122 /* Link.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Link.cpp; sourceTree = "<group>"; };
-		8F41B47D1A7E3C890067E122 /* Link.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Link.h; sourceTree = "<group>"; };
-		8F41B47E1A7E3C890067E122 /* Object.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Object.cpp; sourceTree = "<group>"; };
-		8F41B47F1A7E3C890067E122 /* Object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; path = Object.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		8F41B4801A7E3C890067E122 /* Patcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Patcher.cpp; sourceTree = "<group>"; };
-		8F41B4811A7E3C890067E122 /* Patcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Patcher.h; sourceTree = "<group>"; };
-		8F41B4821A7E3C890067E122 /* Tag.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Tag.cpp; sourceTree = "<group>"; };
-		8F41B4831A7E3C890067E122 /* Tag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tag.h; sourceTree = "<group>"; };
 		8F41B50B1A7E3C990067E122 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
-		8F67F6131A8933DE00DB2C2D /* GuiTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GuiTools.h; sourceTree = "<group>"; };
-		8F67F6171A8B40A700DB2C2D /* Atom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Atom.cpp; sourceTree = "<group>"; };
-		8F67F6181A8B40A800DB2C2D /* Atom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Atom.h; sourceTree = "<group>"; };
+		8FDA00C91A9EEA180022E9AB /* Console.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Console.cpp; path = ../Console.cpp; sourceTree = "<group>"; };
+		8FDA00CA1A9EEA180022E9AB /* Console.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Console.h; path = ../Console.h; sourceTree = "<group>"; };
+		8FDA00CB1A9EEA180022E9AB /* Instance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Instance.cpp; path = ../Instance.cpp; sourceTree = "<group>"; };
+		8FDA00CC1A9EEA180022E9AB /* Instance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Instance.h; path = ../Instance.h; sourceTree = "<group>"; };
+		8FDA00CD1A9EEA180022E9AB /* Object.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Object.cpp; path = ../Object.cpp; sourceTree = "<group>"; };
+		8FDA00CE1A9EEA180022E9AB /* Object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Object.h; path = ../Object.h; sourceTree = "<group>"; };
+		8FDA00CF1A9EEA180022E9AB /* Patcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Patcher.cpp; path = ../Patcher.cpp; sourceTree = "<group>"; };
+		8FDA00D01A9EEA180022E9AB /* Patcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Patcher.h; path = ../Patcher.h; sourceTree = "<group>"; };
+		8FDA00D81A9EEA380022E9AB /* Atom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Atom.cpp; sourceTree = "<group>"; };
+		8FDA00D91A9EEA380022E9AB /* Atom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Atom.h; sourceTree = "<group>"; };
+		8FDA00DA1A9EEA380022E9AB /* Beacon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Beacon.cpp; sourceTree = "<group>"; };
+		8FDA00DB1A9EEA380022E9AB /* Beacon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Beacon.h; sourceTree = "<group>"; };
+		8FDA00DE1A9EEA380022E9AB /* Core.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Core.h; sourceTree = "<group>"; };
+		8FDA00DF1A9EEA380022E9AB /* Tools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tools.h; sourceTree = "<group>"; };
+		8FDA00E51A9EEA380022E9AB /* Tag.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Tag.cpp; sourceTree = "<group>"; };
+		8FDA00E61A9EEA380022E9AB /* Tag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tag.h; sourceTree = "<group>"; };
+		8FDA00ED1A9EEC300022E9AB /* Clock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Clock.cpp; sourceTree = "<group>"; };
+		8FDA00EE1A9EEC300022E9AB /* Clock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Clock.h; sourceTree = "<group>"; };
 		8FFC25421A8BCC8200B49898 /* Major.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Major.cpp; sourceTree = "<group>"; };
 		8FFC25431A8BCC8200B49898 /* Major.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Major.h; sourceTree = "<group>"; };
 		8FFC254F1A8CB75700B49898 /* Color.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Color.cpp; sourceTree = "<group>"; };
@@ -335,48 +330,26 @@
 		8F41B46B1A7E3C770067E122 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				8F41B46C1A7E3C890067E122 /* Kiwi.h */,
+				8FDA00CD1A9EEA180022E9AB /* Object.cpp */,
+				8FDA00CE1A9EEA180022E9AB /* Object.h */,
+				8FDA00CF1A9EEA180022E9AB /* Patcher.cpp */,
+				8FDA00D01A9EEA180022E9AB /* Patcher.h */,
+				8FDA00CB1A9EEA180022E9AB /* Instance.cpp */,
+				8FDA00CC1A9EEA180022E9AB /* Instance.h */,
+				8FDA00C91A9EEA180022E9AB /* Console.cpp */,
+				8FDA00CA1A9EEA180022E9AB /* Console.h */,
 				8F19E7381A97270B003CE222 /* KiwiDsp */,
 				8F41B4B41A7E3C890067E122 /* KiwiGui */,
 				8F19E76A1A97350A003CE222 /* KiwiObjects */,
-				8F41B46D1A7E3C890067E122 /* KiwiBase */,
 			);
 			name = Sources;
-			sourceTree = "<group>";
-		};
-		8F41B46D1A7E3C890067E122 /* KiwiBase */ = {
-			isa = PBXGroup;
-			children = (
-				8F41B4741A7E3C890067E122 /* Core.h */,
-				8F41B4751A7E3C890067E122 /* Defs.h */,
-				8F41B4821A7E3C890067E122 /* Tag.cpp */,
-				8F41B4831A7E3C890067E122 /* Tag.h */,
-				8F67F6171A8B40A700DB2C2D /* Atom.cpp */,
-				8F67F6181A8B40A800DB2C2D /* Atom.h */,
-				8F41B46E1A7E3C890067E122 /* Beacon.cpp */,
-				8F41B46F1A7E3C890067E122 /* Beacon.h */,
-				8F41B4701A7E3C890067E122 /* Clock.cpp */,
-				8F41B4711A7E3C890067E122 /* Clock.h */,
-				8F41B47E1A7E3C890067E122 /* Object.cpp */,
-				8F41B47F1A7E3C890067E122 /* Object.h */,
-				8F41B47C1A7E3C890067E122 /* Link.cpp */,
-				8F41B47D1A7E3C890067E122 /* Link.h */,
-				8F41B4801A7E3C890067E122 /* Patcher.cpp */,
-				8F41B4811A7E3C890067E122 /* Patcher.h */,
-				8F41B47A1A7E3C890067E122 /* Instance.cpp */,
-				8F41B47B1A7E3C890067E122 /* Instance.h */,
-				8F41B4721A7E3C890067E122 /* Console.cpp */,
-				8F41B4731A7E3C890067E122 /* Console.h */,
-			);
-			name = KiwiBase;
-			path = ../KiwiBase;
 			sourceTree = "<group>";
 		};
 		8F41B4B41A7E3C890067E122 /* KiwiGui */ = {
 			isa = PBXGroup;
 			children = (
 				8F21B4561A8238BD00670F15 /* Gui.h */,
-				8F67F6131A8933DE00DB2C2D /* GuiTools.h */,
+				8FDA00D51A9EEA380022E9AB /* KiwiCore */,
 				8FFC254E1A8CB75700B49898 /* Graphics */,
 				8FFC25651A8CB7CE00B49898 /* Attributes */,
 				8FFC256D1A8CB9DB00B49898 /* Models */,
@@ -384,6 +357,23 @@
 			);
 			name = KiwiGui;
 			path = ../KiwiGui;
+			sourceTree = "<group>";
+		};
+		8FDA00D51A9EEA380022E9AB /* KiwiCore */ = {
+			isa = PBXGroup;
+			children = (
+				8FDA00DE1A9EEA380022E9AB /* Core.h */,
+				8FDA00DF1A9EEA380022E9AB /* Tools.h */,
+				8FDA00E51A9EEA380022E9AB /* Tag.cpp */,
+				8FDA00E61A9EEA380022E9AB /* Tag.h */,
+				8FDA00D81A9EEA380022E9AB /* Atom.cpp */,
+				8FDA00D91A9EEA380022E9AB /* Atom.h */,
+				8FDA00DA1A9EEA380022E9AB /* Beacon.cpp */,
+				8FDA00DB1A9EEA380022E9AB /* Beacon.h */,
+				8FDA00ED1A9EEC300022E9AB /* Clock.cpp */,
+				8FDA00EE1A9EEC300022E9AB /* Clock.h */,
+			);
+			path = KiwiCore;
 			sourceTree = "<group>";
 		};
 		8FFC254E1A8CB75700B49898 /* Graphics */ = {
@@ -492,44 +482,43 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8F41B4E21A7E3C890067E122 /* Tag.cpp in Sources */,
-				8F41B4DE1A7E3C890067E122 /* Instance.cpp in Sources */,
 				8FFC25771A8CB9DB00B49898 /* Mouser.cpp in Sources */,
 				8FFC256A1A8CB7CE00B49898 /* Attribute.cpp in Sources */,
 				8F19E77E1A9B02D8003CE222 /* NewBox.cpp in Sources */,
 				8F19E74F1A972724003CE222 /* DspChain.cpp in Sources */,
 				8FFC25611A8CB75700B49898 /* Point.cpp in Sources */,
 				8F19E7541A972724003CE222 /* DspGenerator.cpp in Sources */,
-				8F41B4DA1A7E3C890067E122 /* Clock.cpp in Sources */,
 				8FFC25761A8CB9DB00B49898 /* Keyboarder.cpp in Sources */,
+				8FDA00D21A9EEA180022E9AB /* Instance.cpp in Sources */,
 				8F19E7531A972724003CE222 /* DspNode.cpp in Sources */,
 				8F19E7521A972724003CE222 /* DspIoput.cpp in Sources */,
 				8FFC255E1A8CB75700B49898 /* Color.cpp in Sources */,
-				8F41B4E11A7E3C890067E122 /* Patcher.cpp in Sources */,
-				8F41B4D91A7E3C890067E122 /* Beacon.cpp in Sources */,
-				8F67F6191A8B40A800DB2C2D /* Atom.cpp in Sources */,
 				8F19E7751A97380C003CE222 /* ObjectsDspIo.cpp in Sources */,
+				8FDA00EC1A9EEA380022E9AB /* Tag.cpp in Sources */,
+				8FDA00E71A9EEA380022E9AB /* Atom.cpp in Sources */,
 				8FFC255F1A8CB75700B49898 /* Font.cpp in Sources */,
 				8FFC25791A8CB9DB00B49898 /* Writer.cpp in Sources */,
 				8FFC25641A8CB75700B49898 /* TextLayout.cpp in Sources */,
 				8F19E7501A972724003CE222 /* DspContext.cpp in Sources */,
 				8F19E7511A972724003CE222 /* DspDevice.cpp in Sources */,
 				8FFC25601A8CB75700B49898 /* Path.cpp in Sources */,
+				8FDA00D31A9EEA180022E9AB /* Object.cpp in Sources */,
+				8FDA00D41A9EEA180022E9AB /* Patcher.cpp in Sources */,
 				8F19E7691A973070003CE222 /* DspPortAudio.cpp in Sources */,
 				8FFC257D1A8CBA6000B49898 /* Graphic.cpp in Sources */,
 				8FFC25781A8CB9DB00B49898 /* Sketcher.cpp in Sources */,
 				8FFC25441A8BCC8200B49898 /* Major.cpp in Sources */,
-				8F41B4DB1A7E3C890067E122 /* Console.cpp in Sources */,
 				8FFC256B1A8CB7CE00B49898 /* Default.cpp in Sources */,
 				8F19E77F1A9B02D8003CE222 /* Gui.cpp in Sources */,
 				8F19E7701A97350A003CE222 /* ObjectsDspGenerator.cpp in Sources */,
+				8FDA00E81A9EEA380022E9AB /* Beacon.cpp in Sources */,
+				8FDA00EF1A9EEC300022E9AB /* Clock.cpp in Sources */,
 				8F19E7551A972724003CE222 /* DspIo.cpp in Sources */,
 				8F19E7561A972724003CE222 /* DspMath.cpp in Sources */,
-				8F41B4DF1A7E3C890067E122 /* Link.cpp in Sources */,
 				8F21B4711A8238BD00670F15 /* Classic.cpp in Sources */,
+				8FDA00D11A9EEA180022E9AB /* Console.cpp in Sources */,
 				8FFC25621A8CB75700B49898 /* Rectangle.cpp in Sources */,
 				8F19E7821A9B2035003CE222 /* main.cpp in Sources */,
-				8F41B4E01A7E3C890067E122 /* Object.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
