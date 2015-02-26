@@ -23,7 +23,7 @@
 
 #include "KiwiInstance.h"
 #include "KiwiConsole.h"
-#include "../KiwiObjects/Objects.h"
+#include "../KiwiObjects/KiwiObjects.h"
 
 namespace Kiwi
 {
