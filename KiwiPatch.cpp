@@ -75,10 +75,10 @@ namespace Kiwi
            dico.count(Tag::List::id) &&
            dico.count(Tag::List::arguments))
         {
-            sTag name = dico.at(Tag::List::name);
-            sTag text = dico.at(Tag::List::text);
-            ulong _id = dico.at(Tag::List::id);
-            Vector args=dico.at(Tag::List::arguments);
+            const sTag name = dico.at(Tag::List::name);
+            const sTag text = dico.at(Tag::List::text);
+            const ulong _id = dico.at(Tag::List::id);
+            const Vector args=dico.at(Tag::List::arguments);
             object = Factory::create(name, Detail(getInstance(), getShared(), _id, name, text->getName(), dico, args));
             if(object)
             {
