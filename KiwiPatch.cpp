@@ -21,9 +21,9 @@
  ==============================================================================
 */
 
-#include "Patcher.h"
-#include "Instance.h"
-#include "Console.h"
+#include "KiwiPatch.h"
+#include "KiwiInstance.h"
+#include "KiwiConsole.h"
 
 namespace Kiwi
 {    

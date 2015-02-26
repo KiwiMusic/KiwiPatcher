@@ -22,8 +22,7 @@
 */
 
 
-#include "Console.h"
-#include "Instance.h"
+#include "KiwiConsole.h"
 
 namespace Kiwi
 {

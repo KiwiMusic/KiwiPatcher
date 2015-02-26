@@ -24,7 +24,7 @@
 #ifndef __DEF_KIWI_PATCHER__
 #define __DEF_KIWI_PATCHER__
 
-#include "Console.h"
+#include "KiwiConsole.h"
 
 #endif
 

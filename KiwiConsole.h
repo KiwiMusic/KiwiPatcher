@@ -24,7 +24,7 @@
 #ifndef __DEF_KIWI_CONSOLE__
 #define __DEF_KIWI_CONSOLE__
 
-#include "Instance.h"
+#include "KiwiInstance.h"
 
 namespace Kiwi
 {

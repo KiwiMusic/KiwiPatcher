@@ -24,7 +24,7 @@
 #ifndef __DEF_KIWI_LINK__
 #define __DEF_KIWI_LINK__
 
-#include "Object.h"
+#include "KiwiObject.h"
 
 namespace Kiwi
 {

@@ -21,8 +21,8 @@
  ==============================================================================
 */
 
-#include "Instance.h"
-#include "Console.h"
+#include "KiwiInstance.h"
+#include "KiwiConsole.h"
 #include "../KiwiObjects/Objects.h"
 
 namespace Kiwi

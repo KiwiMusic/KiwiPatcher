@@ -24,7 +24,7 @@
 #ifndef __DEF_KIWI_INSTANCE__
 #define __DEF_KIWI_INSTANCE__
 
-#include "Patcher.h"
+#include "KiwiPatch.h"
 
 // TODO :
 // - See how to set the input and output vector for DSP.

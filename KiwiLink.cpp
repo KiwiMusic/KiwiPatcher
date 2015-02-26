@@ -21,10 +21,10 @@
  ==============================================================================
 */
 
-#include "Link.h"
-#include "Object.h"
-#include "Patcher.h"
-#include "Console.h"
+#include "KiwiLink.h"
+#include "KiwiObject.h"
+#include "KiwiPatch.h"
+#include "KiwiConsole.h"
 
 namespace Kiwi
 {
