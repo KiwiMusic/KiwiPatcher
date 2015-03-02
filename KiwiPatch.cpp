@@ -31,15 +31,10 @@ namespace Kiwi
     //                                      PAGE                                        //
     // ================================================================================ //
     
-    Patcher::Patcher(sInstance instance) : DspChain(instance),
-    m_instance(instance),
-	m_color_unlocked_background(Attr::create("unlocked_bgcolor","Unlocked Background Color", "Appearance", ColorValue(0.88, 0.89, 0.88, 1.))),
-	m_color_locked_background(Attr::create("locked_bgcolor", "Locked Background Color", "Appearance", ColorValue(0.88, 0.89, 0.88, 1.))),
-	m_gridsize(Attr::create("gridsize", "Grid Size", "Editing", LongValue(20)))
+    Patcher::Patcher(sInstance instance) : GuiPatcher(instance), DspChain(instance),
+    m_instance(instance)
     {
-		addAttr(m_color_unlocked_background);
-		addAttr(m_color_locked_background);
-		addAttr(m_gridsize);
+        ;
     }
 	
     Patcher::~Patcher()

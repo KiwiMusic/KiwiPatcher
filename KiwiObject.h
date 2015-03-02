@@ -60,8 +60,8 @@ namespace Kiwi
         const ulong             lid;
         const sTag              name;
         const string            text;
-        const Dico   dico;
-        const Vector      args;
+        const Dico				dico;
+        const Vector			args;
         
         Detail() :
         instance(nullptr), patcher(nullptr), lid(0), name(Tag::create("")), text(""), dico(), args({})
@@ -84,7 +84,7 @@ namespace Kiwi
     /**
      The object is a graphical class that aims to be instantiate in a patcher.
      */
-    class Object : virtual public Beacon::Castaway, virtual public Sketcher
+    class Object : virtual public Beacon::Castaway, public GuiObject
     {
     public:
         
@@ -137,12 +137,6 @@ namespace Kiwi
         atomic_ullong			m_stack_count;
         mutable mutex			m_mutex;
         
-    protected:
-        const sAttrPoint       m_presentation_position;
-        const sAttrSize        m_presentation_size;
-        const sAttrBool        m_hidden;
-        const sAttrBool        m_presentation;
-        const sAttrBool        m_ignoreclick;
     public:
         
         //! Constructor.
@@ -298,63 +292,6 @@ namespace Kiwi
          @param dico The dico.
          */
         void write(Dico& dico) const;
-        
-        //! Retrieves if the object should be hidden when the patcher is locked.
-        /** The function retrieves if the object should be hidden when the patcher is locked.
-         @return True if the object should be hidden when the patcher is locked, false otherwise.
-         */
-        inline bool isHiddenOnLock() const noexcept
-        {
-            return m_hidden->getValue();
-        }
-        
-        //! Retrieve if the object should be displayed in presentation.
-        /** The function retrieves if the object should be displayed in presentation.
-         @return True if the object should be displayed in presentation, otherwise false.
-         */
-        inline bool isIncludeInPresentation() const noexcept
-        {
-            return m_presentation->getValue();
-        }
-		
-		//! Retrieve the "ignoreclick" attribute value of the object.
-		/** The function retrieves the "ignoreclick" attribute value of the object.
-		 @return The "ignoreclick" attribute value of the object.
-		 */
-		inline bool getIgnoreClick() const noexcept
-		{
-			return m_ignoreclick->getValue();
-		}
-		
-        //! Retrieve the position of the object.
-        /** The function retrieves the position of the object.
-         @param presentation The presentation state.
-         @return The position of the object.
-         */
-        inline Point getPresentationPosition() const noexcept
-        {
-			return m_presentation_position->getValue();
-        }
-        
-        //! Retrieve the size of the object.
-        /** The function retrieves the size of the object.
-         @param presentation The presentation state.
-         @return The size of the object.
-         */
-        inline Size getPresentationSize() const noexcept
-        {
-			return m_presentation_size->getValue();
-        }
-        
-        //! Retrieve the bounds of the object.
-        /** The function retrieves the bounds of the object.
-         @param presentation The presentation state.
-         @return The bounds of the object.
-         */
-        inline Rectangle getPresentationBounds() const noexcept
-        {
-			return Rectangle(m_presentation_position->getValue(), m_presentation_size->getValue());
-        }
         
     protected:
         

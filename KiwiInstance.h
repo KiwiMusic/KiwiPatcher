@@ -42,7 +42,7 @@ namespace Kiwi
      @see Patcher
      @see Beacon
      */
-    class Instance : public Beacon::Factory, public DspContext
+    class Instance : public Beacon::Factory, public GuiPatcherManager, public DspContext
     {
     public:
         class Listener;
@@ -63,9 +63,11 @@ namespace Kiwi
         
         //! The constructor.
         /** You should never use this method.
-		 @param device The device manager.
+         @param guiDevice The gui device manager.
+         @param dspDevice The dsp device manager.
+         @param name      The instance name.
          */
-        Instance(sDspDeviceManager device, string const& name) noexcept;
+        Instance(sGuiDeviceManager guiDevice, sDspDeviceManager dspDevice, string const& name) noexcept;
         
         //! The destructor.
         /** You should never use this method.
@@ -74,10 +76,12 @@ namespace Kiwi
         
         //! The instance creation method.
         /** The function allocates an instance and initialize the prototypes of objects.
-         @param device The device manager.
-         @return The instance.
+         @param guiDevice The gui device manager.
+         @param dspDevice The dsp device manager.
+         @param name      The instance name.
+         @return          The instance.
          */
-        static sInstance create(sDspDeviceManager device, string const& name);
+        static sInstance create(sGuiDeviceManager guiDevice, sDspDeviceManager dspDevice, string const& name);
         
         //! Retrieve the shared pointer of the instance.
         /** The function retrieves the shared pointer of the instance.

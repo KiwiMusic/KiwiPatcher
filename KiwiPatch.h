@@ -36,7 +36,7 @@ namespace Kiwi
     /**
      The patcher is...
      */
-	class Patcher : virtual public Attr::Manager, public DspChain
+	class Patcher : public GuiPatcher, public DspChain
 	{
     public:
 		class Listener;
@@ -63,11 +63,6 @@ namespace Kiwi
         set<wListener,
         owner_less<wListener>>      m_lists;
         mutable mutex               m_lists_mutex;
-			
-		// Patcher attributes :
-		const sAttrColor			m_color_unlocked_background;
-		const sAttrColor			m_color_locked_background;
-		const sAttrLong				m_gridsize;
         
     private:
         
@@ -224,34 +219,7 @@ namespace Kiwi
 		 @param attr An attribute.
 		 @return pass true to notify changes to listeners, false if you don't want them to be notified
 		 */
-		virtual bool notify(sAttr attr) {return true;};
-			
-		//! Retrieve the "gridsize" attribute value of the patcher.
-		/** The function retrieves the "gridsize" attribute value of the patcher.
-		@return The "gridsize" attribute value of the patcher.
-		*/
-		inline long getGridSize() const noexcept
-		{
-			return m_gridsize->getValue();
-		}
-			
-		//! Retrieve the "locked_bgcolor" attribute value of the patcher.
-		/** The function retrieves the "locked_bgcolor" attribute value of the patcher.
-		 @return The "locked_bgcolor" attribute value of the patcher.
-		 */
-		inline Color getLockedBackgroundColor() const noexcept
-		{
-			return m_color_locked_background->getValue();
-		}
-			
-		//! Retrieve the "locked_bgcolor" attribute value of the patcher.
-		/** The function retrieves the "locked_bgcolor" attribute value of the patcher.
-		 @return The "locked_bgcolor" attribute value of the patcher.
-		 */
-		inline Color getUnlockedBackgroundColor() const noexcept
-		{
-			return m_color_unlocked_background->getValue();
-		}
+		virtual bool notify(sAttr attr) override {return true;}
     };
 		
 		
