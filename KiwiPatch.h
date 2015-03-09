@@ -34,47 +34,22 @@ namespace Kiwi
     
     //! The patcher manages objects and links.
     /**
-     The patcher is...
+     The patcher is... ??
      */
 	class Patcher : public GuiPatcher, public DspChain
-	{
-    public:
-		class Listener;
-		typedef shared_ptr<Listener>			sListener;
-		typedef weak_ptr<Listener>              wListener;
-		typedef shared_ptr<const Listener>      scListener;
-        typedef weak_ptr<const Listener>        swListener;
-		
-        /** Flags describing the type of the notification
-         @see Controler
-         */
-		enum Notification //: bool
-        {
-            Added        = false,
-            Removed      = true
-        };
-			
+	{	
     private:
         const wInstance             m_instance;
         vector<sObject>             m_objects;
         vector<sLink>               m_links;
         vector<ulong>               m_free_ids;
         mutable mutex               m_mutex;
-        set<wListener,
-        owner_less<wListener>>      m_lists;
-        mutable mutex               m_lists_mutex;
-        
-    private:
-        
-        //! @internal Trigger notification to controlers.
-        void send(sObject object, Notification type);
-        void send(sLink link, Notification type);
         
         //! @internal Object and link creation.
         void createObject(Dico const& dico);
         void createLink(Dico const& dico);
-    public:
         
+    public:
         //! Constructor.
         /** You should never call this method except if you really know what you're doing.
          */
@@ -110,7 +85,7 @@ namespace Kiwi
         {
             return static_pointer_cast<const Patcher>(DspChain::shared_from_this());
         }
-            
+        
         //! Retrieve the shared pointer of the patcher.
         /** The function retrieves the shared pointer of the patcher.
          @return The shared pointer of the patcher.
@@ -197,22 +172,10 @@ namespace Kiwi
         void toBack(sObject object);
         
         //! Write the patcher in a dico.
-        /** The function writes the patcherin a dico.
+        /** The function writes the patcher in a dico.
          @param dico The dico.
          */
         void write(Dico& dico) const;
-		
-		//! Add a listener to the object.
-		/** The function adds a listener to the object.
-		 @param list    The listener.
-		 */
-		void addListener(sListener list);
-        
-        //! Remove a listener from the object.
-        /** The function removes a listener from the object.
-         @param list    The listener.
-         */
-        void removeListener(sListener list);
 		
 		//! Notify the manager that the values of an attribute has changed.
 		/** The function notifies the manager that the values of an attribute has changed.
@@ -220,63 +183,6 @@ namespace Kiwi
 		 @return pass true to notify changes to listeners, false if you don't want them to be notified
 		 */
 		virtual bool notify(sAttr attr) override {return true;}
-    };
-		
-		
-    // ================================================================================ //
-    //                                  PAGE LISTENER                                   //
-    // ================================================================================ //
-    
-    //! The patcher listener is an abstract class that facilitates the control of a patcher in an application.
-    /**
-     The patcher listener should be a shared pointer to be able to bind itself to a patcher. Thus, like in all the kiwi classes, you should use another creation method and call the bind function in it. The patcher listener owns a vector of object listeners and facilitates managements of objects like the creation, the deletion, the selection, etc.
-     @see Patcher, Patcher::Listener, Object::Listener
-     */
-    class Patcher::Listener
-    {
-    public:
-        
-        //! Constructor.
-        /** You should never call this method except if you really know what you're doing.
-         Please use the create method instead.
-         @param patcher The patcher to control.
-         */
-        Listener() noexcept
-        {
-            ;
-        }
-        
-        //! The destructor.
-        /** The destructor.
-         */
-        virtual ~Listener()
-        {
-            ;
-        }
-        
-        //! Receive the notification that a object has been created.
-        /** The function is called by the patcher when a object has been created.
-         @param object     The object.
-         */
-        virtual void objectCreated(sPatcher patcher, sObject object) = 0;
-        
-        //! Receive the notification that a object has been removed.
-        /** The function is called by the patcher when a object has been removed.
-         @param object     The object.
-         */
-        virtual void objectRemoved(sPatcher patcher, sObject object) = 0;
-        
-        //! Receive the notification that a link has been created.
-        /** The function is called by the patcher when a link has been created.
-         @param link     The link.
-         */
-        virtual void linkCreated(sPatcher patcher, sLink link) = 0;
-        
-        //! Receive the notification that a link has been removed.
-        /** The function is called by the patcher when a link has been removed.
-         @param link    The link.
-         */
-        virtual void linkRemoved(sPatcher patcher, sLink link) = 0;
     };
 }
 

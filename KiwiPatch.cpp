@@ -42,7 +42,6 @@ namespace Kiwi
         m_links.clear();
         m_objects.clear();
         m_free_ids.clear();
-        m_lists.clear();
     }
     
     sPatcher Patcher::create(sInstance instance, Dico& dico)
@@ -77,14 +76,16 @@ namespace Kiwi
             object = Factory::create(name, Detail(getInstance(), getShared(), _id, name, text->getName(), dico, args));
             if(object)
             {
+                m_objects.push_back(object);
+                
                 sDspNode dspnode = dynamic_pointer_cast<DspNode>(object);
                 if(dspnode)
                 {
                     DspChain::add(dspnode);
                 }
-                m_objects.push_back(object);
+                
+                GuiPatcher::add(object);
             }
-            send(object, Notification::Added);
         }
     }
     
@@ -221,14 +222,16 @@ namespace Kiwi
         
         if(link)
         {
+            m_links.push_back(link);
+            
             sDspLink dsplink = dynamic_pointer_cast<DspLink>(link);
             if(dsplink)
             {
                 DspChain::add(dsplink);
             }
-            m_links.push_back(link);
+            
+            GuiPatcher::add(link);
         }
-        send(link, Notification::Added);
     }
     
     void Patcher::add(Dico const& dico)
@@ -305,22 +308,27 @@ namespace Kiwi
                         {
                             DspChain::remove(dsplink);
                         }
+                        
+                        GuiPatcher::remove(*li);
+                        
                         li = m_links.erase(li);
-                        send((*li), Notification::Removed);
                     }
                     else
                     {
                         ++li;
                     }
                 }
+                
                 sDspNode dspnode = dynamic_pointer_cast<DspNode>(object);
                 if(dspnode)
                 {
                     DspChain::remove(dspnode);
                 }
+                
+                GuiPatcher::remove(object);
+                
                 m_objects.erase(it);
                 m_free_ids.push_back(object->getId());
-                send(object, Notification::Removed);
             }
         }
     }
@@ -338,8 +346,10 @@ namespace Kiwi
                 {
                     DspChain::remove(dsplink);
                 }
+                
+                GuiPatcher::remove(link);
+                
                 m_links.erase(it);
-                send(link, Notification::Removed);
             }
         }
     }
@@ -355,6 +365,8 @@ namespace Kiwi
                 m_objects.erase(it);
                 m_objects.push_back(object);
             }
+            
+            GuiPatcher::toFront(object);
         }
     }
     
@@ -369,6 +381,8 @@ namespace Kiwi
                 m_objects.erase(it);
                 m_objects.insert(m_objects.begin(), object);
             }
+            
+            GuiPatcher::toBack(object);
         }
     }
 	
@@ -408,82 +422,6 @@ namespace Kiwi
 				subpatcher->set(Tag::List::links, atoms);
 				dico->set(Tag::List::patcher, subpatcher);
 			}*/
-        }
-    }
-    
-    void Patcher::addListener(sListener list)
-    {
-        if(list)
-        {
-            lock_guard<mutex> guard(m_mutex);
-            m_lists.insert(list);
-        }
-    }
-    
-    void Patcher::removeListener(sListener list)
-    {
-        if(list)
-        {
-            lock_guard<mutex> guard(m_mutex);
-            m_lists.erase(list);
-        }
-    }
-
-    void Patcher::send(sObject object, Patcher::Notification type)
-    {
-        if(object)
-        {
-            lock_guard<mutex> guard(m_lists_mutex);
-            for(auto it = m_lists.begin(); it != m_lists.end(); )
-            {
-                sListener list = (*it).lock();
-                if(list)
-                {
-                    if(type == Notification::Added)
-                    {
-                        list->objectCreated(getShared(), object);
-                    }
-                    else
-                    {
-                        list->objectRemoved(getShared(), object);
-                    }
-                    
-                    ++it;
-                }
-                else
-                {
-                    it = m_lists.erase(it);
-                }
-            }
-        }
-    }
-    
-    void Patcher::send(sLink link, Patcher::Notification type)
-    {
-        if(link)
-        {
-            lock_guard<mutex> guard(m_lists_mutex);
-            for(auto it = m_lists.begin(); it != m_lists.end(); )
-            {
-                sListener list = (*it).lock();
-                if(list)
-                {
-                    if(type == Notification::Added)
-                    {
-                        list->linkCreated(getShared(), link);
-                    }
-                    else
-                    {
-                        list->linkRemoved(getShared(), link);
-                    }
-                    
-                    ++it;
-                }
-                else
-                {
-                    it = m_lists.erase(it);
-                }
-            }
         }
     }
     
