@@ -36,7 +36,7 @@ namespace Kiwi
     /**
      The patcher is... ??
      */
-	class Patcher : public GuiPatcher, public DspChain
+	class Patcher : public DspChain,  public GuiPatcher
 	{	
     private:
         const wInstance             m_instance;
@@ -131,32 +131,6 @@ namespace Kiwi
             lock_guard<mutex> guard(m_mutex);
             links = m_links;
         }
-        
-        //! Creation method of the patcher.
-        /** The function evaluates the inputs for the creation and returns the result in the outputs.
-         @param inputs The vector of atoms to evaluate.
-         @param outputs The vector of atoms to return the creation.
-         */
-        void create(Vector const& inputs, Vector outputs);
-        
-        //! Remove method of the patcher.
-        /** The function evaluates the inputs for the deletion.
-         @param inputs The vector of atoms to evaluate.
-         */
-        void remove(Vector const& inputs);
-        
-        //! Get method of the patcher.
-        /** The function evaluates the inputs for the getting and returns the result in the outputs.
-         @param inputs The vector of atoms to evaluate.
-         @param outputs The vector of atoms to return the getting.
-         */
-        void get(Vector const& inputs, Vector outputs) const;
-        
-        //! Set method of the patcher.
-        /** The function evaluates the inputs for the setting.
-         @param inputs The vector of atoms to evaluate.
-         */
-        void set(Vector const& inputs);
         
         //! Append a dico.
         /** The function reads a dico and add the objects and links to the patcher.

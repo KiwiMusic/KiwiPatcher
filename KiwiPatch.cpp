@@ -31,15 +31,10 @@ namespace Kiwi
     //                                      PAGE                                        //
     // ================================================================================ //
     
-    Patcher::Patcher(sInstance instance) : DspChain(instance),
-    m_instance(instance),
-	m_color_unlocked_background(Attr::create("unlocked_bgcolor","Unlocked Background Color", "Appearance", ColorValue(0.88, 0.89, 0.88, 1.))),
-	m_color_locked_background(Attr::create("locked_bgcolor", "Locked Background Color", "Appearance", ColorValue(0.88, 0.89, 0.88, 1.))),
-	m_gridsize(Attr::create("gridsize", "Grid Size", "Editing", LongValue(20)))
+    Patcher::Patcher(sInstance instance) : DspChain(instance), GuiPatcher(instance),
+    m_instance(instance)
     {
-		addAttr(m_color_unlocked_background);
-		addAttr(m_color_locked_background);
-		addAttr(m_gridsize);
+        ;
     }
 	
     Patcher::~Patcher()
@@ -47,7 +42,6 @@ namespace Kiwi
         m_links.clear();
         m_objects.clear();
         m_free_ids.clear();
-        m_lists.clear();
     }
     
     sPatcher Patcher::create(sInstance instance, Dico& dico)
@@ -84,9 +78,9 @@ namespace Kiwi
                 {
                     DspChain::add(dspnode);
                 }
+                GuiPatcher::add(object);
                 m_objects.push_back(object);
             }
-            send(object, Notification::Added);
         }
     }
     
@@ -145,7 +139,7 @@ namespace Kiwi
                                 
                                 DspChain::add(link);
                                 m_links.push_back(static_pointer_cast<Link>(link));
-                                send(static_pointer_cast<Link>(link), Notification::Added);
+                                GuiPatcher::add(link);
 
                             }
                         }
@@ -156,7 +150,7 @@ namespace Kiwi
                             inlet->append(from, vto[1]);
                             sLink link = make_shared<Link>(getShared(), from, vfrom[1], to, vto[1], Object::Io::Message);
                             m_links.push_back(link);
-                            send(link, Notification::Added);
+                            GuiPatcher::add(link);
                         }
                     }
                 }
@@ -250,8 +244,7 @@ namespace Kiwi
                         {
                             DspChain::remove(dsplink);
                         }
-                        li = m_links.erase(li);
-                        send((*li), Notification::Removed);
+                        GuiPatcher::remove(*li);
                     }
                     else
                     {
@@ -263,9 +256,9 @@ namespace Kiwi
                 {
                     DspChain::remove(dspnode);
                 }
+                GuiPatcher::remove(object);
                 m_objects.erase(it);
                 m_free_ids.push_back(object->getId());
-                send(object, Notification::Removed);
             }
         }
     }
@@ -283,8 +276,8 @@ namespace Kiwi
                 {
                     DspChain::remove(dsplink);
                 }
+                GuiPatcher::remove(link);
                 m_links.erase(it);
-                send(link, Notification::Removed);
             }
         }
     }
@@ -354,128 +347,6 @@ namespace Kiwi
 				dico->set(Tag::List::patcher, subpatcher);
 			}*/
         }
-    }
-    
-    void Patcher::addListener(sListener list)
-    {
-        if(list)
-        {
-            lock_guard<mutex> guard(m_mutex);
-            m_lists.insert(list);
-        }
-    }
-    
-    void Patcher::removeListener(sListener list)
-    {
-        if(list)
-        {
-            lock_guard<mutex> guard(m_mutex);
-            m_lists.erase(list);
-        }
-    }
-
-    void Patcher::send(sObject object, Patcher::Notification type)
-    {
-        if(object)
-        {
-            lock_guard<mutex> guard(m_lists_mutex);
-            for(auto it = m_lists.begin(); it != m_lists.end(); )
-            {
-                sListener list = (*it).lock();
-                if(list)
-                {
-                    if(type == Notification::Added)
-                    {
-                        list->objectCreated(getShared(), object);
-                    }
-                    else
-                    {
-                        list->objectRemoved(getShared(), object);
-                    }
-                    
-                    ++it;
-                }
-                else
-                {
-                    it = m_lists.erase(it);
-                }
-            }
-        }
-    }
-    
-    void Patcher::send(sLink link, Patcher::Notification type)
-    {
-        if(link)
-        {
-            lock_guard<mutex> guard(m_lists_mutex);
-            for(auto it = m_lists.begin(); it != m_lists.end(); )
-            {
-                sListener list = (*it).lock();
-                if(list)
-                {
-                    if(type == Notification::Added)
-                    {
-                        list->linkCreated(getShared(), link);
-                    }
-                    else
-                    {
-                        list->linkRemoved(getShared(), link);
-                    }
-                    
-                    ++it;
-                }
-                else
-                {
-                    it = m_lists.erase(it);
-                }
-            }
-        }
-    }
-    
-    void Patcher::create(Vector const& inputs, Vector outputs)
-    {
-        if(!inputs.empty())
-        {
-            /*
-            if(inputs[0].getType() == Atom::TAG)
-            {
-                if(inputs[0] == Tag::List::object)
-                {
-                    createObject(Dico::create());
-                }
-                else if(inputs[0] == Tag::List::link)
-                {
-                    createLink(Dico::create());
-                }
-                else
-                {
-                    Console::error("Creation command accepts only \"object\" or \"link\" argument.");
-                }
-            }
-            else
-            {
-                Console::error("Creation command needs a tag as first argument.");
-            }*/
-        }
-        else
-        {
-            Console::error("Creation command is empty.");
-        }
-    }
-    
-    void Patcher::remove(Vector const& inputs)
-    {
-        
-    }
-    
-    void Patcher::get(Vector const& inputs, Vector outputs) const
-    {
-        
-    }
-    
-    void Patcher::set(Vector const& inputs)
-    {
-        
     }
 }
 
