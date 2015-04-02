@@ -126,7 +126,7 @@ namespace Kiwi
             ulong index;
         };
         
-        const wInstance			m_instance;
+        const wInstance         m_instance;
         const wPatcher          m_patcher;
         const sTag				m_name;
         const string            m_text;
@@ -235,57 +235,79 @@ namespace Kiwi
         /** The functions retrieves the number of inlets of the object.
          @return The number of inlets.
          */
-        inline ulong getNumberOfInlets() const noexcept
-        {
-            lock_guard<mutex> guard(m_mutex);
-            return (ulong)m_inlets.size();
-        }
+        ulong getNumberOfInlets() const noexcept;
+        
+        //! Retrieve the inlets of the object.
+        /** The functions retrieves the inlets of the object.
+         @return The inlets.
+         */
+        vector<scInlet> getInlets() const noexcept;
+        
+        //! Retrieve the inlets of the object.
+        /** The functions retrieves the inlets of the object.
+         @return The inlets.
+         */
+        vector<sInlet> getInlets() noexcept;
         
         //! Retrieve an inlet.
         /** The functions retrieves an inlet.
          @param index The inlet's index.
          @return The inlet.
          */
-        inline sInlet getInlet(ulong index) const noexcept
-        {
-            lock_guard<mutex> guard(m_mutex);
-            if(index < m_inlets.size())
-            {
-                return m_inlets[(vector<sInlet>::size_type)index];
-            }
-            else
-            {
-                return nullptr;
-            }
-        }
+        scInlet getInlet(ulong index) const noexcept;
+        
+        //! Retrieve an inlet.
+        /** The functions retrieves an inlet.
+         @param index The inlet's index.
+         @return The inlet.
+         */
+        sInlet getInlet(ulong index) noexcept;
+        
+        //! Retrieve the dsp index of an inlet.
+        /** The functions retrieves the dsp index of an inlet.
+         @param index The inlet's index.
+         @return The dsp index of the inlet.
+         */
+        ulong getDspInletIndex(ulong index) const throw(Error&);
         
         //! Retrieve the number of outlets of the object.
         /** The functions retrieves the number of outlets of the object.
          @return The number of outlets.
          */
-        inline ulong getNumberOfOutlets() const noexcept
-        {
-            lock_guard<mutex> guard(m_mutex);
-            return (ulong)m_outlets.size();
-        }
+        ulong getNumberOfOutlets() const noexcept;
+        
+        //! Retrieve the outlets of the object.
+        /** The functions retrieves the outlets of the object.
+         @return The outlets.
+         */
+        vector<scOutlet> getOutlets() const noexcept;
+        
+        //! Retrieve the outlets of the object.
+        /** The functions retrieves the outlets of the object.
+         @return The outlets.
+         */
+        vector<sOutlet> getOutlets() noexcept;
         
         //! Retrieve an outlet.
         /** The functions retrieves an outlet.
          @param index The outlet's index.
          @return The outlet.
          */
-        inline sOutlet getOutlet(ulong index) const noexcept
-        {
-            lock_guard<mutex> guard(m_mutex);
-            if(index < m_outlets.size())
-            {
-                return m_outlets[(vector<sOutlet>::size_type)index];
-            }
-            else
-            {
-                return nullptr;
-            }
-        }
+        scOutlet getOutlet(ulong index) const noexcept;
+        
+        //! Retrieve an outlet.
+        /** The functions retrieves an outlet.
+         @param index The outlet's index.
+         @return The outlet.
+         */
+        sOutlet getOutlet(ulong index) noexcept;
+        
+        //! Retrieve the dsp index of an outlet.
+        /** The functions retrieves the dsp index of an outlet.
+         @param index The outlet's index.
+         @return The dsp index of the outlet.
+         */
+        ulong getDspOutletIndex(ulong index) const throw(Error&);
         
         //! The receive method that should be override.
         /** The function shoulds perform some stuff.
@@ -401,15 +423,13 @@ namespace Kiwi
     class Object::Iolet : public enable_shared_from_this<Iolet>
     {
     protected:
-        friend Patcher;
-        friend Link;
-        
         vector<Connection>  m_connections;
         const Io::Type      m_type;
         const Io::Polarity  m_polarity;
         const string        m_description;
         mutable mutex       m_mutex;
         
+    public:
         //! Check if a connection is in the iolet.
         /** The functions checks if a connection is in the iolet.
          @param object The object.
@@ -433,8 +453,7 @@ namespace Kiwi
          @return true if the connection has been removed, otherwise false.
          */
         bool erase(sObject object, ulong index) noexcept;
-        
-    public:
+    
         //! Constructor.
         /** You should never call this method except if you really know what you're doing.
          */
@@ -491,59 +510,40 @@ namespace Kiwi
             return (ulong)m_connections.size();
         }
         
-        //! Retrieve the a connection.
+        //! Retrieve a connection.
         /** The functions retrieves a connection.
          @param index The index of the connection.
          @return The connection.
          */
-        inline Connection getConnection(const ulong index) const noexcept
-        {
-            lock_guard<mutex> guard(m_mutex);
-            if(index < (ulong)m_connections.size())
-            {
-                return m_connections[(vector<Connection>::size_type)index];
-            }
-            else
-            {
-                return {sObject(), 0};
-            }
-        }
+        const Connection getConnection(const ulong index) const noexcept;
+        
+        //! Retrieve a connection.
+        /** The functions retrieves a connection.
+         @param index The index of the connection.
+         @return The connection.
+         */
+        Connection getConnection(const ulong index) noexcept;
         
         //! Retrieve the object of a connection.
         /** The functions retrieves the object of a connection.
          @param index The index of the connection.
          @return The object of a connection.
          */
-        inline sObject getObject(const ulong index) const noexcept
-        {
-            lock_guard<mutex> guard(m_mutex);
-            if(index < (ulong)m_connections.size())
-            {
-                return m_connections[(vector<Connection>::size_type)index].object.lock();
-            }
-            else
-            {
-                return nullptr;
-            }
-        }
+        scObject getObject(const ulong index) const noexcept;
+        
+        //! Retrieve the object of a connection.
+        /** The functions retrieves the object of a connection.
+         @param index The index of the connection.
+         @return The object of a connection.
+         */
+        sObject getObject(const ulong index) noexcept;
         
         //! Retrieve the iolet's index of a connection.
         /** The functions retrieves the iolet's index of a connection.
          @param index The index of the connection.
          @return The iolet's index of a connection.
          */
-        inline ulong getIndex(const ulong index) const noexcept
-        {
-            lock_guard<mutex> guard(m_mutex);
-            if(index < (ulong)m_connections.size())
-            {
-                return m_connections[(vector<Connection>::size_type)index].index;
-            }
-            else
-            {
-                return 0;
-            }
-        }
+        ulong getIndex(const ulong index) const noexcept;
     };
     
     // ================================================================================ //

@@ -32,6 +32,72 @@ namespace Kiwi
     //                                      IOLET                                       //
     // ================================================================================ //
     
+    const Object::Connection Object::Iolet::getConnection(const ulong index) const noexcept
+    {
+        lock_guard<mutex> guard(m_mutex);
+        if(index < (ulong)m_connections.size())
+        {
+            return m_connections[(vector<Connection>::size_type)index];
+        }
+        else
+        {
+            return {sObject(), 0};
+        }
+    }
+    
+    Object::Connection Object::Iolet::getConnection(const ulong index) noexcept
+    {
+        lock_guard<mutex> guard(m_mutex);
+        if(index < (ulong)m_connections.size())
+        {
+            return m_connections[(vector<Connection>::size_type)index];
+        }
+        else
+        {
+            return {sObject(), 0};
+        }
+    }
+    
+    scObject Object::Iolet::getObject(const ulong index) const noexcept
+    {
+        lock_guard<mutex> guard(m_mutex);
+        if(index < (ulong)m_connections.size())
+        {
+            return m_connections[(vector<Connection>::size_type)index].object.lock();
+        }
+        else
+        {
+            return nullptr;
+        }
+    }
+    
+    sObject Object::Iolet::getObject(const ulong index) noexcept
+    {
+        lock_guard<mutex> guard(m_mutex);
+        if(index < (ulong)m_connections.size())
+        {
+            return m_connections[(vector<Connection>::size_type)index].object.lock();
+        }
+        else
+        {
+            return nullptr;
+        }
+    }
+    
+
+    ulong Object::Iolet::getIndex(const ulong index) const noexcept
+    {
+        lock_guard<mutex> guard(m_mutex);
+        if(index < (ulong)m_connections.size())
+        {
+            return m_connections[(vector<Connection>::size_type)index].index;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    
     bool Object::Iolet::has(sObject object, ulong index) const noexcept
     {
         if(object)
@@ -79,7 +145,7 @@ namespace Kiwi
                 if(cobject && object == cobject && m_connections[i].index == index)
                 {
                     m_connections.erase(m_connections.begin() + i);
-                    return false;
+                    return true;
                 }
             }
         }
@@ -102,8 +168,8 @@ namespace Kiwi
         lock_guard<mutex> guard(m_mutex);
         for(vector<Connection>::size_type i = 0; i < m_connections.size(); i++)
         {
-            sObject receiver       = m_connections[i].object.lock();
-            ulong inlet  = m_connections[i].index;
+            sObject receiver = m_connections[i].object.lock();
+            ulong inlet      = m_connections[i].index;
             if(receiver)
             {
                 if(++receiver->m_stack_count < 256)
@@ -209,6 +275,148 @@ namespace Kiwi
         if(outlet)
         {
             m_outlets.push_back(outlet);
+        }
+    }
+    
+    ulong Object::getNumberOfInlets() const noexcept
+    {
+        lock_guard<mutex> guard(m_mutex);
+        return (ulong)m_inlets.size();
+    }
+    
+    vector<Object::scInlet> Object::getInlets() const noexcept
+    {
+        lock_guard<mutex> guard(m_mutex);
+        return vector<scInlet>(m_inlets.begin(), m_inlets.end());
+    }
+    
+    vector<Object::sInlet> Object::getInlets() noexcept
+    {
+        lock_guard<mutex> guard(m_mutex);
+        return m_inlets;
+    }
+    
+    Object::scInlet Object::getInlet(ulong index) const noexcept
+    {
+        lock_guard<mutex> guard(m_mutex);
+        if(index < m_inlets.size())
+        {
+            return m_inlets[(vector<sInlet>::size_type)index];
+        }
+        else
+        {
+            return nullptr;
+        }
+    }
+    
+    Object::sInlet Object::getInlet(ulong index) noexcept
+    {
+        lock_guard<mutex> guard(m_mutex);
+        if(index < m_inlets.size())
+        {
+            return m_inlets[(vector<sInlet>::size_type)index];
+        }
+        else
+        {
+            return nullptr;
+        }
+    }
+    
+    ulong Object::getDspInletIndex(ulong index) const throw(Error&)
+    {
+        if(index < m_inlets.size())
+        {
+            if(m_inlets[index]->getType() & Object::Io::Signal)
+            {
+                ulong dspindex = 0;
+                for(ulong i = index; i; i--)
+                {
+                    if(m_inlets[i-1]->getType() & Object::Io::Signal)
+                    {
+                        dspindex++;
+                    }
+                }
+                return dspindex;
+            }
+            else
+            {
+                throw Error("The inlet " + to_string(index) + " isn't a dsp inlet.");
+            }
+        }
+        else
+        {
+            throw Error("The inlet " + to_string(index) + " index is out of ranges.");
+        }
+    }
+
+    ulong Object::getNumberOfOutlets() const noexcept
+    {
+        lock_guard<mutex> guard(m_mutex);
+        return (ulong)m_outlets.size();
+    }
+    
+    vector<Object::scOutlet> Object::getOutlets() const noexcept
+    {
+        lock_guard<mutex> guard(m_mutex);
+        return vector<Object::scOutlet>(m_outlets.begin(), m_outlets.end());
+    }
+    
+    vector<Object::sOutlet> Object::getOutlets() noexcept
+    {
+        lock_guard<mutex> guard(m_mutex);
+        return m_outlets;
+    }
+    
+    Object::scOutlet Object::getOutlet(ulong index) const noexcept
+    {
+        lock_guard<mutex> guard(m_mutex);
+        if(index < m_outlets.size())
+        {
+            return m_outlets[(vector<sOutlet>::size_type)index];
+        }
+        else
+        {
+            return nullptr;
+        }
+    }
+    
+    Object::sOutlet Object::getOutlet(ulong index) noexcept
+    {
+        lock_guard<mutex> guard(m_mutex);
+        if(index < m_outlets.size())
+        {
+            return m_outlets[(vector<sOutlet>::size_type)index];
+        }
+        else
+        {
+            return nullptr;
+        }
+    }
+    
+    ulong Object::getDspOutletIndex(ulong index) const throw(Error&)
+    {
+        if(index < m_outlets.size())
+        {
+            if(m_outlets[index]->getType() & Object::Io::Signal)
+            {
+                ulong dspindex = 0;
+                for(ulong i = index; i; i--)
+                {
+                    if(m_outlets[i-1]->getType() & Object::Io::Signal)
+                    {
+                        dspindex++;
+                    }
+                }
+                return dspindex;
+            }
+            else
+            {
+                throw Error("The outlet " + to_string(index) + "isn't a dsp outlet.");
+            }
+        }
+        else
+        {
+            throw Error("The outlet " + to_string(index) + " index is out of ranges.");
         }
     }
 }
