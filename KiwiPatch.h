@@ -127,12 +127,29 @@ namespace Kiwi
 
         //! Get the objects.
         /** The function retrieves the objects from the patcher.
-         @param objects   A vector of atoms.
+         @return A vector with the objects.
          */
-        void getObjects(vector<sObject>& objects) const noexcept
+        inline vector<sObject> getObjects() const noexcept
         {
             lock_guard<mutex> guard(m_mutex);
-            objects = m_objects;
+            return m_objects;
+        }
+        
+        //! Get an object with the id.
+        /** The function retrieves an object with an id.
+         @param id   The id of the object.
+         */
+        inline sObject getObjectWithId(ulong const _id) const noexcept
+        {
+            lock_guard<mutex> guard(m_mutex);
+            for(vector<sObject>::size_type i = 0; i < m_objects.size(); i++)
+            {
+                if(m_objects[i]->getId() == _id)
+                {
+                    return m_objects[i];
+                }
+            }
+            return nullptr;
         }
         
         //! Get the links.

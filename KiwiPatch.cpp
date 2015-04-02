@@ -70,16 +70,13 @@ namespace Kiwi
     void Patcher::createObject(Dico const& dico)
     {
         sObject object;
-        if(dico.count(Tag::List::name) &&
-           dico.count(Tag::List::text) &&
-           dico.count(Tag::List::id) &&
-           dico.count(Tag::List::arguments))
+        if(dico.count(Tag::List::name) && dico.at(Tag::List::name).isTag() &&
+           dico.count(Tag::List::text) && dico.at(Tag::List::text).isTag() &&
+           dico.count(Tag::List::id) && dico.at(Tag::List::id).isNumber() &&
+           dico.count(Tag::List::arguments) && dico.at(Tag::List::arguments).isVector())
         {
-            const sTag name = dico.at(Tag::List::name);
             const sTag text = dico.at(Tag::List::text);
-            const ulong _id = dico.at(Tag::List::id);
-            const Vector args=dico.at(Tag::List::arguments);
-            object = Factory::create(name, Detail(getInstance(), getShared(), _id, name, text->getName(), dico, args));
+            object = Factory::create(dico.at(Tag::List::name), Detail(getInstance(), getShared(), dico.at(Tag::List::id), dico.at(Tag::List::name), text->getName(), dico, dico.at(Tag::List::arguments)));
             if(object)
             {
                 sDspNode dspnode = dynamic_pointer_cast<DspNode>(object);
@@ -95,145 +92,88 @@ namespace Kiwi
     
     void Patcher::createLink(Dico const& dico)
     {
-        sLink link;
-        ulong indexo, indexi, ido, idi;
-        Vector atoms;
-        auto it = dico.find(Tag::List::from);
-        if(it != dico.end())
+        if(dico.count(Tag::List::from) && dico.at(Tag::List::from).isVector() &&
+           dico.count(Tag::List::to) && dico.at(Tag::List::to).isVector())
         {
-            atoms = it->second;
-        }
-        if(atoms.size() > 1 && atoms[0].isNumber() && atoms[1].isNumber())
-        {
-            ido     = atoms[0];
-            indexo  = atoms[1];
-        }
-        else
-        {
-            return;
-        }
-        
-        atoms.clear();
-        it = dico.find(Tag::List::to);
-        if(it != dico.end())
-        {
-            atoms = it->second;
-        }
-        if(atoms.size() > 1 && atoms[0].isNumber() && atoms[1].isNumber())
-        {
-            idi     = atoms[0];
-            indexi  = atoms[1];
-        }
-        else
-        {
-            return;
-        }
-        
-        sObject from, to;
-        if(ido < m_objects.size() + 1 && idi <  m_objects.size() + 1 && ido != idi)
-        {
-            for(vector<sObject>::size_type i = 0; i < m_objects.size(); i++)
+            Vector const& vfrom  = dico.at(Tag::List::from);
+            Vector const& vto    = dico.at(Tag::List::to);
+            if(vfrom.size() > 1 && vto.size() > 1)
             {
-                if(m_objects[i]->getId() == ido)
+                const sObject from = getObjectWithId(vfrom[0]);
+                const sObject to   = getObjectWithId(vto[0]);
+                if(from && to)
                 {
-                    from = m_objects[i];
-                }
-                else if(m_objects[i]->getId() == idi)
-                {
-                    to = m_objects[i];
-                }
-                else if(from.use_count() && to.use_count())
-                {
-                    break;
-                }
-            }
-        }
-        
-        if(from && to)
-        {
-            Object::sOutlet outlet  = from->getOutlet(indexo);
-            Object::sInlet inlet    = to->getInlet(indexi);
-            if(outlet && inlet)
-            {
-                if(outlet->getType() >= Object::Io::Signal && inlet->getType() >= Object::Io::Signal)
-                {
-                    sDspNode pfrom = dynamic_pointer_cast<DspNode>(from);
-                    sDspNode pto   = dynamic_pointer_cast<DspNode>(to);
-                    if(from && to)
+                    const Object::sOutlet outlet  = from->getOutlet(vfrom[1]);
+                    const Object::sInlet inlet    = to->getInlet(vto[1]);
+                    if(outlet && inlet)
                     {
-                        ulong poutlet = 0, pinlet = 0;
-                        for(ulong i = 0; i < from->getNumberOfOutlets(); i++)
+                        if(outlet->getType() >= Object::Io::Signal && inlet->getType() >= Object::Io::Signal)
                         {
-                            Object::sOutlet out = from->getOutlet(poutlet);
-                            if(out)
+                            sDspNode pfrom = dynamic_pointer_cast<DspNode>(from);
+                            sDspNode pto   = dynamic_pointer_cast<DspNode>(to);
+                            if(from && to)
                             {
-                                if(out == outlet)
+                                ulong poutlet, pinlet;
+                                try
                                 {
-                                    break;
+                                    pinlet = from->getDspInletIndex(vfrom[1]);
                                 }
-                                else if(out->getType() & Object::Io::Signal)
+                                catch(Error& e)
                                 {
-                                    poutlet++;
+                                    Console::post(e.what());
+                                    return;
                                 }
+                                
+                                try
+                                {
+                                    poutlet = from->getDspOutletIndex(vto[1]);
+                                }
+                                catch(Error& e)
+                                {
+                                    Console::post(e.what());
+                                    return;
+                                }
+                                
+                                outlet->append(to, vfrom[1]);
+                                inlet->append(from, vto[1]);
+                                Object::Io::Type type = Object::Io::Signal;
+                                if(outlet->getType() == Object::Io::Both && inlet->getType() == Object::Io::Both)
+                                {
+                                    type = Object::Io::Both;
+                                }
+                                shared_ptr<Link::SignalLink> link = make_shared<Link::SignalLink>(getShared(), from, vfrom[1], to, vto[1], type, pfrom, poutlet, pto, pinlet);
+                                
+                                DspChain::add(link);
+                                m_links.push_back(static_pointer_cast<Link>(link));
+                                send(static_pointer_cast<Link>(link), Notification::Added);
+
                             }
                         }
-                        if(poutlet >= pfrom->getNumberOfOutputs())
+                        else if(outlet->getType() == inlet->getType() || inlet->getType() == Object::Io::Both || outlet->getType() == Object::Io::Both)
                         {
-                            return;
-                        }
-                        
-                        for(ulong i = 0; i < to->getNumberOfInlets(); i++)
-                        {
-                            Object::sInlet in = to->getInlet(pinlet);
-                            if(in)
-                            {
-                                if(in == inlet)
-                                {
-                                    break;
-                                }
-                                else if(in->getType() & Object::Io::Signal)
-                                {
-                                    pinlet++;
-                                }
-                            }
-                        }
-                        if(pinlet >= pto->getNumberOfInputs())
-                        {
-                            return;
-                        }
-                        
-                        outlet->append(to, indexo);
-                        inlet->append(from, indexi);
-                        if(outlet->getType() == Object::Io::Both && inlet->getType() == Object::Io::Both)
-                        {
-                            link = make_shared<Link::SignalLink>(getShared(), from, indexo, to, indexi, Object::Io::Both, pfrom, poutlet, pto, pinlet);
-                        }
-                        else
-                        {
-                            link = make_shared<Link::SignalLink>(getShared(), from, indexo, to, indexi, Object::Io::Signal, pfrom, poutlet, pto, pinlet);
+                            
+                            outlet->append(to, vfrom[1]);
+                            inlet->append(from, vto[1]);
+                            sLink link = make_shared<Link>(getShared(), from, vfrom[1], to, vto[1], Object::Io::Message);
+                            m_links.push_back(link);
+                            send(link, Notification::Added);
                         }
                     }
                 }
-                else if(outlet->getType() == inlet->getType() || inlet->getType() == Object::Io::Both || outlet->getType() == Object::Io::Both)
+                else
                 {
-                    
-                    outlet->append(to, indexo);
-                    inlet->append(from, indexi);
-                    link = make_shared<Link>(getShared(), from, indexo, to, indexi, Object::Io::Message);
+                    throw Error("The dico isn't valid for a link creation.");
                 }
             }
-        }
-        
-        if(link)
-        {
-            sDspLink dsplink = dynamic_pointer_cast<DspLink>(link);
-            if(dsplink)
+            else
             {
-                DspChain::add(dsplink);
+                throw Error("The dico isn't valid for a link creation.");
             }
-            m_links.push_back(link);
         }
-        send(link, Notification::Added);
+        else
+        {
+            throw Error("The dico isn't valid for a link creation.");
+        }
     }
     
     void Patcher::add(Dico const& dico)
