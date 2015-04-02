@@ -36,7 +36,7 @@ namespace Kiwi
     /**
      The link is a combination of two sockets used to create the connection between objects in a patcher.
      */
-    class Link
+    class Link : public GuiLink
     {
     private:
         const wPatcher          m_patcher;

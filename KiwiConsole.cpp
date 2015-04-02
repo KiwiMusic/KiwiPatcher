@@ -26,7 +26,8 @@
 
 namespace Kiwi
 {
-    sDspDeviceManager Console::device;
+    sDspDeviceManager Console::m_dsp_device;
+    sGuiDeviceManager Console::m_gui_device;
     map<sTag, sInstance> Console::m_instances;
     
     set<Console::wListener,
@@ -81,7 +82,7 @@ namespace Kiwi
             {
                 string name;
                 iss >> name;
-                Instance::create(device, name);
+                Instance::create(m_gui_device, m_dsp_device, name);
             }
             else if(command == "delete")
             {

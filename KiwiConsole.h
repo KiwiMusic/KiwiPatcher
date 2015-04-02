@@ -42,10 +42,11 @@ namespace Kiwi
     class Console : public enable_shared_from_this<Console>
     {
     public:
-        friend sInstance Instance::create(sDspDeviceManager device, string const& name);
+        friend sInstance Instance::create(sGuiDeviceManager, sDspDeviceManager, string const&);
         static map<sTag, sInstance> m_instances;
         
-        static sDspDeviceManager            device;
+        static sDspDeviceManager            m_dsp_device;
+        static sGuiDeviceManager            m_gui_device;
         
         class Listener;
         typedef shared_ptr<Listener>        sListener;

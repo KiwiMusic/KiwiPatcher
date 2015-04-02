@@ -33,8 +33,9 @@ namespace Kiwi
     //                                      INSTANCE                                    //
     // ================================================================================ //
     
-    Instance::Instance(sDspDeviceManager device, string const& name) noexcept :
-    DspContext(device),
+    Instance::Instance(sGuiDeviceManager guiDevice, sDspDeviceManager dspDevice, string const& name) noexcept :
+    GuiPatchManager(guiDevice),
+    DspContext(dspDevice),
     m_name(name)
     {
 		;
@@ -49,7 +50,7 @@ namespace Kiwi
 #endif
     }
     
-    sInstance Instance::create(sDspDeviceManager device, string const& name)
+    sInstance Instance::create(sGuiDeviceManager guiDevice, sDspDeviceManager dspDevice, string const& name)
     {
         sInstance instance;
         if(!name.empty())
@@ -61,7 +62,7 @@ namespace Kiwi
             }
             if(Console::m_instances.find(tname) == Console::m_instances.end())
             {
-                instance = make_shared<Instance>(device, name);
+                instance = make_shared<Instance>(guiDevice, dspDevice, name);
                 if(instance)
                 {
                     Console::m_instances[tname] = instance;
