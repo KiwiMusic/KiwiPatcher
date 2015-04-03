@@ -230,13 +230,10 @@ namespace Kiwi
         dico[Tag::List::id]         = (long)getId();
         dico[Tag::List::ninlets]    = (long)getNumberOfInlets();
         dico[Tag::List::noutlets]   = (long)getNumberOfOutlets();
-        vector<sAttr> attrs;
-        getAttrs(attrs);
+        vector<sAttr> attrs = getAttrs();
         for(vector<sAttr>::size_type i = 0; i < attrs.size(); i++)
         {
-            string text;
-            attrs[i]->getValueString(text);
-            dico[Tag::create(attrs[i]->getName())] = Tag::create(text);
+            dico[Tag::create(attrs[i]->getName())] = attrs[i]->get();
         }
     }
     
