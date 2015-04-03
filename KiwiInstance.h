@@ -42,7 +42,7 @@ namespace Kiwi
      @see Patcher
      @see Beacon
      */
-    class Instance : public Beacon::Factory, public GuiPatchManager, public DspContext
+    class Instance : public Beacon::Factory, public GuiContext, public DspContext
     {
     public:
         class Listener;

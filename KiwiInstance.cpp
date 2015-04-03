@@ -34,7 +34,7 @@ namespace Kiwi
     // ================================================================================ //
     
     Instance::Instance(sGuiDeviceManager guiDevice, sDspDeviceManager dspDevice, string const& name) noexcept :
-    GuiPatchManager(guiDevice),
+    GuiContext(guiDevice),
     DspContext(dspDevice),
     m_name(name)
     {
