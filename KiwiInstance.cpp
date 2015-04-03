@@ -245,19 +245,19 @@ namespace Kiwi
             if(obj)
             {
                 obj->initialize();
-                //scDico dico = detail.dico;
+                Dico values = detail.dico;
                 vector<sAttr> attrs;
                 obj->getAttrs(attrs);
                 for(vector<sAttr>::size_type i = 0; i < attrs.size(); i++)
                 {
                     sTag name = Tag::create(attrs[i]->getName());
                     int todo;
-                    /*
-                    if(dico->has(name))
+                    if(values.count(name))
                     {
-                         attrs[i]->setValueString(dico->getAsString(name));
+                        cout << name->getName() << " : " << values[name] << endl;
+                        //attrs[i]->setValueString(dico->getAsString(name));
                     }
-                     */
+                
                 }
             }
             return obj;

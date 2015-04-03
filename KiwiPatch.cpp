@@ -31,7 +31,7 @@ namespace Kiwi
     //                                      PAGE                                        //
     // ================================================================================ //
     
-    Patcher::Patcher(sInstance instance) : DspChain(instance), GuiPatcher(instance),
+    Patcher::Patcher(sInstance instance) noexcept : DspChain(instance), GuiPatcher(instance),
     m_instance(instance)
     {
         ;

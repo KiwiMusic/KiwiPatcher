@@ -53,7 +53,7 @@ namespace Kiwi
         //! Constructor.
         /** You should never call this method except if you really know what you're doing.
          */
-        Patcher(sInstance instance);
+        Patcher(sInstance instance) noexcept;
         
         //! Destructor.
         /** You should never call this method except if you really know what you're doing.
@@ -136,7 +136,7 @@ namespace Kiwi
         /** The function reads a dico and add the objects and links to the patcher.
          @param dico The dico.
          */
-        void add(Dico const& dico);
+        void add(Dico const& dico) override;
         
         //! Free a object.
         /** The function removes a object from the patcher.
