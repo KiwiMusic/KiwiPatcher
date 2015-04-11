@@ -26,9 +26,9 @@
 
 namespace Kiwi
 {
-    sDspDeviceManager Console::m_dsp_device;
-    sGuiDeviceManager Console::m_gui_device;
-    map<sTag, sInstance> Console::m_instances;
+    //sDspDeviceManager Console::m_dsp_device;
+    //sGuiDeviceManager Console::m_gui_device;
+    //map<sTag, sInstance> Console::m_instances;
     
     set<Console::wListener,
     owner_less<Console::wListener>> Console::m_listeners;
@@ -71,7 +71,7 @@ namespace Kiwi
         istringstream iss(message);
         iss >> command;
         iss >> target;
-        
+        /*
         if(command == "exit")
         {
             return false;
@@ -124,7 +124,7 @@ namespace Kiwi
             {
                 error("The console accepts only the commands \"create\", \"delete\", \"set\", \"get\" and \"exit\".");
             }
-        }
+        }*/
         
         return true;
     }

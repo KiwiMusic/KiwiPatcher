@@ -53,7 +53,7 @@ namespace Kiwi
     typedef shared_ptr<const Instance>  scInstance;
     typedef weak_ptr<const Instance>    wcInstance;
     
-    struct Detail
+    struct Infos
     {
         const sInstance         instance;
         const sPatcher          patcher;
@@ -63,13 +63,13 @@ namespace Kiwi
         const Dico				dico;
         const Vector			args;
         
-        Detail() :
+        Infos() noexcept :
         instance(nullptr), patcher(nullptr), lid(0), name(Tag::create("")), text(""), dico(), args({})
         {
             ;
         }
         
-        Detail(sInstance _instance, sPatcher _patcher, const ulong _id, sTag _name, const string _text, Dico const& _dico, Vector const& _args) :
+        Infos(sInstance _instance, sPatcher _patcher, const ulong _id, sTag _name, const string _text, Dico const& _dico, Vector const& _args) :
         instance(_instance), patcher(_patcher), lid(_id), name(_name), text(_text), dico(_dico), args(_args)
         {
             ;
@@ -84,7 +84,7 @@ namespace Kiwi
     /**
      The object is a graphical class that aims to be instantiate in a patcher.
      */
-    class Object : virtual public Beacon::Castaway, public GuiObject
+    class Object : virtual public Beacon::Castaway, public GuiSketcher
     {
     public:
         
@@ -118,6 +118,12 @@ namespace Kiwi
         typedef weak_ptr<Outlet>        wOutlet;
         typedef shared_ptr<const Outlet>scOutlet;
         typedef weak_ptr<const Outlet>  wcOutlet;
+        
+        class Controller;
+        typedef shared_ptr<Controller>          sController;
+        typedef weak_ptr<Controller>            wController;
+        typedef shared_ptr<const Controller>    scController;
+        typedef weak_ptr<const Controller>      wcController;
     
     private:
         struct Connection
@@ -142,12 +148,12 @@ namespace Kiwi
         //! Constructor.
         /** You should never call this method except if you really know what you're doing.
          */
-        Object(Detail const& detail, sTag name);
+        Object(Infos const& detail, sTag name) noexcept;
         
         //! Destructor.
         /** You should never call this method except if you really know what you're doing.
          */
-        virtual ~Object();
+        virtual ~Object() noexcept;
         
     protected:
         
@@ -157,7 +163,7 @@ namespace Kiwi
          */
         sObject getShared() noexcept
         {
-            return dynamic_pointer_cast<Object>(shared_from_this());
+            return dynamic_pointer_cast<Object>(GuiSketcher::shared_from_this());
         }
         
         //! Retrieve the shared pointer of the attribute manager.
@@ -166,7 +172,7 @@ namespace Kiwi
          */
         scObject getShared() const noexcept
         {
-            return dynamic_pointer_cast<const Object>(shared_from_this());
+            return dynamic_pointer_cast<const Object>(GuiSketcher::shared_from_this());
         }
         
     public:
@@ -309,7 +315,7 @@ namespace Kiwi
          */
         virtual void receive(ulong index, Vector const& atoms) = 0;
         
-        //! Write the object in a map.
+        //! Write the object in a dico.
         /** The function writes the object in a dico.
          @param dico The dico.
          */
@@ -322,7 +328,7 @@ namespace Kiwi
          @param index The index of the outlet.
          @param atoms A list of atoms to pass.
          */
-        void    send(ulong index, Vector const& atoms) const noexcept;
+        void    send(const ulong index, Vector const& atoms) const noexcept;
         
         //! Add a new inlet to the object.
         /** The function adds a new inlet to the object.
@@ -337,6 +343,18 @@ namespace Kiwi
          @param description The description of the outlet.
          */
         void    addOutlet(Io::Type type, string const& description = "");
+        
+        //! Remove an inlet from the object.
+        /** The function removes an inlet from the object.
+         @param index The index of the inlet.
+         */
+        void    removeInlet(const ulong index);
+        
+        //! Remove an outlet from the object.
+        /** The function removes an outlet from the object.
+         @param index The outlet of the inlet.
+         */
+        void    removeOutlet(const ulong index);
 
     private:
         
@@ -351,6 +369,95 @@ namespace Kiwi
          @param dico The dico.
          */
 		virtual void load(Dico const& dico) {};
+        
+        //! Create the controller.
+        /** The function creates a controller depending on the inheritance.
+         @return The controller.
+         */
+        sGuiController createController() override;
+        
+    public:
+        
+        //! Retrieves if the box should be hidden when the patcher is locked.
+        /** The function retrieves if the box should be hidden when the patcher is locked.
+         @return True if the box should be hidden when the patcher is locked, false otherwise.
+         */
+        inline bool isHiddenOnLock() const noexcept
+        {
+            return getAttrTyped<BoolValue>("hidden")->getValue();
+        }
+        
+        //! Retrieve if the box should be displayed in presentation.
+        /** The function retrieves if the box should be displayed in presentation.
+         @return True if the box should be displayed in presentation, otherwise false.
+         */
+        inline bool isIncludeInPresentation() const noexcept
+        {
+            return getAttrTyped<BoolValue>("presentation")->getValue();
+        }
+        
+        //! Retrieve the "ignoreclick" attribute value of the box.
+        /** The function retrieves the "ignoreclick" attribute value of the box.
+         @return The "ignoreclick" attribute value of the box.
+         */
+        inline bool getIgnoreClick() const noexcept
+        {
+            return getAttrTyped<BoolValue>("ignoreclick")->getValue();
+        }
+        
+        //! Retrieve the position of the object.
+        /** The function retrieves the position of the object.
+         @return The position of the object.
+         */
+        inline Point getPosition() const noexcept
+        {
+            return getAttrTyped<PointValue>("position")->getValue();
+        }
+        
+        //! Retrieve the size of the object.
+        /** The function retrieves the size of the object.
+         @return The size of the object.
+         */
+        inline Size getSize() const noexcept
+        {
+            return getAttrTyped<SizeValue>("size")->getValue();
+        }
+        
+        //! Retrieve the bounds of the object.
+        /** The function retrieves the bounds of the object.
+         @return The bounds of the object.
+         */
+        inline Rectangle getBounds() const noexcept
+        {
+            return Rectangle(getAttrTyped<PointValue>("position")->getValue(), getAttrTyped<SizeValue>("size")->getValue());
+        }
+        
+        //! Retrieve the position of the box when the patcherview is in presentation mode.
+        /** The function retrieves the position of the box when the patcherview is in presentation mode.
+         @return The position of the box when the patcherview is in presentation mode.
+         */
+        inline Point getPresentationPosition() const noexcept
+        {
+            return getAttrTyped<PointValue>("presentation_position")->getValue();
+        }
+        
+        //! Retrieve the size of the box when the patcherview is in presentation mode.
+        /** The function retrieves the size of the box when the patcherview is in presentation mode.
+         @return The size of the box when the patcherview is in presentation mode.
+         */
+        inline Size getPresentationSize() const noexcept
+        {
+            return getAttrTyped<SizeValue>("presentation_size")->getValue();
+        }
+        
+        //! Retrieve the bounds of the box when the patcherview is in presentation mode.
+        /** The function retrieves the bounds of the box when the patcherview is in presentation mode.
+         @return The bounds of the box when the patcherview is in presentation mode.
+         */
+        inline Rectangle getPresentationBounds() const noexcept
+        {
+            return Rectangle(getAttrTyped<PointValue>("presentation_position")->getValue(), getAttrTyped<SizeValue>("presentation_size")->getValue());
+        }
     };
     
     //! The outlet owns a set of links.

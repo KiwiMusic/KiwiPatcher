@@ -60,18 +60,18 @@ namespace Kiwi
             {
                 libraries_loaded = ObjectsInitialize();
             }
-            if(Console::m_instances.find(tname) == Console::m_instances.end())
+            //if(Console::m_instances.find(tname) == Console::m_instances.end())
             {
                 instance = make_shared<Instance>(guiDevice, dspDevice, name);
                 if(instance)
                 {
-                    Console::m_instances[tname] = instance;
+                    //Console::m_instances[tname] = instance;
 #ifdef __KIWI_VERBOSE__
                     Console::post("The instance \"" + name + "\" has been created.");
 #endif
                 }
             }
-            else
+            //else
             {
                 Console::error("The instance's name \"" + instance->getName() + "\" already exists.");
             }
@@ -97,6 +97,7 @@ namespace Kiwi
             m_patchers_mutex.lock();
             m_patchers.insert(patcher);
             m_patchers_mutex.unlock();
+            patcher->initialize();
             DspContext::add(patcher);
             
             m_lists_mutex.lock();
@@ -236,7 +237,7 @@ namespace Kiwi
     map<sTag, shared_ptr<Factory::Creator>> Factory::m_creators;
     mutex Factory::m_mutex;
     
-    sObject Factory::create(sTag name, Detail const& detail)
+    sObject Factory::create(sTag name, Infos const& detail)
     {
         auto it = m_creators.find(name);
         if(it != m_creators.end())

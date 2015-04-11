@@ -43,10 +43,10 @@ namespace Kiwi
     {
     public:
         friend sInstance Instance::create(sGuiDeviceManager, sDspDeviceManager, string const&);
-        static map<sTag, sInstance> m_instances;
+        //static map<sTag, sInstance> m_instances;
         
-        static sDspDeviceManager            m_dsp_device;
-        static sGuiDeviceManager            m_gui_device;
+        //static sDspDeviceManager            m_dsp_device;
+        //static sGuiDeviceManager            m_gui_device;
         
         class Listener;
         typedef shared_ptr<Listener>        sListener;

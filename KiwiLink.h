@@ -24,7 +24,7 @@
 #ifndef __DEF_KIWI_LINK__
 #define __DEF_KIWI_LINK__
 
-#include "KiwiObject.h"
+#include "KiwiObjectController.h"
 
 namespace Kiwi
 {
@@ -36,7 +36,7 @@ namespace Kiwi
     /**
      The link is a combination of two sockets used to create the connection between objects in a patcher.
      */
-    class Link : public GuiLink
+    class Link
     {
     private:
         const wPatcher          m_patcher;

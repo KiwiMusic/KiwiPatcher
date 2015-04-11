@@ -51,7 +51,7 @@ namespace Kiwi
         typedef shared_ptr<const Listener>  scListener;
         typedef weak_ptr<const Listener>    wcListener;
         
-    private:        
+    private:
         const string            m_name;
         set<sPatcher>           m_patchers;
         mutex                   m_patchers_mutex;
@@ -252,14 +252,14 @@ namespace Kiwi
         {
         public:
             virtual ~Creator(){};
-            virtual sObject create(Detail const& init) = 0;
+            virtual sObject create(Infos const& init) = 0;
         };
         
         
         template <class T> class CreatorTyped : public Creator
         {
         public:
-            sObject create(Detail const& init) override
+            sObject create(Infos const& init) override
             {
                 return make_shared<T>(init);
             }
@@ -276,13 +276,13 @@ namespace Kiwi
         template <class T,
         typename = typename enable_if<
         is_base_of<Object, T>::value &&
-        is_base_of<Sketcher, T>::value &&
+        is_base_of<GuiSketcher, T>::value &&
         !is_abstract<T>::value &&
-        is_constructible<T, Detail const&>::value        
+        is_constructible<T, Infos const&>::value        
         >::type>
         static void add(sTag name = Tag::create(""))
         {
-            sObject object = make_shared<T>(Detail());
+            sObject object = make_shared<T>(Infos());
             if(object)
             {
                 const sTag rname = (name == Tag::create("")) ? object->getName() : name;
@@ -310,7 +310,7 @@ namespace Kiwi
          @param node The detail to initialize the object.
          @return An object.
          */
-        static sObject create(sTag name, Detail const& detail);
+        static sObject create(sTag name, Infos const& detail);
         
         //! Retrieves if an object exist.
         /** This function retrieves if an object exist.

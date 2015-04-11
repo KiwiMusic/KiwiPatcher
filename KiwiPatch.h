@@ -36,8 +36,15 @@ namespace Kiwi
     /**
      The patcher is... ??
      */
-	class Patcher : public DspChain,  public GuiPatcher
-	{	
+    class Patcher : public GuiSketcher, public DspChain
+	{
+    public:
+        class Controller;
+        typedef shared_ptr<Controller>          sController;
+        typedef weak_ptr<Controller>            wController;
+        typedef shared_ptr<const Controller>    scController;
+        typedef weak_ptr<const Controller>      wcController;
+        
     private:
         const wInstance             m_instance;
         vector<sObject>             m_objects;
@@ -136,7 +143,7 @@ namespace Kiwi
         /** The function reads a dico and add the objects and links to the patcher.
          @param dico The dico.
          */
-        void add(Dico const& dico) override;
+        void add(Dico const& dico);
         
         //! Free a object.
         /** The function removes a object from the patcher.
@@ -167,13 +174,62 @@ namespace Kiwi
          @param dico The dico.
          */
         void write(Dico& dico) const;
+        
+        //! Notify the patcher that the values of an attribute has changed.
+        /** The function notifies the patcher that the values of an attribute has changed.
+         @param attr An attribute.
+         @return pass true to notify changes to listeners, false if you don't want them to be notified
+         */
+        bool notify(sAttr attr) override;
+        
+        //! The paint method that should be override.
+        /** The function shoulds draw some stuff in the sketch.
+         @param sketch A sketch to draw.
+         */
+        void draw(scGuiController ctrl, Sketch& sketch) const override;
+        
+        //! Create a new window for the patcher.
+        /** The function creates a new window for the patcher.
+         @return The window.
+         */
+        sGuiWindow createWindow();
+        
+        //! Retrieve the "gridsize" attribute value of the patcher.
+        /** The function retrieves the "gridsize" attribute value of the patcher.
+         @return The "gridsize" attribute value of the patcher.
+         */
+        inline long getGridSize() const noexcept
+        {
+            return getAttrTyped<LongValue>("gridsize")->getValue();
+        }
+        
+        //! Retrieve the "locked_bgcolor" attribute value of the patcher.
+        /** The function retrieves the "locked_bgcolor" attribute value of the patcher.
+         @return The "locked_bgcolor" attribute value of the patcher.
+         */
+        inline Color getLockedBackgroundColor() const noexcept
+        {
+            return getAttrTyped<ColorValue>("locked_bgcolor")->getValue();
+        }
+        
+        //! Retrieve the "locked_bgcolor" attribute value of the patcher.
+        /** The function retrieves the "locked_bgcolor" attribute value of the patcher.
+         @return The "locked_bgcolor" attribute value of the patcher.
+         */
+        inline Color getUnlockedBackgroundColor() const noexcept
+        {
+            return getAttrTyped<ColorValue>("unlocked_bgcolor")->getValue();
+        }
+        
+    private:
+        
+        //! Create the controller.
+        /** The function creates a controller of the patcher.
+         @return The controller.
+         */
+        sGuiController createController() override;
 		
-		//! Notify the manager that the values of an attribute has changed.
-		/** The function notifies the manager that the values of an attribute has changed.
-		 @param attr An attribute.
-		 @return pass true to notify changes to listeners, false if you don't want them to be notified
-		 */
-		virtual bool notify(sAttr attr) override {return true;}
+		
     };
 }
 

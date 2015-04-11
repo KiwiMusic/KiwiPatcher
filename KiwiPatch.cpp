@@ -24,6 +24,7 @@
 #include "KiwiPatch.h"
 #include "KiwiInstance.h"
 #include "KiwiConsole.h"
+#include "KiwiPatcherController.h"
 
 namespace Kiwi
 {    
@@ -31,10 +32,16 @@ namespace Kiwi
     //                                      PAGE                                        //
     // ================================================================================ //
     
-    Patcher::Patcher(sInstance instance) noexcept : DspChain(instance), GuiPatcher(instance),
+    Patcher::Patcher(sInstance instance) noexcept :
+    GuiSketcher(instance),
+    DspChain(instance),
     m_instance(instance)
     {
-        ;
+        addAttr(Attr::create("position",    "Position", "Appearance", PointValue(0., 0.)));
+        addAttr(Attr::create("size",        "Size",     "Appearance", SizeValue(800., 600.)));
+        addAttr(Attr::create("unlocked_bgcolor","Unlocked Background Color", "Appearance", ColorValue(0.88, 0.89, 0.88, 1.)));
+        addAttr(Attr::create("locked_bgcolor", "Locked Background Color", "Appearance", ColorValue(0.88, 0.89, 0.88, 1.)));
+        addAttr(Attr::create("gridsize", "Grid Size", "Editing", LongValue(20)));
     }
 	
     Patcher::~Patcher()
@@ -50,7 +57,6 @@ namespace Kiwi
         if(patcher)
         {
             instance->DspContext::add(patcher);
-			patcher->initialize();
 			
             auto it = dico.find(Tag::List::patcher);
             if(it != dico.end())
@@ -70,7 +76,7 @@ namespace Kiwi
            dico.count(Tag::List::arguments) && dico.at(Tag::List::arguments).isVector())
         {
             const sTag text = dico.at(Tag::List::text);
-            object = Factory::create(dico.at(Tag::List::name), Detail(getInstance(), getShared(), dico.at(Tag::List::id), dico.at(Tag::List::name), text->getName(), dico, dico.at(Tag::List::arguments)));
+            object = Factory::create(dico.at(Tag::List::name), Infos(getInstance(), getShared(), dico.at(Tag::List::id), dico.at(Tag::List::name), text->getName(), dico, dico.at(Tag::List::arguments)));
             if(object)
             {
                 sDspNode dspnode = dynamic_pointer_cast<DspNode>(object);
@@ -78,8 +84,8 @@ namespace Kiwi
                 {
                     DspChain::add(dspnode);
                 }
-                GuiPatcher::add(object);
                 m_objects.push_back(object);
+                GuiSketcher::add(object);
             }
         }
     }
@@ -139,7 +145,6 @@ namespace Kiwi
                                 
                                 DspChain::add(link);
                                 m_links.push_back(static_pointer_cast<Link>(link));
-                                GuiPatcher::add(link);
 
                             }
                         }
@@ -150,7 +155,6 @@ namespace Kiwi
                             inlet->append(from, vto[1]);
                             sLink link = make_shared<Link>(getShared(), from, vfrom[1], to, vto[1], Object::Io::Message);
                             m_links.push_back(link);
-                            GuiPatcher::add(link);
                         }
                     }
                 }
@@ -244,7 +248,6 @@ namespace Kiwi
                         {
                             DspChain::remove(dsplink);
                         }
-                        GuiPatcher::remove(*li);
                     }
                     else
                     {
@@ -256,8 +259,8 @@ namespace Kiwi
                 {
                     DspChain::remove(dspnode);
                 }
-                GuiPatcher::remove(object);
                 m_objects.erase(it);
+                GuiSketcher::remove(object);
                 m_free_ids.push_back(object->getId());
             }
         }
@@ -276,7 +279,6 @@ namespace Kiwi
                 {
                     DspChain::remove(dsplink);
                 }
-                GuiPatcher::remove(link);
                 m_links.erase(it);
             }
         }
@@ -347,6 +349,36 @@ namespace Kiwi
 				dico->set(Tag::List::patcher, subpatcher);
 			}*/
         }
+    }
+    
+    bool Patcher::notify(sAttr attr)
+    {
+        return true;
+    }
+     
+    void Patcher::draw(scGuiController ctrl, Sketch& sketch) const
+    {
+        ;
+    }
+    
+    sGuiWindow Patcher::createWindow()
+    {
+        sInstance instance = getInstance();
+        if(instance)
+        {
+            sGuiWindow window = instance->createWindow();
+            if(window)
+            {
+                window->add(getShared());
+            }
+            return window;
+        }
+        return sGuiWindow();
+    }
+    
+    sGuiController Patcher::createController()
+    {
+        return make_shared<Patcher::Controller>(getShared());
     }
 }
 

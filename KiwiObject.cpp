@@ -204,8 +204,8 @@ namespace Kiwi
     //                                      OBJECT                                      //
     // ================================================================================ //
     
-    Object::Object(Detail const& detail, sTag name) :
-    GuiObject(detail.patcher),
+    Object::Object(Infos const& detail, sTag name) noexcept :
+    GuiSketcher(detail.instance),
     m_instance(detail.instance),
     m_patcher(detail.patcher),
     m_name(name),
@@ -213,10 +213,16 @@ namespace Kiwi
     m_id(detail.lid),
     m_stack_count(0)
     {
-        ;
+        addAttr(Attr::create("position",                "Position",                 "Appearance", PointValue(0., 0.)));
+        addAttr(Attr::create("size",                    "Size",                     "Appearance", SizeValue(10., 10.)));
+        addAttr(Attr::create("presentation_position",   "Presentation Position",    "Appearance", PointValue(0., 0.)));
+        addAttr(Attr::create("presentation_size",       "Presentation Size",        "Appearance", SizeValue(10., 10.)));
+        addAttr(Attr::create("hidden",                  "Hide on Lock",             "Appearance", BoolValue(false)));
+        addAttr(Attr::create("presentation",            "Include in presentation",  "Appearance", BoolValue(false)));
+        addAttr(Attr::create("ignoreclick",             "Ignore Click",             "Behavior",   BoolValue(false)));
     }
     
-    Object::~Object()
+    Object::~Object() noexcept
     {
         m_outlets.clear();
         m_inlets.clear();
@@ -225,26 +231,21 @@ namespace Kiwi
     void Object::write(Dico& dico) const
     {
         this->save(dico);
+        Attr::Manager::write(dico);
         dico[Tag::List::name]       = getName();
         dico[Tag::List::text]       = getText();
         dico[Tag::List::id]         = (long)getId();
         dico[Tag::List::ninlets]    = (long)getNumberOfInlets();
-        dico[Tag::List::noutlets]   = (long)getNumberOfOutlets();
-        vector<sAttr> attrs = getAttrs();
-        for(vector<sAttr>::size_type i = 0; i < attrs.size(); i++)
-        {
-            dico[Tag::create(attrs[i]->getName())] = attrs[i]->get();
-        }
+        dico[Tag::List::noutlets]   = (long)getNumberOfInlets();
     }
     
-    void Object::send(ulong index, Vector const& atoms) const noexcept
+    void Object::send(const ulong index, Vector const& atoms) const noexcept
     {
-        m_mutex.lock();
-        if(index < m_outlets.size())
+        lock_guard<mutex> guard(m_mutex);
+        if(vector<sOutlet>::size_type(index) < m_outlets.size())
         {
-            m_outlets[(vector<sOutlet>::size_type)index]->send(atoms);
+            m_outlets[vector<sOutlet>::size_type(index)]->send(atoms);
         }
-        m_mutex.unlock();
     }
 
     void Object::addInlet(Io::Type type, Io::Polarity polarity, string const& description)
@@ -254,6 +255,14 @@ namespace Kiwi
         if(inlet)
         {
             m_inlets.push_back(inlet);
+            if(inlet->getType() & Io::Type::Signal)
+            {
+                DspNode* node = dynamic_cast<DspNode *>(this);
+                if(node)
+                {
+                    node->setNumberOfInlets(ulong(m_inlets.size()));
+                }
+            }
         }
     }
     
@@ -264,6 +273,32 @@ namespace Kiwi
         if(outlet)
         {
             m_outlets.push_back(outlet);
+            if(outlet->getType() & Io::Type::Signal)
+            {
+                DspNode* node = dynamic_cast<DspNode *>(this);
+                if(node)
+                {
+                    node->setNumberOfOutlets(ulong(m_outlets.size()));
+                }
+            }
+        }
+    }
+    
+    void Object::removeInlet(const ulong index)
+    {
+        lock_guard<mutex> guard(m_mutex);
+        if(index < ulong(m_inlets.size()))
+        {
+            
+        }
+    }
+    
+    void Object::removeOutlet(const ulong index)
+    {
+        lock_guard<mutex> guard(m_mutex);
+        if(index < ulong(m_outlets.size()))
+        {
+            
         }
     }
     
@@ -407,6 +442,11 @@ namespace Kiwi
         {
             throw Error("The outlet " + to_string(index) + " index is out of ranges.");
         }
+    }
+    
+    sGuiController Object::createController()
+    {
+        return make_shared<Object::Controller>(getShared());
     }
 }
 
