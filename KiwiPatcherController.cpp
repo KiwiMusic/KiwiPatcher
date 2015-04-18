@@ -45,7 +45,7 @@ namespace Kiwi
     
     Point Patcher::Controller::getPosition() const noexcept
     {
-        return m_patcher->getAttrTyped<PointValue>("position")->getValue();
+        return Point(0., 0.);
     }
     
     Size Patcher::Controller::getSize() const noexcept
@@ -92,7 +92,7 @@ namespace Kiwi
             */
             //unselectAll();
             //lockStatusChanged();
-            //redraw();
+            redraw();
         }
     }
     
@@ -109,7 +109,7 @@ namespace Kiwi
         {
             const int grid_size = m_patcher->getGridSize();
             const Rectangle bounds = sketch.getBounds();
-            //sketch.setColour(bgcolor.contrasting(0.5).withAlpha(0.7f));
+            sketch.setColor((bgcolor.contrasted(0.5)).withAlpha(0.7));
             for(int x = bounds.x() - (int(bounds.x()) % grid_size); x < bounds.width(); x += grid_size)
             {
                 for(int y = bounds.y() - (int(bounds.y()) % grid_size) ; y < bounds.height(); y += grid_size)
@@ -124,31 +124,79 @@ namespace Kiwi
     {
         if(event.isDoubleClick())
         {
-            Dico object;
-            object[Tag::List::name] = Tag::create("bang");
-            object[Tag::List::text] = Tag::create("bang");
-            object[Tag::List::id] = 0;
-            object[Tag::List::position]  = {event.getDownX(), event.getDownY()};
-            object[Tag::List::arguments] = Vector();
-            Vector objects = {object};
-            Dico dico;
-            dico[Tag::List::objects] = {objects};
-            
-            m_patcher->add(dico);
+            ;
         }
+        return true;
+    }
+    
+    bool Patcher::Controller::mouseDown(MouseEvent const& event)
+    {
         return true;
     }
     
     bool Patcher::Controller::receive(KeyboardEvent const& event)
     {
-        Console::post("Keyboarder");
         return true;
     }
     
     bool Patcher::Controller::receive(KeyboardFocus const focus)
     {
-        Console::post("focus");
         return true;
+    }
+    
+    vector<Action::Code> Patcher::Controller::getActionCodes()
+    {
+        return vector<Action::Code>({newBang, editModeSwitch});
+    }
+    
+    Action Patcher::Controller::getAction(const ulong code)
+    {
+        switch(code)
+        {
+            case editModeSwitch:
+                return Action(KeyboardEvent(KeyboardEvent::Cmd, L'e'), "Edit", "Switch between edit and play mode", ActionCategories::editing);
+                break;
+            case newBang:
+                return Action(KeyboardEvent(KeyboardEvent::Nothing, L'b'), "New Bang", "Add a new object in the patcher", ActionCategories::editing);
+                break;
+                
+            default:
+                return Action();
+                break;
+        }
+    }
+    
+    bool Patcher::Controller::performAction(const ulong code)
+    {
+        switch(code)
+        {
+            case editModeSwitch:
+                setLockStatus(!getLockStatus());
+                return true;
+                break;
+            case newBang:
+                createObject("bang", getMouseRelativePosition());
+                return true;
+                break;
+                
+            default:
+                return false;
+                break;
+        }
+    }
+    
+    void Patcher::Controller::createObject(string const& name, Point const& position)
+    {
+        Dico object;
+        object[Tag::List::name] = Tag::create(name);
+        object[Tag::List::text] = Tag::create(name);
+        object[Tag::List::id] = 0;
+        object[Tag::List::position]  = {position.x(), position.y()};
+        object[Tag::List::arguments] = Vector();
+        Vector objects = {object};
+        Dico dico;
+        dico[Tag::List::objects] = {objects};
+        m_patcher->add(dico);
     }
 }
 

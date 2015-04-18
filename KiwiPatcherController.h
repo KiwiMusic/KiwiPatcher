@@ -32,7 +32,7 @@ namespace Kiwi
     //                              PATCHER CONTROLLER                                  //
     // ================================================================================ //
 
-    class Patcher::Controller : public GuiController, public enable_shared_from_this<Patcher::Controller>
+    class Patcher::Controller : public GuiController, public Attr::Listener, public enable_shared_from_this<Patcher::Controller>
     {
     private:
         const sPatcher  m_patcher;
@@ -73,6 +73,15 @@ namespace Kiwi
          @return true if the controller wants the keyboard, othrewise false.
          */
         inline bool wantKeyboard() const noexcept override
+        {
+            return true;
+        }
+        
+        //! Receives if the controller wants actions.
+        /** This function retrieves if the controller wants the actions.
+         @return true if the controller wants the actions, othrewise false.
+         */
+        inline bool wantActions() const noexcept override
         {
             return true;
         }
@@ -161,6 +170,34 @@ namespace Kiwi
          @return true if the class has done something with the event otherwise false
          */
         bool receive(KeyboardFocus const event) override;
+        
+        //! Retrieves the action codes.
+        /** The function retreives the action codes from the the manager.
+         @return The action codes.
+         */
+        vector<Action::Code> getActionCodes() override;
+        
+        //! Retrieves an action from the manager.
+        /** The function retreives an action from the the manager.
+         @param code The code of the action.
+         @return The action.
+         */
+        Action getAction(const ulong code) override;
+        
+        //! Performs an action.
+        /** The function performs an action.
+         @param code The code of the action.
+         @return true if the action has been performed, otherwise false.
+         */
+        bool performAction(const ulong code) override;
+        
+    private:
+        
+        //@internal
+        bool mouseDown(MouseEvent const& event);
+        
+        //@internal
+        void createObject(string const& name, Point const& position);
     };
 }
 

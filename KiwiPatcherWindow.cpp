@@ -21,184 +21,38 @@
  ==============================================================================
 */
 
-#include "KiwiPatcherController.h"
+#include "KiwiPatcherWindow.h"
 #include "KiwiInstance.h"
 #include "KiwiConsole.h"
 
 namespace Kiwi
 {    
     // ================================================================================ //
-    //                              PATCHER CONTROLLER                                  //    
+    //                              PATCHER WINDOW                                      //
     // ================================================================================ //
     
-    Patcher::Controller::Controller(sPatcher patcher) noexcept :
-    GuiController(patcher),
+    Patcher::Window::Window(sPatcher patcher) noexcept :
+    GuiWindow(patcher->GuiSketcher::getContext()),
     m_patcher(patcher)
     {
-        ;
+        setPosition(patcher->getPosition());
+        setSize(Size(patcher->getSize().width(), patcher->getSize().height() + 24.));
     }
     
-    Patcher::Controller::~Controller() noexcept
+    Patcher::Window::~Window() noexcept
     {
-        ;
+        
     }
     
-    Point Patcher::Controller::getPosition() const noexcept
+    void Patcher::Window::initialize() noexcept
     {
-        return m_patcher->getAttrTyped<PointValue>("position")->getValue();
-    }
-    
-    Size Patcher::Controller::getSize() const noexcept
-    {
-        return m_patcher->getAttrTyped<SizeValue>("size")->getValue();
-    }
-    
-    void Patcher::Controller::notify(sAttr attr)
-    {
-        ;
-    }
-    
-    // ================================================================================ //
-    //										PRESENTATION                                //
-    // ================================================================================ //
-    
-    void Patcher::Controller::setZoom(ulong zoom)
-    {
-        m_zoom = clip(zoom, 1ul, 1000ul);
-    }
-    
-    void Patcher::Controller::setLockStatus(bool locked)
-    {
-        if(m_locked != locked)
-        {
-            m_locked = locked;
-            /*
-            m_listeners_mutex.lock();
-            auto it = m_listeners.begin();
-            while(it != m_listeners.end())
-            {
-                if((*it).expired())
-                {
-                    it = m_listeners.erase(it);
-                }
-                else
-                {
-                    sListener listener = (*it).lock();
-                    listener->patcherViewLockStatusChanged();
-                    ++it;
-                }
-            }
-            m_listeners_mutex.unlock();
-            */
-            //unselectAll();
-            //lockStatusChanged();
-            redraw();
-        }
-    }
-    
-    //! The paint method that can be override.
-    /** The function shoulds draw some stuff in the sketch.
-     @param sketch  A sketch to draw.
-     */
-    void Patcher::Controller::draw(Sketch& sketch)
-    {
-        const bool locked = getLockStatus();
-        const Color bgcolor = locked ? m_patcher->getLockedBackgroundColor() : m_patcher->getUnlockedBackgroundColor();
-        sketch.fillAll(bgcolor);
-        if(!locked)
-        {
-            const int grid_size = m_patcher->getGridSize();
-            const Rectangle bounds = sketch.getBounds();
-            sketch.setColor((bgcolor.contrasted(0.5)).withAlpha(0.7));
-            for(int x = bounds.x() - (int(bounds.x()) % grid_size); x < bounds.width(); x += grid_size)
-            {
-                for(int y = bounds.y() - (int(bounds.y()) % grid_size) ; y < bounds.height(); y += grid_size)
-                {
-                    sketch.fillRectangle(x, y, 1, 1);
-                }
-            }
-        }
-    }
-    
-    bool Patcher::Controller::receive(MouseEvent const& event)
-    {
-        if(event.isDoubleClick())
-        {
-            ;
-        }
-        return true;
-    }
-    
-    bool Patcher::Controller::mouseDown(MouseEvent const& event)
-    {
-        return true;
-    }
-    
-    bool Patcher::Controller::receive(KeyboardEvent const& event)
-    {
-        Console::post("Keyboarder");
-        return true;
-    }
-    
-    bool Patcher::Controller::receive(KeyboardFocus const focus)
-    {
-        Console::post("focus");
-        return true;
-    }
-    
-    vector<Action::Code> Patcher::Controller::getActionCodes()
-    {
-        return vector<Action::Code>({newBang, editModeSwitch});
-    }
-    
-    Action Patcher::Controller::getAction(const ulong code)
-    {
-        switch(code)
-        {
-            case editModeSwitch:
-                return Action(KeyboardEvent(KeyboardEvent::Cmd, L'e'), "Edit", "Switch between edit and play mode", ActionCategories::editing);
-                break;
-            case newBang:
-                return Action(KeyboardEvent(KeyboardEvent::Nothing, L'b'), "New Bang", "Add a new object in the patcher", ActionCategories::editing);
-                break;
-                
-            default:
-                return Action();
-                break;
-        }
-    }
-    
-    bool Patcher::Controller::performAction(const ulong code)
-    {
-        switch(code)
-        {
-            case editModeSwitch:
-                setLockStatus(!getLockStatus());
-                return true;
-                break;
-            case newBang:
-                createObject("bang", getMouseRelativePosition());
-                return true;
-                break;
-                
-            default:
-                return false;
-                break;
-        }
-    }
-    
-    void Patcher::Controller::createObject(string const& name, Point const& position)
-    {
-        Dico object;
-        object[Tag::List::name] = Tag::create(name);
-        object[Tag::List::text] = Tag::create(name);
-        object[Tag::List::id] = 0;
-        object[Tag::List::position]  = {position.x(), position.y()};
-        object[Tag::List::arguments] = Vector();
-        Vector objects = {object};
-        Dico dico;
-        dico[Tag::List::objects] = {objects};
-        m_patcher->add(dico);
+        m_header = GuiWindow::Header::create(dynamic_pointer_cast<GuiWindow>(shared_from_this()), "Zaza");
+        m_container = make_shared<GuiContainer>(getContext());
+        m_container->setPosition(Point(0., 24.));
+        m_container->setSize(Size(getSize().width(), getSize().height() - 24));
+        addContent(m_header);
+        addContent(m_container);
+        m_container->addContent(m_patcher);
     }
 }
 
