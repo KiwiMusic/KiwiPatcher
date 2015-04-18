@@ -25,6 +25,7 @@
 #include "KiwiInstance.h"
 #include "KiwiConsole.h"
 #include "KiwiPatcherController.h"
+#include "KiwiPatcherWindow.h"
 
 namespace Kiwi
 {    
@@ -37,11 +38,13 @@ namespace Kiwi
     DspChain(instance),
     m_instance(instance)
     {
-        addAttr(Attr::create("position",    "Position", "Appearance", PointValue(0., 0.)));
+        addAttr(Attr::create("position",    "Position", "Appearance", PointValue(30., 30.)));
         addAttr(Attr::create("size",        "Size",     "Appearance", SizeValue(800., 600.)));
         addAttr(Attr::create("unlocked_bgcolor","Unlocked Background Color", "Appearance", ColorValue(0.88, 0.89, 0.88, 1.)));
         addAttr(Attr::create("locked_bgcolor", "Locked Background Color", "Appearance", ColorValue(0.88, 0.89, 0.88, 1.)));
         addAttr(Attr::create("gridsize", "Grid Size", "Editing", LongValue(20)));
+        setPosition(Point(30., 30.));
+        setSize(Size(800., 600.));
     }
 	
     Patcher::~Patcher()
@@ -353,10 +356,18 @@ namespace Kiwi
     
     bool Patcher::notify(sAttr attr)
     {
+        if(attr->getName() == "position")
+        {
+            GuiSketcher::setPosition(Point(attr->get()[0], attr->get()[1]));
+        }
+        else if(attr->getName() == "size")
+        {
+            GuiSketcher::setSize(Size(attr->get()[0], attr->get()[1]));
+        }
         return true;
     }
      
-    void Patcher::draw(scGuiController ctrl, Sketch& sketch) const
+    void Patcher:: draw(scGuiView ctrl, Sketch& sketch) const
     {
         ;
     }
@@ -366,10 +377,11 @@ namespace Kiwi
         sInstance instance = getInstance();
         if(instance)
         {
-            sGuiWindow window = instance->createWindow();
+            shared_ptr<Window> window = make_shared<Window>(getShared());
             if(window)
             {
-                window->add(getShared());
+                window->initialize();
+                window->display();
             }
             return window;
         }
@@ -379,6 +391,28 @@ namespace Kiwi
     sGuiController Patcher::createController()
     {
         return make_shared<Patcher::Controller>(getShared());
+    }
+    
+    Patcher::sLasso Patcher::createLasso()
+    {
+        sLasso lasso = make_shared<Lasso>(GuiSketcher::getContext());
+        if(lasso)
+        {
+            GuiSketcher::add(lasso);
+        }
+        return lasso;
+    }
+    
+    void Patcher::removeLasso(sLasso lasso)
+    {
+        GuiSketcher::remove(lasso);
+    }
+    
+    void Patcher::Lasso::draw(scGuiView view, Sketch& sketch) const
+    {
+        sketch.fillAll(Color(0.96, 0.96, 0.96, 0.4));
+        sketch.setColor(Color(0.96, 0.96, 0.96, 1.));
+        sketch.drawRectangle(getBounds().withZeroOrigin(), 1.);
     }
 }
 

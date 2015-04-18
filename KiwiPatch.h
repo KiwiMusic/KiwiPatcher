@@ -36,7 +36,7 @@ namespace Kiwi
     /**
      The patcher is... ??
      */
-    class Patcher : public GuiSketcher, public DspChain
+    class Patcher : public GuiSketcher, public DspChain, public Attr::Manager
 	{
     public:
         class Controller;
@@ -44,6 +44,19 @@ namespace Kiwi
         typedef weak_ptr<Controller>            wController;
         typedef shared_ptr<const Controller>    scController;
         typedef weak_ptr<const Controller>      wcController;
+        
+        class Window;
+        typedef shared_ptr<Window>              sWindow;
+        typedef weak_ptr<Window>                wWindow;
+        typedef shared_ptr<const Window>        scWindow;
+        typedef weak_ptr<const Window>          wcWindow;
+        
+        class Lasso;
+        typedef shared_ptr<Lasso>               sLasso;
+        typedef weak_ptr<Lasso>                 wLasso;
+        typedef shared_ptr<const Lasso>         scLasso;
+        typedef weak_ptr<const Lasso>           wcLasso;
+        
         
     private:
         const wInstance             m_instance;
@@ -182,11 +195,11 @@ namespace Kiwi
          */
         bool notify(sAttr attr) override;
         
-        //! The paint method that should be override.
+        //! The draw method that should be override.
         /** The function shoulds draw some stuff in the sketch.
          @param sketch A sketch to draw.
          */
-        void draw(scGuiController ctrl, Sketch& sketch) const override;
+        void draw(scGuiView view, Sketch& sketch) const override;
         
         //! Create a new window for the patcher.
         /** The function creates a new window for the patcher.
@@ -221,6 +234,10 @@ namespace Kiwi
             return getAttrTyped<ColorValue>("unlocked_bgcolor")->getValue();
         }
         
+        sLasso createLasso();
+        
+        void removeLasso(sLasso lasso);
+        
     private:
         
         //! Create the controller.
@@ -228,8 +245,36 @@ namespace Kiwi
          @return The controller.
          */
         sGuiController createController() override;
-		
-		
+    };
+    
+    class Patcher::Lasso : public GuiSketcher
+    {
+    private:
+        bool						dragging;
+        set<wObject,
+        owner_less<wObject>>        objects;
+        set<wLink,
+        owner_less<wLink>>          links;
+        
+    public:
+        
+        Lasso(sGuiContext context) noexcept : GuiSketcher(context)
+        {
+            ;
+        }
+        
+        virtual ~Lasso() noexcept
+        {
+            objects.clear();
+            links.clear();
+        }
+        
+        //! The draw method that should be override.
+        /** The function shoulds draw some stuff in the sketch.
+         @param ctrl    The controller that ask the draw.
+         @param sketch  A sketch to draw.
+         */
+        void draw(scGuiView view, Sketch& sketch) const override;
     };
 }
 
