@@ -32,7 +32,7 @@ namespace Kiwi
     //                              OBJECT CONTROLLER                                   //
     // ================================================================================ //
     
-    class Object::Controller : public GuiController
+    class Object::Controller : public GuiController, public Attr::Listener
     {
     private:
         const sObject   m_object;
