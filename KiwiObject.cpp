@@ -213,9 +213,9 @@ namespace Kiwi
     m_id(detail.lid),
     m_stack_count(0)
     {
-        addAttr(Attr::create("position",                "Position",                 "Appearance", PointValue(0., 0.)));
+        addAttr(Attr::create("position",                "Position",                 "Appearance", Point(0., 0.)));
         addAttr(Attr::create("size",                    "Size",                     "Appearance", SizeValue(10., 10.)));
-        addAttr(Attr::create("presentation_position",   "Presentation Position",    "Appearance", PointValue(0., 0.)));
+        addAttr(Attr::create("presentation_position",   "Presentation Position",    "Appearance", Point(0., 0.)));
         addAttr(Attr::create("presentation_size",       "Presentation Size",        "Appearance", SizeValue(10., 10.)));
         addAttr(Attr::create("hidden",                  "Hide on Lock",             "Appearance", BoolValue(false)));
         addAttr(Attr::create("presentation",            "Include in presentation",  "Appearance", BoolValue(false)));

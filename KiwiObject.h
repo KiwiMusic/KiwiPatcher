@@ -470,7 +470,7 @@ namespace Kiwi
          */
         inline Point getPosition() const noexcept
         {
-            return getAttrTyped<PointValue>("position")->getValue();
+            return getAttrTyped<Point>("position")->getValue();
         }
         
         //! Retrieve the size of the object.
@@ -488,7 +488,7 @@ namespace Kiwi
          */
         inline Rectangle getBounds() const noexcept
         {
-            return Rectangle(getAttrTyped<PointValue>("position")->getValue(), getAttrTyped<SizeValue>("size")->getValue());
+            return Rectangle(getAttrTyped<Point>("position")->getValue(), getAttrTyped<SizeValue>("size")->getValue());
         }
         
         //! Retrieve the position of the box when the patcherview is in presentation mode.
@@ -497,7 +497,7 @@ namespace Kiwi
          */
         inline Point getPresentationPosition() const noexcept
         {
-            return getAttrTyped<PointValue>("presentation_position")->getValue();
+            return getAttrTyped<Point>("presentation_position")->getValue();
         }
         
         //! Retrieve the size of the box when the patcherview is in presentation mode.
@@ -515,7 +515,7 @@ namespace Kiwi
          */
         inline Rectangle getPresentationBounds() const noexcept
         {
-            return Rectangle(getAttrTyped<PointValue>("presentation_position")->getValue(), getAttrTyped<SizeValue>("presentation_size")->getValue());
+            return Rectangle(getAttrTyped<Point>("presentation_position")->getValue(), getAttrTyped<SizeValue>("presentation_size")->getValue());
         }
     };
     

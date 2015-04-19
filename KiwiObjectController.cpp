@@ -45,7 +45,7 @@ namespace Kiwi
     
     Point Object::Controller::getPosition() const noexcept
     {
-        return m_object->getAttrTyped<PointValue>("position")->getValue();
+        return m_object->getAttrTyped<Point>("position")->getValue();
     }
     
     Size Object::Controller::getSize() const noexcept

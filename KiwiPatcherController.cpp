@@ -124,7 +124,7 @@ namespace Kiwi
     {
         if(event.isDoubleClick())
         {
-            ;
+            performAction(newObject);
         }
         return true;
     }
@@ -146,7 +146,7 @@ namespace Kiwi
     
     vector<Action::Code> Patcher::Controller::getActionCodes()
     {
-        return vector<Action::Code>({newBang, editModeSwitch});
+        return vector<Action::Code>({newBang, newObject, editModeSwitch});
     }
     
     Action Patcher::Controller::getAction(const ulong code)
@@ -157,7 +157,10 @@ namespace Kiwi
                 return Action(KeyboardEvent(KeyboardEvent::Cmd, L'e'), "Edit", "Switch between edit and play mode", ActionCategories::editing);
                 break;
             case newBang:
-                return Action(KeyboardEvent(KeyboardEvent::Nothing, L'b'), "New Bang", "Add a new object in the patcher", ActionCategories::editing);
+                return Action(KeyboardEvent(KeyboardEvent::Nothing, L'b'), "New Bang", "Add a new bang in the patcher", ActionCategories::editing);
+                break;
+            case newObject:
+                return Action(KeyboardEvent(KeyboardEvent::Nothing, L'n'), "New Object", "Add a new object in the patcher", ActionCategories::editing);
                 break;
                 
             default:
@@ -176,6 +179,10 @@ namespace Kiwi
                 break;
             case newBang:
                 createObject("bang", getMouseRelativePosition());
+                return true;
+                break;
+            case newObject:
+                createObject("newobject", getMouseRelativePosition());
                 return true;
                 break;
                 
