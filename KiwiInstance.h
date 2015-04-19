@@ -140,32 +140,6 @@ namespace Kiwi
          */
         void getPatchers(vector<sPatcher>& patchers);
         
-        //! Creation method of the instance.
-        /** The function evaluates the inputs for the creation and returns the result in the outputs.
-         @param inputs The vector of atoms to evaluate.
-         @param outputs The vector of atoms to return the creation.
-         */
-        void create(Vector const& inputs, Vector outputs);
-        
-        //! Remove method of the instance.
-        /** The function evaluates the inputs for the deletion.
-         @param inputs The vector of atoms to evaluate.
-         */
-        void remove(Vector const& inputs);
-        
-        //! Get method of the instance.
-        /** The function evaluates the inputs for the getting and returns the result in the outputs.
-         @param inputs The vector of atoms to evaluate.
-         @param outputs The vector of atoms to return the getting.
-         */
-        void get(Vector const& inputs, Vector outputs) const;
-        
-        //! Set method of the instance.
-        /** The function evaluates the inputs for the setting.
-         @param inputs The vector of atoms to evaluate.
-         */
-        void set(Vector const& inputs);
-        
         //! Add an instance listener in the binding list of the instance.
         /** The function adds an instance listener in the binding list of the instance. 
 		 If the instance listener is already in the binding list, the function doesn't do anything.
@@ -273,15 +247,14 @@ namespace Kiwi
         /** This function adds a new object to the factory. If the name of the object already exists, the function doesn't do anything otherwise the object is added to the factory.
          @name  The alias name of the object.
          */
-        template <class T,
-        typename = typename enable_if<
-        is_base_of<Object, T>::value &&
-        is_base_of<GuiSketcher, T>::value &&
-        !is_abstract<T>::value &&
-        is_constructible<T, Infos const&>::value        
-        >::type>
+        template <class T>
         static void add(sTag name = Tag::create(""))
         {
+            static_assert(is_base_of<Object, T>::value, "The class must inherit from object.");
+            static_assert(is_base_of<GuiSketcher, T>::value, "The class must inherit from sketcher.");
+            static_assert(!is_abstract<T>::value, "The class must not be abstract.");
+            static_assert(is_constructible<T, Infos const&>::value, "The class must be constructible with Infos.");
+            
             sObject object = make_shared<T>(Infos());
             if(object)
             {

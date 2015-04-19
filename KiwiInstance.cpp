@@ -177,59 +177,6 @@ namespace Kiwi
         }
     }
     
-    void Instance::create(Vector const& inputs, Vector outputs)
-    {
-        
-    }
-    
-    void Instance::remove(Vector const& inputs)
-    {
-        
-    }
-    
-    void Instance::get(Vector const& inputs, Vector outputs) const
-    {
-        if(!inputs.empty())
-        {
-            if(inputs[0].isTag() && sTag(inputs[0]) == Tag::List::dsp)
-            {
-                if(inputs.size() > 1)
-                {
-                    if(inputs[0].isTag())
-                    {
-                        if(sTag(inputs[0]) == Tag::List::dsp)
-                        {
-                            
-                        }
-                    }
-                }
-                else
-                {
-                    Console::error("The dsp gettings method needs arguments.");
-                }
-            }
-        }
-        else
-        {
-            Console::error("The gettings method needs arguments.");
-        }
-    }
-    
-    void Instance::set(Vector const& inputs)
-    {
-        if(!inputs.empty())
-        {
-            if(inputs[0].isTag() && sTag(inputs[0]) == Tag::List::dsp)
-            {
-                
-            }
-        }
-        else
-        {
-            Console::error("The setting method needs arguments.");
-        }
-    }
-    
     // ================================================================================ //
     //                                      OBJECT FACTORY                              //
     // ================================================================================ //
