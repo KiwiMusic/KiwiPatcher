@@ -39,7 +39,7 @@ namespace Kiwi
     m_instance(instance)
     {
         addAttr(Attr::create("position",    "Position", "Appearance", Point(30., 30.)));
-        addAttr(Attr::create("size",        "Size",     "Appearance", SizeValue(800., 600.)));
+        addAttr(Attr::create("size",        "Size",     "Appearance", Size(800., 600.)));
         addAttr(Attr::create("unlocked_bgcolor","Unlocked Background Color", "Appearance", ColorValue(0.88, 0.89, 0.88, 1.)));
         addAttr(Attr::create("locked_bgcolor", "Locked Background Color", "Appearance", ColorValue(0.88, 0.89, 0.88, 1.)));
         addAttr(Attr::create("gridsize", "Grid Size", "Editing", LongValue(20)));

@@ -50,7 +50,7 @@ namespace Kiwi
     
     Size Object::Controller::getSize() const noexcept
     {
-        return m_object->getAttrTyped<SizeValue>("size")->getValue();
+        return m_object->getAttrTyped<Size>("size")->getValue();
     }
     
     void Object::Controller::notify(sAttr attr)

@@ -50,7 +50,7 @@ namespace Kiwi
     
     Size Patcher::Controller::getSize() const noexcept
     {
-        return m_patcher->getAttrTyped<SizeValue>("size")->getValue();
+        return m_patcher->getAttrTyped<Size>("size")->getValue();
     }
     
     void Patcher::Controller::notify(sAttr attr)
