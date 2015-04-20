@@ -89,6 +89,7 @@ namespace Kiwi
                 }
                 m_objects.push_back(object);
                 GuiSketcher::add(object);
+                object->loaded();
             }
         }
     }

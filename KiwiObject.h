@@ -146,6 +146,7 @@ namespace Kiwi
     class Object : virtual public Beacon::Castaway, public GuiSketcher, virtual public Attr::Manager
     {
     public:
+        friend class Patcher;
         
         struct Io
         {
@@ -222,7 +223,7 @@ namespace Kiwi
          */
         sObject getShared() noexcept
         {
-            return dynamic_pointer_cast<Object>(Attr::Manager::shared_from_this());
+            return static_pointer_cast<Object>(GuiSketcher::shared_from_this());
         }
         
         //! Retrieve the shared pointer of the attribute manager.
@@ -231,7 +232,25 @@ namespace Kiwi
          */
         scObject getShared() const noexcept
         {
-            return dynamic_pointer_cast<const Object>(Attr::Manager::shared_from_this());
+            return static_pointer_cast<const Object>(GuiSketcher::shared_from_this());
+        }
+        
+        //! Retrieve the shared pointer of the ...
+        /** The function retrieves the shared pointer of the attribute manager.
+         @return The shared pointer of the attribute manager.
+         */
+        template <class T> shared_ptr<T> getShared() noexcept
+        {
+            return dynamic_pointer_cast<T>(GuiSketcher::shared_from_this());
+        }
+        
+        //! Retrieve the shared pointer of the attribute manager.
+        /** The function retrieves the shared pointer of the attribute manager.
+         @return The shared pointer of the attribute manager.
+         */
+        template <class T> shared_ptr<const T> getShared() const noexcept
+        {
+            return dynamic_pointer_cast<const T>(GuiSketcher::shared_from_this());
         }
         
     public:
@@ -423,11 +442,10 @@ namespace Kiwi
          */
 		virtual void save(Dico& dico) const {};
 		
-        //! The read method that should be override.
-        /** The function reads a dico to initalize the objecte.
-         @param dico The dico.
+        //! The method is called after that the object has been that loaded.
+        /** The function is called after the object creation should be override if you need to use a your shared pointer or to attach the object to another class.
          */
-		virtual void load(Dico const& dico) {};
+		virtual void loaded() {};
         
         //! Create the controller.
         /** The function creates a controller depending on the inheritance.
