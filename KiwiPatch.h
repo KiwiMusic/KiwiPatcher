@@ -222,7 +222,7 @@ namespace Kiwi
          */
         inline Color getLockedBackgroundColor() const noexcept
         {
-            return getAttrTyped<ColorValue>("locked_bgcolor")->getValue();
+            return getAttrTyped<Color>("locked_bgcolor")->getValue();
         }
         
         //! Retrieve the "locked_bgcolor" attribute value of the patcher.
@@ -231,7 +231,7 @@ namespace Kiwi
          */
         inline Color getUnlockedBackgroundColor() const noexcept
         {
-            return getAttrTyped<ColorValue>("unlocked_bgcolor")->getValue();
+            return getAttrTyped<Color>("unlocked_bgcolor")->getValue();
         }
         
         sLasso createLasso();
