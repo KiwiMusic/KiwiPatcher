@@ -194,15 +194,7 @@ namespace Kiwi
     
     void Patcher::Controller::createObject(string const& name, Point const& position)
     {
-        Dico object;
-        object[Tag::List::name] = Tag::create(name);
-        object[Tag::List::text] = Tag::create(name);
-        object[Tag::List::id] = 0;
-        object[Tag::List::position]  = {position.x(), position.y()};
-        object[Tag::List::arguments] = Vector();
-        Vector objects = {object};
-        Dico dico;
-        dico[Tag::List::objects] = {objects};
+        const Dico dico({pair<sTag, Atom>(Tag::List::objects, Vector({Dico({pair<sTag, Atom>(Tag::List::name, Tag::create(name)), pair<sTag, Atom>(Tag::List::text, Tag::create(name)), pair<sTag, Atom>(Tag::List::position, {position.x(), position.y()})})}))});
         m_patcher->add(dico);
     }
 }

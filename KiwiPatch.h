@@ -66,7 +66,7 @@ namespace Kiwi
         mutable mutex               m_mutex;
         
         //! @internal Object and link creation.
-        void createObject(Dico const& dico);
+        void createObject(Dico& dico);
         void createLink(Dico const& dico);
         
     public:

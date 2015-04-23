@@ -70,16 +70,12 @@ namespace Kiwi
         return patcher;
     }
     
-    void Patcher::createObject(Dico const& dico)
+    void Patcher::createObject(Dico& dico)
     {
         sObject object;
-        if(dico.count(Tag::List::name) && dico.at(Tag::List::name).isTag() &&
-           dico.count(Tag::List::text) && dico.at(Tag::List::text).isTag() &&
-           dico.count(Tag::List::id) && dico.at(Tag::List::id).isNumber() &&
-           dico.count(Tag::List::arguments) && dico.at(Tag::List::arguments).isVector())
+        if(dico.count(Tag::List::name))
         {
-            const sTag text = dico.at(Tag::List::text);
-            object = Factory::create(dico.at(Tag::List::name), Infos(getInstance(), getShared(), dico.at(Tag::List::id), dico.at(Tag::List::name), text->getName(), dico, dico.at(Tag::List::arguments)));
+            object = Factory::create(dico[Tag::List::name], Infos(getInstance(), getShared(), ulong(dico[Tag::List::id]), sTag(dico[Tag::List::name]), sTag(dico[Tag::List::text])->getName(), dico, dico[Tag::List::arguments]));
             if(object)
             {
                 sDspNode dspnode = dynamic_pointer_cast<DspNode>(object);
@@ -180,7 +176,6 @@ namespace Kiwi
     
     void Patcher::add(Dico const& dico)
     {
-        Dico rdico = dico;
         Vector objects, links;
         auto it = dico.find(Tag::List::objects);
         if(it != dico.end())
