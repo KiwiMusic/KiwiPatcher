@@ -69,13 +69,13 @@ namespace Kiwi
         
         if(from && to)
         {
-            dico[Tag::List::from] = {(long)from->getId(), (long)getOutletIndex()};
-            dico[Tag::List::to] = {(long)to->getId(), (long)getInletIndex()};
+            dico[Tags::from] = {(long)from->getId(), (long)getOutletIndex()};
+            dico[Tags::to] = {(long)to->getId(), (long)getInletIndex()};
         }
         else
         {
-            dico.erase(Tag::List::from);
-            dico.erase(Tag::List::to);
+            dico.erase(Tags::from);
+            dico.erase(Tags::to);
         }
     }
     
