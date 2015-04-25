@@ -40,9 +40,9 @@ namespace Kiwi
     {
         setPosition(Point(30., 30.));
         setSize(Size(800., 600.));
-        addAttr(Attr::create("unlocked_bgcolor","Unlocked Background Color", "Appearance", Color(0.88, 0.89, 0.88, 1.)));
-        addAttr(Attr::create("locked_bgcolor", "Locked Background Color", "Appearance", Color(0.88, 0.89, 0.88, 1.)));
-        addAttr(Attr::create("gridsize", "Grid Size", "Editing", LongValue(20)));
+        createAttr(Tags::unlocked_bgcolor,  "Unlocked Background Color",    "Appearance",   Color(0.88, 0.89, 0.88, 1.));
+        createAttr(Tags::locked_bgcolor,    "Locked Background Color",      "Appearance",   Color(0.88, 0.89, 0.88, 1.));
+        createAttr(Tags::gridsize,          "Grid Size",                    "Editing",      long(20ul));
     }
 	
     Patcher::~Patcher()
@@ -59,7 +59,7 @@ namespace Kiwi
         {
             instance->DspContext::add(patcher);
 			
-            auto it = dico.find(Tag::List::patcher);
+            auto it = dico.find(Tags::patcher);
             if(it != dico.end())
             {
                 patcher->add(it->second);
@@ -71,9 +71,9 @@ namespace Kiwi
     void Patcher::createObject(Dico& dico)
     {
         sObject object;
-        if(dico.count(Tag::List::name))
+        if(dico.count(Tags::name))
         {
-            object = Factory::create(dico[Tag::List::name], Infos(getInstance(), getShared(), ulong(dico[Tag::List::id]), sTag(dico[Tag::List::name]), sTag(dico[Tag::List::text])->getName(), dico, dico[Tag::List::arguments]));
+            object = Factory::create(dico[Tags::name], Infos(getInstance(), getShared(), ulong(dico[Tags::id]), sTag(dico[Tags::name]), sTag(dico[Tags::text])->getName(), dico, dico[Tags::arguments]));
             if(object)
             {
                 sDspNode dspnode = dynamic_pointer_cast<DspNode>(object);
@@ -90,11 +90,11 @@ namespace Kiwi
     
     void Patcher::createLink(Dico const& dico)
     {
-        if(dico.count(Tag::List::from) && dico.at(Tag::List::from).isVector() &&
-           dico.count(Tag::List::to) && dico.at(Tag::List::to).isVector())
+        if(dico.count(Tags::from) && dico.at(Tags::from).isVector() &&
+           dico.count(Tags::to) && dico.at(Tags::to).isVector())
         {
-            Vector const& vfrom  = dico.at(Tag::List::from);
-            Vector const& vto    = dico.at(Tag::List::to);
+            Vector const& vfrom  = dico.at(Tags::from);
+            Vector const& vto    = dico.at(Tags::to);
             if(vfrom.size() > 1 && vto.size() > 1)
             {
                 const sObject from = getObjectWithId(vfrom[0]);
@@ -175,12 +175,12 @@ namespace Kiwi
     void Patcher::add(Dico const& dico)
     {
         Vector objects, links;
-        auto it = dico.find(Tag::List::objects);
+        auto it = dico.find(Tags::objects);
         if(it != dico.end())
         {
             objects = it->second;
         }
-        it = dico.find(Tag::List::links);
+        it = dico.find(Tags::links);
         if(it != dico.end())
         {
             links = it->second;
@@ -192,26 +192,26 @@ namespace Kiwi
             Dico objdico(objects[i]);
             if(!objdico.empty())
             {
-                const ulong r_id = objdico[Tag::List::id];
+                const ulong r_id = objdico[Tags::id];
                 const ulong n_id = m_free_ids.empty() ? m_objects.size() + 1 : m_free_ids[0];
                 if(!m_free_ids.empty())
                 {
                     m_free_ids.erase(m_free_ids.begin());
                 }
-                objdico[Tag::List::id] = (long)n_id;
+                objdico[Tags::id] = (long)n_id;
                 Vector atoms;
                 for(vector<sLink>::size_type i = 0; i < links.size(); i++)
                 {
-                    atoms = objdico[Tag::List::from];
+                    atoms = objdico[Tags::from];
                     if(atoms.size() > 1 && r_id == (ulong)atoms[0])
                     {
-                        objdico[Tag::List::from] = {(long)n_id, atoms[1]};
+                        objdico[Tags::from] = {(long)n_id, atoms[1]};
                     }
             
-                    atoms = objdico[Tag::List::to];
+                    atoms = objdico[Tags::to];
                     if(atoms.size() > 1 && r_id == (ulong)atoms[0])
                     {
-                        objdico[Tag::List::to] = {(long)n_id, atoms[1]};
+                        objdico[Tags::to] = {(long)n_id, atoms[1]};
                     }
                 }
                 createObject(objdico);
@@ -329,7 +329,7 @@ namespace Kiwi
                         atoms.push_back(object);
 					}
 				}
-				subpatcher->set(Tag::List::objects, atoms);
+				subpatcher->set(Tags::objects, atoms);
 				
 				atoms.clear();
 				
@@ -342,23 +342,10 @@ namespace Kiwi
 						atoms.push_back(link);
 					}
 				}
-				subpatcher->set(Tag::List::links, atoms);
-				dico->set(Tag::List::patcher, subpatcher);
+				subpatcher->set(Tags::links, atoms);
+				dico->set(Tags::patcher, subpatcher);
 			}*/
         }
-    }
-    
-    bool Patcher::notify(sAttr attr)
-    {
-        if(attr->getName() == "position")
-        {
-            GuiSketcher::setPosition(Point(attr->get()[0], attr->get()[1]));
-        }
-        else if(attr->getName() == "size")
-        {
-            GuiSketcher::setSize(Size(attr->get()[0], attr->get()[1]));
-        }
-        return true;
     }
      
     void Patcher:: draw(scGuiView ctrl, Sketch& sketch) const

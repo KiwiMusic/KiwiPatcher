@@ -43,21 +43,6 @@ namespace Kiwi
         ;
     }
     
-    Point Patcher::Controller::getPosition() const noexcept
-    {
-        return Point(0., 0.);
-    }
-    
-    Size Patcher::Controller::getSize() const noexcept
-    {
-        return m_patcher->getAttrTyped<Size>("size")->getValue();
-    }
-    
-    void Patcher::Controller::notify(sAttr attr)
-    {
-        ;
-    }
-    
     // ================================================================================ //
     //										PRESENTATION                                //
     // ================================================================================ //
@@ -194,7 +179,7 @@ namespace Kiwi
     
     void Patcher::Controller::createObject(string const& name, Point const& position)
     {
-        const Dico dico({pair<sTag, Atom>(Tag::List::objects, Vector({Dico({pair<sTag, Atom>(Tag::List::name, Tag::create(name)), pair<sTag, Atom>(Tag::List::text, Tag::create(name)), pair<sTag, Atom>(Tag::List::position, {position.x(), position.y()})})}))});
+        const Dico dico({pair<sTag, Atom>(Tags::objects, Vector({Dico({pair<sTag, Atom>(Tags::name, Tag::create(name)), pair<sTag, Atom>(Tags::text, Tag::create(name)), pair<sTag, Atom>(Tags::position, {position.x(), position.y()})})}))});
         m_patcher->add(dico);
     }
 }

@@ -188,13 +188,6 @@ namespace Kiwi
          */
         void write(Dico& dico) const;
         
-        //! Notify the patcher that the values of an attribute has changed.
-        /** The function notifies the patcher that the values of an attribute has changed.
-         @param attr An attribute.
-         @return pass true to notify changes to listeners, false if you don't want them to be notified
-         */
-        bool notify(sAttr attr) override;
-        
         //! The draw method that should be override.
         /** The function shoulds draw some stuff in the sketch.
          @param sketch A sketch to draw.
@@ -213,7 +206,7 @@ namespace Kiwi
          */
         inline long getGridSize() const noexcept
         {
-            return getAttrTyped<LongValue>("gridsize")->getValue();
+            return getAttrValue<long>(Tags::gridsize);
         }
         
         //! Retrieve the "locked_bgcolor" attribute value of the patcher.
@@ -222,7 +215,7 @@ namespace Kiwi
          */
         inline Color getLockedBackgroundColor() const noexcept
         {
-            return getAttrTyped<Color>("locked_bgcolor")->getValue();
+            return getAttrValue<Color>(Tags::locked_bgcolor);
         }
         
         //! Retrieve the "locked_bgcolor" attribute value of the patcher.
@@ -231,7 +224,7 @@ namespace Kiwi
          */
         inline Color getUnlockedBackgroundColor() const noexcept
         {
-            return getAttrTyped<Color>("unlocked_bgcolor")->getValue();
+            return getAttrValue<Color>(Tags::unlocked_bgcolor);
         }
         
         sLasso createLasso();

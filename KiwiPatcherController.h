@@ -32,7 +32,7 @@ namespace Kiwi
     //                              PATCHER CONTROLLER                                  //
     // ================================================================================ //
 
-    class Patcher::Controller : public GuiController, public Attr::Listener, public enable_shared_from_this<Patcher::Controller>
+    class Patcher::Controller : public GuiController, public enable_shared_from_this<Patcher::Controller>
     {
     private:
         const sPatcher  m_patcher;
@@ -58,6 +58,24 @@ namespace Kiwi
         // ================================================================================ //
         //										BEHAVIOR                                    //
         // ================================================================================ //
+        
+        //! Retrieve the position of the sketcher.
+        /** The function retrieves the position of the sketcher.
+         @return The position of the sketcher.
+         */
+        virtual Point getPosition() const noexcept
+        {
+            return Point(0., 0.);
+        }
+        
+        //! Retrieve the size of the sketcher.
+        /** The function retrieves the size of the sketcher.
+         @return The size of the sketcher.
+         */
+        virtual Size getSize() const noexcept
+        {
+            return m_patcher->getSize();
+        }
         
         //! Receives if the controller wants the mouse.
         /** This function retrieves if the controller wants the mouse.
@@ -89,24 +107,6 @@ namespace Kiwi
         // ================================================================================ //
         //										PRESENTATION                                //
         // ================================================================================ //
-        
-        //! Retrieve the position of the patcher.
-        /** The function retrieves the position of the patcher.
-         @return The position of the patcher.
-         */
-        Point getPosition() const noexcept override;
-        
-        //! Retrieve the size of the patcher.
-        /** The function retrieves the size of the patcher.
-         @return The size of the patcher.
-         */
-        Size getSize() const noexcept override;
-        
-        //! Receive the notification that an attribute has changed.
-        /** The function must be implement to receive notifications when an attribute is added or removed, or when its value, appearance or behavior changes.
-         @param attr		The attribute that has been modified.
-         */
-        void notify(sAttr attr) override;
         
         //! Retrieve the zoom of the patcher.
         /** The function retrieves the zoom of the patcher.
