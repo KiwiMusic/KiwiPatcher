@@ -461,7 +461,7 @@ namespace Kiwi
          */
         inline bool isHiddenOnLock() const noexcept
         {
-            return getAttrTyped<BoolValue>("hidden")->getValue();
+            return getAttrValue<bool>(Tags::hidden);
         }
         
         //! Retrieve if the box should be displayed in presentation.
@@ -470,7 +470,7 @@ namespace Kiwi
          */
         inline bool isIncludeInPresentation() const noexcept
         {
-            return getAttrTyped<BoolValue>("presentation")->getValue();
+            return getAttrValue<bool>(Tags::presentation);
         }
         
         //! Retrieve the "ignoreclick" attribute value of the box.
@@ -479,7 +479,7 @@ namespace Kiwi
          */
         inline bool getIgnoreClick() const noexcept
         {
-            return getAttrTyped<BoolValue>("ignoreclick")->getValue();
+            return getAttrValue<bool>(Tags::ignoreclick);
         }
         
         //! Retrieve the position of the box when the patcherview is in presentation mode.
@@ -488,7 +488,7 @@ namespace Kiwi
          */
         inline Point getPresentationPosition() const noexcept
         {
-            return getAttrTyped<Point>("presentation_position")->getValue();
+            return getAttrValue<Point>(Tags::presentation_position);
         }
         
         //! Retrieve the size of the box when the patcherview is in presentation mode.
@@ -497,7 +497,7 @@ namespace Kiwi
          */
         inline Size getPresentationSize() const noexcept
         {
-            return getAttrTyped<Size>("presentation_size")->getValue();
+            return getAttrValue<Size>(Tags::presentation_size);
         }
         
         //! Retrieve the bounds of the box when the patcherview is in presentation mode.
@@ -506,7 +506,7 @@ namespace Kiwi
          */
         inline Rectangle getPresentationBounds() const noexcept
         {
-            return Rectangle(getAttrTyped<Point>("presentation_position")->getValue(), getAttrTyped<Size>("presentation_size")->getValue());
+            return Rectangle(getPresentationPosition(), getPresentationSize());
         }
     };
     

@@ -213,11 +213,11 @@ namespace Kiwi
     m_id(detail.lid),
     m_stack_count(0)
     {
-        addAttr(Attr::create("presentation_position",   "Presentation Position",    "Appearance", Point(0., 0.)));
-        addAttr(Attr::create("presentation_size",       "Presentation Size",        "Appearance", Size(10., 10.)));
-        addAttr(Attr::create("hidden",                  "Hide on Lock",             "Appearance", BoolValue(false)));
-        addAttr(Attr::create("presentation",            "Include in presentation",  "Appearance", BoolValue(false)));
-        addAttr(Attr::create("ignoreclick",             "Ignore Click",             "Behavior",   BoolValue(false)));
+        createAttr(Tags::presentation_position, "Presentation Position",    "Appearance", Point(0., 0.));
+        createAttr(Tags::presentation_size,     "Presentation Size",        "Appearance", Size(10., 10.));
+        createAttr(Tags::hidden,                "Hide on Lock",             "Appearance", bool(false));
+        createAttr(Tags::presentation,          "Include in presentation",  "Appearance", bool(false));
+        createAttr(Tags::ignoreclick,           "Ignore Click",             "Behavior",   bool(false));
     }
     
     Object::~Object() noexcept
@@ -230,11 +230,11 @@ namespace Kiwi
     {
         this->save(dico);
         Attr::Manager::write(dico);
-        dico[Tag::List::name]       = getName();
-        dico[Tag::List::text]       = getText();
-        dico[Tag::List::id]         = (long)getId();
-        dico[Tag::List::ninlets]    = (long)getNumberOfInlets();
-        dico[Tag::List::noutlets]   = (long)getNumberOfInlets();
+        dico[Tags::name]       = getName();
+        dico[Tags::text]       = getText();
+        dico[Tags::id]         = (long)getId();
+        dico[Tags::ninlets]    = (long)getNumberOfInlets();
+        dico[Tags::noutlets]   = (long)getNumberOfInlets();
     }
     
     void Object::send(const ulong index, Vector const& atoms) const noexcept
