@@ -59,18 +59,6 @@ namespace Kiwi
         //										PRESENTATION                                //
         // ================================================================================ //
         
-        //! Retrieve the position of the object.
-        /** The function retrieves the position of the object.
-         @return The position of the object.
-         */
-        Point getPosition() const noexcept override;
-        
-        //! Retrieve the size of the object.
-        /** The function retrieves the size of the object.
-         @return The size of the object.
-         */
-        Size getSize() const noexcept override;
-        
         //! Receive the notification that an attribute has changed.
         /** The function must be implement to receive notifications when an attribute is added or removed, or when its value, appearance or behavior changes.
          @param attr		The attribute that has been modified.

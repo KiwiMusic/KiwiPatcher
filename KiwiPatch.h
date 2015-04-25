@@ -36,7 +36,7 @@ namespace Kiwi
     /**
      The patcher is... ??
      */
-    class Patcher : public GuiSketcher, public DspChain, public Attr::Manager
+    class Patcher : public GuiSketcher, public DspChain
 	{
     public:
         class Controller;

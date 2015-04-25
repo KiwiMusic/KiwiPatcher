@@ -143,7 +143,7 @@ namespace Kiwi
     /**
      The object is a graphical class that aims to be instantiate in a patcher.
      */
-    class Object : virtual public Beacon::Castaway, public GuiSketcher, virtual public Attr::Manager
+    class Object : virtual public Beacon::Castaway, public GuiSketcher
     {
     public:
         friend class Patcher;
@@ -391,7 +391,7 @@ namespace Kiwi
         /** The function shoulds perform some stuff.
          @param atoms    A list of atoms to pass.
          */
-        virtual void receive(ulong index, Vector const& atoms) = 0;
+        virtual void receive(const ulong index, Vector const& atoms) = 0;
         
         //! Write the object in a dico.
         /** The function writes the object in a dico.
@@ -480,33 +480,6 @@ namespace Kiwi
         inline bool getIgnoreClick() const noexcept
         {
             return getAttrTyped<BoolValue>("ignoreclick")->getValue();
-        }
-        
-        //! Retrieve the position of the object.
-        /** The function retrieves the position of the object.
-         @return The position of the object.
-         */
-        inline Point getPosition() const noexcept
-        {
-            return getAttrTyped<Point>("position")->getValue();
-        }
-        
-        //! Retrieve the size of the object.
-        /** The function retrieves the size of the object.
-         @return The size of the object.
-         */
-        inline Size getSize() const noexcept
-        {
-            return getAttrTyped<Size>("size")->getValue();
-        }
-        
-        //! Retrieve the bounds of the object.
-        /** The function retrieves the bounds of the object.
-         @return The bounds of the object.
-         */
-        inline Rectangle getBounds() const noexcept
-        {
-            return Rectangle(getAttrTyped<Point>("position")->getValue(), getAttrTyped<Size>("size")->getValue());
         }
         
         //! Retrieve the position of the box when the patcherview is in presentation mode.

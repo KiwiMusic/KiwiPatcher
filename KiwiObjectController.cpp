@@ -43,16 +43,6 @@ namespace Kiwi
         ;
     }
     
-    Point Object::Controller::getPosition() const noexcept
-    {
-        return m_object->getAttrTyped<Point>("position")->getValue();
-    }
-    
-    Size Object::Controller::getSize() const noexcept
-    {
-        return m_object->getAttrTyped<Size>("size")->getValue();
-    }
-    
     void Object::Controller::notify(sAttr attr)
     {
         ;
