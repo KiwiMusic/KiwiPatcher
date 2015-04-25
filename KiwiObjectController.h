@@ -32,7 +32,7 @@ namespace Kiwi
     //                              OBJECT CONTROLLER                                   //
     // ================================================================================ //
     
-    class Object::Controller : public GuiController, public Attr::Listener
+    class Object::Controller : public GuiController
     {
     private:
         const sObject   m_object;
@@ -58,12 +58,6 @@ namespace Kiwi
         // ================================================================================ //
         //										PRESENTATION                                //
         // ================================================================================ //
-        
-        //! Receive the notification that an attribute has changed.
-        /** The function must be implement to receive notifications when an attribute is added or removed, or when its value, appearance or behavior changes.
-         @param attr		The attribute that has been modified.
-         */
-        void notify(sAttr attr) override;
         
         //! Retrieve the zoom of the object.
         /** The function retrieves the zoom of the object.
