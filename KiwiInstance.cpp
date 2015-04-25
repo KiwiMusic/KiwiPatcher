@@ -97,7 +97,6 @@ namespace Kiwi
             m_patchers_mutex.lock();
             m_patchers.insert(patcher);
             m_patchers_mutex.unlock();
-            patcher->initialize();
             DspContext::add(patcher);
             
             m_lists_mutex.lock();
@@ -192,19 +191,7 @@ namespace Kiwi
             sObject obj = it->second->create(detail);
             if(obj)
             {
-                obj->initialize();
-                Dico values = detail.dico;
-                vector<sAttr> attrs = obj->getAttrs();
-                for(vector<sAttr>::size_type i = 0; i < attrs.size(); i++)
-                {
-                    sTag name = Tag::create(attrs[i]->getName());
-                    auto it = values.find(name);
-                    if(it != values.end())
-                    {
-                        attrs[i]->set(it->second);
-                    }
-                
-                }
+                obj->read(detail.dico);
             }
             return obj;
         }
