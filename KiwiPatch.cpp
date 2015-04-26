@@ -82,7 +82,7 @@ namespace Kiwi
                     DspChain::add(dspnode);
                 }
                 m_objects.push_back(object);
-                GuiSketcher::add(object);
+                GuiSketcher::addChild(object);
                 object->loaded();
             }
         }
@@ -257,7 +257,7 @@ namespace Kiwi
                     DspChain::remove(dspnode);
                 }
                 m_objects.erase(it);
-                GuiSketcher::remove(object);
+                GuiSketcher::removeChild(object);
                 m_free_ids.push_back(object->getId());
             }
         }
@@ -379,14 +379,14 @@ namespace Kiwi
         sLasso lasso = make_shared<Lasso>(GuiSketcher::getContext());
         if(lasso)
         {
-            GuiSketcher::add(lasso);
+            GuiSketcher::addChild(lasso);
         }
         return lasso;
     }
     
     void Patcher::removeLasso(sLasso lasso)
     {
-        GuiSketcher::remove(lasso);
+        GuiSketcher::removeChild(lasso);
     }
     
     void Patcher::Lasso::draw(scGuiView view, Sketch& sketch) const
