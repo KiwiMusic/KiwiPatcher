@@ -103,6 +103,26 @@ namespace Kiwi
                 }
             }
         }
+        /*
+        Path p;
+        p.addRectangle(Rectangle(200, 20, 100, 100));
+        p.addRectangle(Rectangle(20, 20, 100, 100), -20);
+        p.addRectangle(Rectangle(200, 200, 100, 100), 10);
+        p.addRectangle(200, 400, 100, 100, 20, 20, Rectangle::TopLeft | Rectangle::BottomRight);
+        
+        p.addEllipse(Rectangle(400, 20, 200, 100));
+        p.addEllipse(Point(200, 200), 10, 20);
+        
+        Rectangle rect(400, 200, 200, 200);
+        p.addRectangle(rect);
+        sketch.drawPath(p, 2);
+        
+        sketch.setColor(Colors::red);
+        p.clear();
+        //p.addArc(rect.centre(), Point(rect.width()*0.5, rect.height()*0.5), M_PI_4, -M_PI_4);
+        p.addPieChart(rect.centre(), Point(rect.width()*0.5, rect.height()*0.5), -M_PI_4, M_PI_4);
+        sketch.drawPath(p, 2);
+        */
     }
     
     bool Patcher::Controller::receive(MouseEvent const& event)
