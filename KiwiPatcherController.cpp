@@ -125,16 +125,66 @@ namespace Kiwi
         */
     }
     
+    // ================================================================================ //
+    //                                      MOUSE                                       //
+    // ================================================================================ //
+    
     bool Patcher::Controller::receive(MouseEvent const& event)
     {
-        if(event.isDoubleClick())
+        switch (event.getType())
         {
-            performAction(newObject);
+            case MouseEvent::Enter:         return mouseEnter(event);
+            case MouseEvent::Leave:         return mouseLeave(event);
+            case MouseEvent::Move:          return mouseMove(event);
+            case MouseEvent::Drag:          return mouseDrag(event);
+            case MouseEvent::Down:          return mouseDown(event);
+            case MouseEvent::Up:            return mouseUp(event);
+            case MouseEvent::DoubleClick:   return mouseDoubleClick(event);
+            case MouseEvent::Wheel:         return mouseWeel(event);
+                
+            default: break;
         }
+        
+        return true;
+    }
+    
+    bool Patcher::Controller::mouseEnter(MouseEvent const& event)
+    {
+        return true;
+    }
+    
+    bool Patcher::Controller::mouseLeave(MouseEvent const& event)
+    {
+        return true;
+    }
+    
+    bool Patcher::Controller::mouseDrag(MouseEvent const& event)
+    {
+        return true;
+    }
+
+    bool Patcher::Controller::mouseMove(MouseEvent const& event)
+    {
         return true;
     }
     
     bool Patcher::Controller::mouseDown(MouseEvent const& event)
+    {
+        return true;
+    }
+    
+    bool Patcher::Controller::mouseUp(MouseEvent const& event)
+    {
+        return true;
+    }
+    
+    bool Patcher::Controller::mouseDoubleClick(MouseEvent const& event)
+    {
+        performAction(newObject);
+        return true;
+    }
+    
+    bool Patcher::Controller::mouseWeel(MouseEvent const& event)
     {
         return true;
     }
@@ -149,6 +199,10 @@ namespace Kiwi
         return true;
     }
     
+    // ================================================================================ //
+    //                                      ACTIONS                                     //
+    // ================================================================================ //
+    
     vector<Action::Code> Patcher::Controller::getActionCodes()
     {
         return vector<Action::Code>({newBang, newObject, editModeSwitch});
@@ -160,17 +214,12 @@ namespace Kiwi
         {
             case editModeSwitch:
                 return Action(KeyboardEvent(KeyboardEvent::Cmd, L'e'), "Edit", "Switch between edit and play mode", ActionCategories::editing);
-                break;
             case newBang:
                 return Action(KeyboardEvent(KeyboardEvent::Nothing, L'b'), "New Bang", "Add a new bang in the patcher", ActionCategories::editing);
-                break;
             case newObject:
                 return Action(KeyboardEvent(KeyboardEvent::Nothing, L'n'), "New Object", "Add a new object in the patcher", ActionCategories::editing);
-                break;
                 
-            default:
-                return Action();
-                break;
+            default: return Action();
         }
     }
     
@@ -181,19 +230,14 @@ namespace Kiwi
             case editModeSwitch:
                 setLockStatus(!getLockStatus());
                 return true;
-                break;
             case newBang:
                 createObject("bang", getMouseRelativePosition());
                 return true;
-                break;
             case newObject:
                 createObject("newobject", getMouseRelativePosition());
                 return true;
-                break;
                 
-            default:
-                return false;
-                break;
+            default: return false;
         }
     }
     

@@ -65,7 +65,7 @@ namespace Kiwi
          */
         virtual Point getPosition() const noexcept
         {
-            return Point(0., 0.);
+            return Point();
         }
         
         //! Retrieve the size of the sketcher.
@@ -194,7 +194,21 @@ namespace Kiwi
     private:
         
         //@internal
+        bool mouseEnter(MouseEvent const& event);
+        //@internal
+        bool mouseLeave(MouseEvent const& event);
+        //@internal
+        bool mouseDrag(MouseEvent const& event);
+        //@internal
+        bool mouseMove(MouseEvent const& event);
+        //@internal
         bool mouseDown(MouseEvent const& event);
+        //@internal
+        bool mouseUp(MouseEvent const& event);
+        //@internal
+        bool mouseDoubleClick(MouseEvent const& event);
+        //@internal
+        bool mouseWeel(MouseEvent const& event);
         
         //@internal
         void createObject(string const& name, Point const& position);
