@@ -47,6 +47,30 @@ namespace Kiwi
     //										PRESENTATION                                //
     // ================================================================================ //
     
+    Point Object::Controller::getPosition() const noexcept
+    {
+        if(!m_presentation)
+        {
+            return m_object->getPosition();
+        }
+        else
+        {
+            return m_object->getPresentationPosition();
+        }
+    }
+    
+    Size Object::Controller::getSize() const noexcept
+    {
+        if(!m_presentation)
+        {
+            return m_object->getSize();
+        }
+        else
+        {
+            return m_object->getPresentationSize();
+        }
+    }
+    
     void Object::Controller::setZoom(ulong zoom)
     {
         m_zoom = clip(zoom, 1ul, 1000ul);
@@ -84,6 +108,17 @@ namespace Kiwi
     void Object::Controller::draw(Sketch& sketch)
     {
         GuiController::draw(sketch);
+        if(!m_locked)
+        {
+            Size size = getSize();
+            const ulong ninlets = max(m_object->getNumberOfInlets(), 2ul) - 1ul;
+            sketch.setColor(Colors::black);
+            for(ulong i = 0; i < m_object->getNumberOfInlets(); i++)
+            {
+                sketch.fillRectangle(i / ninlets * size.width(), 0., 6., 3.);
+            }
+        }
+        
     }
 }
 

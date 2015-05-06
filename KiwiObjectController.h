@@ -59,6 +59,18 @@ namespace Kiwi
         //										PRESENTATION                                //
         // ================================================================================ //
         
+        //! Retrieve the position of the object.
+        /** The function retrieves the position of the object.
+         @return The position of the object.
+         */
+        Point getPosition() const noexcept override;
+        
+        //! Retrieve the size of the object.
+        /** The function retrieves the size of the object.
+         @return The size of the object.
+         */
+        Size getSize() const noexcept override;
+        
         //! Retrieve the zoom of the object.
         /** The function retrieves the zoom of the object.
          @return the zoom of the object in percent.
