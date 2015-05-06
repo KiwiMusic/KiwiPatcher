@@ -33,10 +33,15 @@ namespace Kiwi
     
     Patcher::Window::Window(sPatcher patcher) noexcept :
     GuiWindow(patcher->GuiSketcher::getContext()),
-    m_patcher(patcher)
+    m_patcher(patcher),
+    m_viewport(make_shared<GuiViewPort>(patcher->GuiSketcher::getContext()))
     {
         setPosition(patcher->getPosition());
         setSize(Size(patcher->getSize().width(), patcher->getSize().height() + 24.));
+        m_viewport->setPosition(Point(0., 24.));
+        m_viewport->setSize(patcher->getSize());
+        m_viewport->setContent(patcher);
+        addChild(m_viewport);
     }
     
     Patcher::Window::~Window() noexcept
@@ -47,12 +52,7 @@ namespace Kiwi
     void Patcher::Window::initialize() noexcept
     {
         m_header = GuiWindow::Header::create(dynamic_pointer_cast<GuiWindow>(shared_from_this()), "Zaza");
-        m_container = make_shared<GuiContainer>(getContext());
-        m_container->setPosition(Point(0., 24.));
-        m_container->setSize(Size(getSize().width(), getSize().height() - 24));
-        addContent(m_header);
-        addContent(m_container);
-        m_container->addContent(m_patcher);
+        addChild(m_header);
     }
 }
 
