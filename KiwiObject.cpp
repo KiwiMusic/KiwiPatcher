@@ -204,7 +204,7 @@ namespace Kiwi
     //                                      OBJECT                                      //
     // ================================================================================ //
     
-    Object::Object(Infos const& detail, sTag name) noexcept :
+    Object::Object(Infos const& detail, const sTag name) noexcept :
     GuiSketcher(detail.instance),
     m_instance(detail.instance),
     m_patcher(detail.patcher),
@@ -445,6 +445,60 @@ namespace Kiwi
     sGuiController Object::createController()
     {
         return make_shared<Object::Controller>(getShared());
+    }
+    
+    // ================================================================================ //
+    //                                      BOX                                         //
+    // ================================================================================ //
+    
+    Box::Box(Infos const& infos, const sTag name) : Object(infos, name),
+    m_editor(make_shared<GuiTextEditor>(infos.instance))
+    {
+        createAttr(Tags::bgcolor,   "Background Color",   "Color", Color(1., 1., 1., 1.));
+        createAttr(Tags::bdcolor,   "Border Color",       "Color", Color(0.4, 0.4, 0.4, 1.));
+        createAttr(Tags::textcolor, "Text Color",         "Color", Color(0.4, 0.4, 0.4, 1.));
+    }
+    
+    Box::~Box()
+    {
+        ;
+    }
+
+    void Box::draw(scGuiView view, Sketch& sketch) const
+    {
+        const Rectangle bounds = getBounds().withZeroOrigin().reduced(1.5);
+        sketch.setColor(getBorderColor());
+        sketch.setLineWidth(3.);
+        sketch.drawRectangle(bounds);
+        sketch.setColor(getBakcgroundColor());
+        sketch.fillRectangle(bounds);
+        sketch.setColor(getTextColor());
+        sketch.drawText(getText(), bounds, Font::Left);
+    }
+    
+    void Box::textChanged(sGuiTextEditor editor)
+    {
+        ;
+    }
+    
+    void Box::tabKeyPressed(sGuiTextEditor editor)
+    {
+        ;
+    }
+    
+    void Box::returnKeyPressed(sGuiTextEditor editor)
+    {
+        ;
+    }
+    
+    void Box::escapeKeyPressed(sGuiTextEditor editor)
+    {
+        ;
+    }
+    
+    void Box::focusLost(sGuiTextEditor editor)
+    {
+        ;
     }
 }
 

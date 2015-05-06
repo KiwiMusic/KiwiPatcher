@@ -157,14 +157,15 @@ namespace Kiwi
                 Both    = 2
             };
             
-            enum Polarity : bool
+            enum Polarity
             {
-                Cold   = 0,
-                Hot    = 1
+                Cold   = false,
+                Hot    = true
             };
         };
         
-    
+        class New;
+        class Errors;
         class Iolet;
         
         class Inlet;
@@ -202,13 +203,13 @@ namespace Kiwi
         vector<sInlet>			m_inlets;
         atomic_ullong			m_stack_count;
         mutable mutex			m_mutex;
-        
+        vector<exception_ptr>   m_errors;
     public:
         
         //! Constructor.
         /** You should never call this method except if you really know what you're doing.
          */
-        Object(Infos const& detail, sTag name) noexcept;
+        Object(Infos const& detail, const sTag name) noexcept;
         
         //! Destructor.
         /** You should never call this method except if you really know what you're doing.
@@ -251,6 +252,38 @@ namespace Kiwi
         template <class T> shared_ptr<const T> getShared() const noexcept
         {
             return dynamic_pointer_cast<const T>(GuiSketcher::shared_from_this());
+        }
+        
+        //! Adds a error.
+        /** The function retrieves the shared pointer of the attribute manager.
+         @return The shared pointer of the attribute manager.
+         */
+        void error(Error const& error)
+        {
+            try
+            {
+                throw error;
+            }
+            catch(const Error& e)
+            {
+                m_errors.push_back(current_exception());
+            }
+        }
+        
+        //! Adds a error.
+        /** The function retrieves the shared pointer of the attribute manager.
+         @return The shared pointer of the attribute manager.
+         */
+        void warning(Error const& error)
+        {
+            try
+            {
+                throw error;
+            }
+            catch(const Error& e)
+            {
+                m_errors.push_back(current_exception());
+            }
         }
         
     public:
@@ -407,6 +440,26 @@ namespace Kiwi
          @param atoms A list of atoms to pass.
          */
         void    send(const ulong index, Vector const& atoms) const noexcept;
+        
+        //! Send a vector of atoms via an outlet.
+        /** The function sends a vector of atoms via an outlet and dispatches it to all the connected inlets.
+         @param index The index of the outlet.
+         @param atoms A list of atoms to pass.
+         */
+        void    send(const ulong index, initializer_list<Atom> il) const noexcept
+        {
+            send(index, Vector(il));
+        }
+        
+        //! Send a vector of atoms via an outlet.
+        /** The function sends a vector of atoms via an outlet and dispatches it to all the connected inlets.
+         @param index The index of the outlet.
+         @param atoms A list of atoms to pass.
+         */
+        void    send(const ulong index, Atom&& atom) const noexcept
+        {
+            send(index, Vector({atom}));
+        }
         
         //! Add a new inlet to the object.
         /** The function adds a new inlet to the object.
@@ -691,6 +744,109 @@ namespace Kiwi
          @param atoms The vector of atoms.
          */
         void send(Vector const& atoms) const noexcept;
+    };
+        
+    // ================================================================================ //
+    //                                      BOX                                         //
+    // ================================================================================ //
+    
+    class Box : public Object, public GuiTextEditor::Listener
+    {
+    private:
+        const sGuiTextEditor m_editor;
+    public:
+        Box(Infos const& infos, const sTag name);
+        virtual ~Box();
+        
+        //! Retrieves the background color of the box.
+        /** The function retrieves the background color of the box.
+         @return The background color of the box.
+         */
+        inline Color getBakcgroundColor() const noexcept
+        {
+            return getAttrValue<Color>(Tags::bgcolor);
+        }
+        
+        //! Retrieves the border color of the box.
+        /** The function retrieves the border color of the box.
+         @return The border color of the box.
+         */
+        inline Color getBorderColor() const noexcept
+        {
+            return getAttrValue<Color>(Tags::bdcolor);
+        }
+        
+        //! Retrieves the text color of the box.
+        /** The function retrieves the text color of the box.
+         @return The text color of the box.
+         */
+        inline Color getTextColor() const noexcept
+        {
+            return getAttrValue<Color>(Tags::textcolor);
+        }
+    private:
+        void draw(scGuiView view, Sketch& sketch) const override;
+        void textChanged(sGuiTextEditor editor) override;
+        void tabKeyPressed(sGuiTextEditor editor) override;
+        void returnKeyPressed(sGuiTextEditor editor) override;
+        void escapeKeyPressed(sGuiTextEditor editor) override;
+        void focusLost(sGuiTextEditor editor) override;
+    };
+        
+    // ================================================================================ //
+    //                                      BOX                                         //
+    // ================================================================================ //
+    
+    class Object::New : public Object, public GuiTextEditor::Listener
+    {
+    private:
+        const sGuiTextEditor m_editor;
+    public:
+        New(Infos const& infos);
+        virtual ~New();
+        
+        //! Retrieves the background color of the box.
+        /** The function retrieves the background color of the box.
+         @return The background color of the box.
+         */
+        inline Color getBakcgroundColor() const noexcept
+        {
+            return getAttrValue<Color>(Tags::bgcolor);
+        }
+        
+        //! Retrieves the border color of the box.
+        /** The function retrieves the border color of the box.
+         @return The border color of the box.
+         */
+        inline Color getBorderColor() const noexcept
+        {
+            return getAttrValue<Color>(Tags::bdcolor);
+        }
+        
+        //! Retrieves the text color of the box.
+        /** The function retrieves the text color of the box.
+         @return The text color of the box.
+         */
+        inline Color getTextColor() const noexcept
+        {
+            return getAttrValue<Color>(Tags::textcolor);
+        }
+    private:
+        void draw(scGuiView view, Sketch& sketch) const override;
+        void textChanged(sGuiTextEditor editor) override;
+        void tabKeyPressed(sGuiTextEditor editor) override;
+        void returnKeyPressed(sGuiTextEditor editor) override;
+        void escapeKeyPressed(sGuiTextEditor editor) override;
+        void focusLost(sGuiTextEditor editor) override;
+    };
+        
+    class Object::Errors
+    {
+    public:
+        class WrongArgument : public Error
+        {
+            
+        };
     };
 }
 
