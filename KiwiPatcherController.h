@@ -148,28 +148,28 @@ namespace Kiwi
         /** The function shoulds draw some stuff in the sketch.
          @param sketch  A sketch to draw.
          */
-        void draw(Sketch& sketch) override;
+        void draw(sGuiView view, Sketch& sketch) override;
         
         //! The mouse receive method.
         /** The function pass the mouse event to the sketcher if it inherits from mouser.
          @param event    A mouser event.
          @return true if the class has done something with the event otherwise false
          */
-        bool receive(MouseEvent const& event) override;
+        bool receive(sGuiView view, MouseEvent const& event) override;
         
         //! The keyboard receive method.
         /** The function pass the keyboard event to the sketcher if it inherits from keyboarder.
          @param event    A keyboard event.
          @return true if the class has done something with the event otherwise false
          */
-        bool receive(KeyboardEvent const& event) override;
+        bool receive(sGuiView view, KeyboardEvent const& event) override;
         
         //! The keyboard focus receive method.
         /** The function pass the keyboard event to the sketcher if it inherits from keyboarder.
          @param event    A focus event.
          @return true if the class has done something with the event otherwise false
          */
-        bool receive(KeyboardFocus const event) override;
+        bool receive(sGuiView view, KeyboardFocus const event) override;
         
         //! Retrieves the action codes.
         /** The function retreives the action codes from the the manager.

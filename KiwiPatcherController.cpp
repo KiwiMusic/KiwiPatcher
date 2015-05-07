@@ -85,7 +85,7 @@ namespace Kiwi
     /** The function shoulds draw some stuff in the sketch.
      @param sketch  A sketch to draw.
      */
-    void Patcher::Controller::draw(Sketch& sketch)
+    void Patcher::Controller::draw(sGuiView view, Sketch& sketch)
     {
         const bool locked = getLockStatus();
         const Color bgcolor = locked ? m_patcher->getLockedBackgroundColor() : m_patcher->getUnlockedBackgroundColor();
@@ -129,7 +129,7 @@ namespace Kiwi
     //                                      MOUSE                                       //
     // ================================================================================ //
     
-    bool Patcher::Controller::receive(MouseEvent const& event)
+    bool Patcher::Controller::receive(sGuiView view, MouseEvent const& event)
     {
         switch (event.getType())
         {
@@ -189,12 +189,12 @@ namespace Kiwi
         return true;
     }
     
-    bool Patcher::Controller::receive(KeyboardEvent const& event)
+    bool Patcher::Controller::receive(sGuiView view, KeyboardEvent const& event)
     {
         return true;
     }
     
-    bool Patcher::Controller::receive(KeyboardFocus const focus)
+    bool Patcher::Controller::receive(sGuiView view, KeyboardFocus const focus)
     {
         return true;
     }

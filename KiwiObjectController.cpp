@@ -105,9 +105,9 @@ namespace Kiwi
         }
     }
     
-    void Object::Controller::draw(Sketch& sketch)
+    void Object::Controller::draw(sGuiView view, Sketch& sketch)
     {
-        GuiController::draw(sketch);
+        m_object->draw(view, sketch);
         if(!m_locked)
         {
             Size size = getSize();
