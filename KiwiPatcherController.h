@@ -35,13 +35,20 @@ namespace Kiwi
     class Patcher::Controller : public GuiController, public enable_shared_from_this<Patcher::Controller>
     {
     private:
-        const sPatcher  m_patcher;
-        ulong           m_zoom;
-        bool            m_locked;
-        bool            m_presentation;
-        bool            m_display_grid;
-        bool            m_snap_to_grid;
+        const sPatcher      m_patcher;
+        const sSelection    m_selection;
+        const sLasso        m_lasso;
+        ulong               m_zoom;
+        bool                m_locked;
+        bool                m_presentation;
+        bool                m_display_grid;
+        bool                m_snap_to_grid;
         
+        //! Called after the controller has been created.
+        /** This function is called after the controller has been created (via the create method).
+         */
+        void created() noexcept;
+
     public:
         
         //! The patcher controller constructor.
@@ -54,6 +61,12 @@ namespace Kiwi
         /** The function does nothing.
          */
         ~Controller() noexcept;
+        
+        //! The controller creation method.
+        /** The function allocates a controller.
+         @return The controller.
+         */
+        static sController create(sPatcher patcher) noexcept;
         
         // ================================================================================ //
         //										BEHAVIOR                                    //
@@ -212,6 +225,268 @@ namespace Kiwi
         
         //@internal
         void createObject(string const& name, Point const& position);
+    };
+    
+    // ================================================================================ //
+    //                                PATCHER SELECTION                                 //
+    // ================================================================================ //
+    
+    class Patcher::Selection
+    {
+    private:
+        friend Patcher;
+        friend Patcher::Controller;
+
+        const wPatcher          m_patcher;
+        set<wObject,
+        owner_less<wObject>>    m_objects;
+        set<wLink,
+        owner_less<wLink>>      m_links;
+        mutable mutex           m_mutex;
+        
+        void selectionChanged()
+        {
+            int todo_notify_changes;
+        }
+        
+    public:
+        
+        //! The patcher selection constructor.
+        /** The function allocates a patcher selection and initializes memory.
+         */
+        Selection(sPatcher patcher) noexcept : m_patcher(patcher)
+        {
+            ;
+        }
+        
+        //! Destructor.
+        /** The destructor frees the selection memory.
+         */
+        ~Selection() noexcept
+        {
+            m_objects.clear();
+            m_links.clear();
+        }
+        
+        //! Retrieve the patcher.
+        /** The function retrieves the patcher.
+         @return The patcher.
+         */
+        inline sPatcher getPatcher() const noexcept
+        {
+            return m_patcher.lock();
+        }
+        
+        //! Retrieves if some objects or links are currently selected.
+        /** The function retrieves if some objects or links are currently selected.
+         @return True if some objects or links are currently selected, false if nothing is selected.
+         */
+        inline bool isAnythingSelected() const noexcept
+        {
+            return isAnyObjectSelected() || isAnyLinkSelected();
+        }
+        
+        //! Retrieves if some objects are currently selected.
+        /** The function retrieves if some objects are currently selected.
+         @return True if some objects are currently selected, false if no object is selected.
+         */
+        inline bool isAnyObjectSelected() const noexcept
+        {
+            lock_guard<mutex> guard(m_mutex);
+            return !m_objects.empty();
+        }
+        
+        //! Retrieves the number of objects currently selected.
+        /** The function retrieves the number of objects currently selected.
+         @return The number of objects currently selected.
+         */
+        inline long getNumberOfSelectedObjects() const noexcept
+        {
+            lock_guard<mutex> guard(m_mutex);
+            return !m_objects.size();
+        }
+        
+        //! Retrieves if some links are currently selected.
+        /** The function retrieves if some links are currently selected.
+         @return True if some links are currently selected, false if no object is selected.
+         */
+        inline bool isAnyLinkSelected() const noexcept
+        {
+            lock_guard<mutex> guard(m_mutex);
+            return !m_links.empty();
+        }
+        
+        //! Retrieves the selected objects.
+        /** The function retrieves the selected objects.
+         */
+        set<wObject, owner_less<wObject>> getObjects() const noexcept
+        {
+            return m_objects;
+        }
+        
+        //! Retrieves the selected links.
+        /** The function retrieves the selected links.
+         */
+        set<wLink, owner_less<wLink>> getLinks() const noexcept
+        {
+            return m_links;
+        }
+        
+        //! Retrieves if an object is selected.
+        /** The function retrieve if an object is selected.
+         */
+        bool has(sObject object);
+        
+        //! Retrieves if a link is selected.
+        /** The function retrieve if a link is selected.
+         */
+        bool has(sLink link);
+        
+        //! Adds all objects to selection.
+        /** The function adds all objects to selection.
+         */
+        bool addAllObjects();
+        
+        //! Adds all links to selection.
+        /** The function adds all links to selection.
+         */
+        bool addAllLinks();
+        
+        //! Selects a set of objects.
+        /** The function selects a set of objects.
+         */
+        void add(vector<sObject>& objects);
+        
+        //! Selects a set of links.
+        /** The function selects a set of links.
+         */
+        void add(vector<sLink>& links);
+        
+        //! Adds an object to the selection.
+        /** The function adds an object to the selection.
+         */
+        bool add(sObject object, const bool notify = true);
+        
+        //! Adds a link to the selection.
+        /** The function adds a link to the selection.
+         */
+        bool add(sLink link, const bool notify = true);
+        
+        //! Clears the selection then the selects an object.
+        /** The function clears the selection then the selects an object.
+         */
+        bool set(sObject object);
+        
+        //! Clears the selection then the selects an object.
+        /** The function clears the selection then the selects an object.
+         */
+        bool set(sLink link);
+        
+        //! Unselects all objects and links.
+        /** The function unselects all objects and links.
+         */
+        void removeAll(const bool notify = true);
+        
+        //! Unselects all objects.
+        /** The function unselects all objects.
+         */
+        bool removeAllObjects(const bool notify = true);
+        
+        //! Unselects all links.
+        /** The function unselects all links.
+         */
+        bool removeAllLinks(const bool notify = true);
+        
+        //! Unselects a set of objects.
+        /** The function unselects a set of objects.
+         */
+        void remove(vector<sObject>& objects);
+        
+        //! Unselects a set of links.
+        /** The function unselects a set of links.
+         */
+        void remove(vector<sLink>& links);
+        
+        //! Removes an object from the selection.
+        /** The function unselects object.
+         */
+        bool remove(sObject object, const bool notify = true);
+        
+        //! Removes a link from the selection.
+        /** The function unselects link.
+         */
+        bool remove(sLink link, const bool notify = true);
+    };
+    
+    // ================================================================================ //
+    //                                  PATCHER LASSO                                   //
+    // ================================================================================ //
+    
+    class Patcher::Lasso : public GuiSketcher
+    {
+    private:
+        const sPatcher          m_patcher;
+        const sSelection    	m_selection;
+        bool                    m_dragging;
+        bool                    m_active;
+        Point                   m_startpos;
+        set<wObject,
+        owner_less<wObject>>    m_objects;
+        set<wLink,
+        owner_less<wLink>>      m_links;
+        mutable mutex           m_mutex;
+        
+        //! @internal
+        void addToPatcher() noexcept;
+        
+        //! @internal
+        void removeFromPatcher() noexcept;
+        
+    public:
+        
+        //! Constructor.
+        /** The function initialises a lasso.
+         @param patcher     The patcher that will hold it.
+         @param selection   The patcher's selection.
+         */
+        Lasso(sPatcher patcher, sSelection selection) noexcept;
+        
+        //! Destructor.
+        inline ~Lasso() noexcept {}
+        
+        //! Return true if the lasso is being dragged.
+        /** The function returns true if the lasso is being dragged.
+         @return True if the lasso is being dragged, false otherwise.
+         */
+        inline bool isDragging() const noexcept {return m_dragging;}
+        
+        //! Initialize the selection of the links and objects.
+        /** The function initialize the selection of the links and objects.
+         @param point       The starting point.
+         @param preserve    Pass true if you want that the lasso preserves the current selection.
+         */
+        void start(Point const& point, const bool preserve) noexcept;
+        
+        //! Perform the selection of the links and the objects.
+        /** The function performs the selection of the links and the objects.
+         @param point       The dragging point.
+         @param objects     The lasso should add objects to the selection.
+         @param links       The lasso should add links to the selection.
+         @param preserve    The lasso should preserve the last selection.
+         */
+        void drag(Point const& point, const bool objects, const bool links, const bool preserve) noexcept;
+        
+        //! Finish the selection of the links and objects.
+        /** The function finishes the selection of the links and objects.
+         */
+        void end() noexcept;
+        
+        //! The lasso drawing method.
+        /** The function draws the lasso.
+         @param view    The view that ask to draw.
+         @param sketch  A sketch to draw.
+         */
+        void draw(scGuiView view, Sketch& sketch) const override;
     };
 }
 

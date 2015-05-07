@@ -371,29 +371,8 @@ namespace Kiwi
     
     sGuiController Patcher::createController()
     {
-        return make_shared<Patcher::Controller>(getShared());
-    }
-    
-    Patcher::sLasso Patcher::createLasso()
-    {
-        sLasso lasso = make_shared<Lasso>(GuiSketcher::getContext());
-        if(lasso)
-        {
-            GuiSketcher::addChild(lasso);
-        }
-        return lasso;
-    }
-    
-    void Patcher::removeLasso(sLasso lasso)
-    {
-        GuiSketcher::removeChild(lasso);
-    }
-    
-    void Patcher::Lasso::draw(scGuiView view, Sketch& sketch) const
-    {
-        sketch.fillAll(Color(0.96, 0.96, 0.96, 0.4));
-        sketch.setColor(Color(0.96, 0.96, 0.96, 1.));
-        sketch.drawRectangle(getBounds().withZeroOrigin(), 1.);
+        return Patcher::Controller::create(getShared());
+        //return make_shared<Patcher::Controller>(getShared());
     }
 }
 

@@ -32,8 +32,7 @@ namespace Kiwi
     // ================================================================================ //
     
     Object::Controller::Controller(sObject object) noexcept :
-    GuiController(object),
-    m_object(object)
+    GuiController(object)
     {
         ;
     }
@@ -57,27 +56,6 @@ namespace Kiwi
         if(m_locked != locked)
         {
             m_locked = locked;
-            /*
-             m_listeners_mutex.lock();
-             auto it = m_listeners.begin();
-             while(it != m_listeners.end())
-             {
-             if((*it).expired())
-             {
-             it = m_listeners.erase(it);
-             }
-             else
-             {
-             sListener listener = (*it).lock();
-             listener->objectViewLockStatusChanged();
-             ++it;
-             }
-             }
-             m_listeners_mutex.unlock();
-             */
-            //unselectAll();
-            //lockStatusChanged();
-            //redraw();
         }
     }
     
@@ -85,20 +63,17 @@ namespace Kiwi
     {
         GuiController::draw(sketch);
     }
+    
+    bool Object::Controller::isVisible() const noexcept
+    {
+        sObject object = getObject();
+        if(object)
+        {
+            return !(m_locked && object->isHiddenOnLock()) || (m_presentation && !object->isIncludeInPresentation());
+        }
+        
+        return false;
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

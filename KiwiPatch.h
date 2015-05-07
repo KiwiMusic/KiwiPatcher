@@ -39,17 +39,23 @@ namespace Kiwi
     class Patcher : public GuiSketcher, public DspChain
 	{
     public:
+        class Window;
+        typedef shared_ptr<Window>              sWindow;
+        typedef weak_ptr<Window>                wWindow;
+        typedef shared_ptr<const Window>        scWindow;
+        typedef weak_ptr<const Window>          wcWindow;
+        
         class Controller;
         typedef shared_ptr<Controller>          sController;
         typedef weak_ptr<Controller>            wController;
         typedef shared_ptr<const Controller>    scController;
         typedef weak_ptr<const Controller>      wcController;
         
-        class Window;
-        typedef shared_ptr<Window>              sWindow;
-        typedef weak_ptr<Window>                wWindow;
-        typedef shared_ptr<const Window>        scWindow;
-        typedef weak_ptr<const Window>          wcWindow;
+        class Selection;
+        typedef shared_ptr<Selection>           sSelection;
+        typedef weak_ptr<Selection>             wSelection;
+        typedef shared_ptr<const Selection>     scSelection;
+        typedef weak_ptr<const Selection>       wcSelection;
         
         class Lasso;
         typedef shared_ptr<Lasso>               sLasso;
@@ -57,14 +63,15 @@ namespace Kiwi
         typedef shared_ptr<const Lasso>         scLasso;
         typedef weak_ptr<const Lasso>           wcLasso;
         
-        
     private:
+        friend class Controller;
+        friend class Selection;
         const wInstance             m_instance;
         vector<sObject>             m_objects;
         vector<sLink>               m_links;
         vector<ulong>               m_free_ids;
         mutable mutex               m_mutex;
-        
+
         //! @internal Object and link creation.
         void createObject(Dico& dico);
         void createLink(Dico const& dico);
@@ -144,12 +151,12 @@ namespace Kiwi
         
         //! Get the links.
         /** The function retrieves the links from the patcher.
-         @param links   A vector of links.
+         @return A vector of links.
          */
-        void getLinks(vector<sLink>& links) const noexcept
+        vector<sLink> getLinks() const noexcept
         {
             lock_guard<mutex> guard(m_mutex);
-            links = m_links;
+            return m_links;
         }
         
         //! Append a dico.
@@ -227,10 +234,6 @@ namespace Kiwi
             return getAttrValue<Color>(Tags::unlocked_bgcolor);
         }
         
-        sLasso createLasso();
-        
-        void removeLasso(sLasso lasso);
-        
     private:
         
         //! Create the controller.
@@ -238,36 +241,6 @@ namespace Kiwi
          @return The controller.
          */
         sGuiController createController() override;
-    };
-    
-    class Patcher::Lasso : public GuiSketcher
-    {
-    private:
-        bool						dragging;
-        set<wObject,
-        owner_less<wObject>>        objects;
-        set<wLink,
-        owner_less<wLink>>          links;
-        
-    public:
-        
-        Lasso(sGuiContext context) noexcept : GuiSketcher(context)
-        {
-            ;
-        }
-        
-        virtual ~Lasso() noexcept
-        {
-            objects.clear();
-            links.clear();
-        }
-        
-        //! The draw method that should be override.
-        /** The function shoulds draw some stuff in the sketch.
-         @param ctrl    The controller that ask the draw.
-         @param sketch  A sketch to draw.
-         */
-        void draw(scGuiView view, Sketch& sketch) const override;
     };
 }
 
