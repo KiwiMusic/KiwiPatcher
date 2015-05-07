@@ -600,16 +600,19 @@ namespace Kiwi
     Patcher::Lasso::Lasso(sPatcher patcher, sController pctrl, sSelection selection) noexcept :
     GuiSketcher(patcher->GuiSketcher::getContext()), m_patcher(patcher), m_owner_ctrl(pctrl), m_selection(selection)
     {
-        assert(m_patcher);
-        assert(m_selection);
+        ;
     }
     
     void Patcher::Lasso::addToPatcher() noexcept
     {
         if(!m_active)
         {
-            m_patcher->addChild(static_pointer_cast<GuiSketcher>(shared_from_this()));
-            m_active = true;
+            sPatcher p = m_patcher.lock();
+            if(p)
+            {
+                p->addChild(static_pointer_cast<GuiSketcher>(shared_from_this()));
+                m_active = true;
+            }
         }
     }
     
@@ -617,8 +620,12 @@ namespace Kiwi
     {
         if(m_active)
         {
-            m_patcher->removeChild(static_pointer_cast<GuiSketcher>(shared_from_this()));
-            m_active = false;
+            sPatcher p = m_patcher.lock();
+            if(p)
+            {
+                p->removeChild(static_pointer_cast<GuiSketcher>(shared_from_this()));
+                m_active = false;
+            }
         }
     }
     
@@ -626,34 +633,38 @@ namespace Kiwi
     {
         // You need to call end() before to call start again to avoid this assertion.
         assert(!m_dragging);
-        
-        m_startpos = point;
-        setBounds(Rectangle(point, Size()));
-        addToPatcher();
-        
-        if(!preserve)
+
+        const sSelection selection = m_selection.lock();
+        if(selection)
         {
-            m_selection->removeAll();
-        }
-        else
-        {
-            lock_guard<mutex> guard(m_mutex);
+            m_startpos = point;
+            setBounds(Rectangle(point, Size()));
+            addToPatcher();
             
-            for(auto elem : m_selection->getObjects())
+            if(!preserve)
             {
-                sObject object = elem.lock();
-                if(object)
-                {
-                    m_objects.insert(object);
-                }
+                selection->removeAll();
             }
-            
-            for(auto elem : m_selection->getLinks())
+            else
             {
-                sLink link = elem.lock();
-                if(link)
+                lock_guard<mutex> guard(m_mutex);
+                
+                for(auto elem : selection->getObjects())
                 {
-                    m_links.insert(link);
+                    sObject object = elem.lock();
+                    if(object)
+                    {
+                        m_objects.insert(object);
+                    }
+                }
+                
+                for(auto elem : selection->getLinks())
+                {
+                    sLink link = elem.lock();
+                    if(link)
+                    {
+                        m_links.insert(link);
+                    }
                 }
             }
         }
@@ -663,91 +674,96 @@ namespace Kiwi
     
     void Patcher::Lasso::drag(Point const& point, const bool includeObjects, const bool includeLinks, const bool preserve) noexcept
     {
-        setBounds(Rectangle::withCorners(m_startpos, point));
-        bool changed = false;
-        
-        if(preserve)
+        const scPatcher patcher = m_patcher.lock();
+        const sSelection selection = m_selection.lock();
+        if(patcher && selection)
         {
-            if(includeObjects)
+            setBounds(Rectangle::withCorners(m_startpos, point));
+            bool changed = false;
+            
+            if(preserve)
             {
-                vector<sObject> lassoObjects;
-                int todo_lassoHitTest;
-                //knockObjects(getBounds(), lassoObjects);
-                
-                lock_guard<mutex> guard(m_mutex);
-                for(auto object : m_patcher->getObjects())
+                if(includeObjects)
                 {
-                    if(object)
+                    vector<sObject> lassoObjects;
+                    int todo_lassoHitTest;
+                    //knockObjects(getBounds(), lassoObjects);
+                    
+                    lock_guard<mutex> guard(m_mutex);
+                    for(auto object : patcher->getObjects())
                     {
-                        const bool isSelected = m_selection->has(object);
-                        const bool wasSelected = m_objects.find(object) != m_objects.end();
-                        const bool inLasso = find(lassoObjects.begin(), lassoObjects.end(), object) != lassoObjects.end();
-                        
-                        if(!isSelected && (wasSelected != inLasso))
+                        if(object)
                         {
-                            m_selection->add(object, false);
-                            changed = true;
-                        }
-                        else if(isSelected && (wasSelected == inLasso))
-                        {
-                            m_selection->remove(object, false);
-                            changed = true;
+                            const bool isSelected = selection->has(object);
+                            const bool wasSelected = m_objects.find(object) != m_objects.end();
+                            const bool inLasso = find(lassoObjects.begin(), lassoObjects.end(), object) != lassoObjects.end();
+                            
+                            if(!isSelected && (wasSelected != inLasso))
+                            {
+                                selection->add(object, false);
+                                changed = true;
+                            }
+                            else if(isSelected && (wasSelected == inLasso))
+                            {
+                                selection->remove(object, false);
+                                changed = true;
+                            }
                         }
                     }
                 }
-            }
-            if(includeLinks)
-            {
-                vector<sLink> lassoLinks;
-                int todo_lassoHitTest;
-                //knockObjects(getBounds(), lassoLinks);
-                
-                lock_guard<mutex> guard(m_mutex);
-                for(auto link : m_patcher->getLinks())
+                if(includeLinks)
                 {
-                    if(link)
+                    vector<sLink> lassoLinks;
+                    int todo_lassoHitTest;
+                    //knockObjects(getBounds(), lassoLinks);
+                    
+                    lock_guard<mutex> guard(m_mutex);
+                    for(auto link : patcher->getLinks())
                     {
-                        const bool isSelected = m_selection->has(link);
-                        const bool wasSelected = m_links.find(link) != m_links.end();
-                        const bool inLasso = find(lassoLinks.begin(), lassoLinks.end(), link) != lassoLinks.end();
-                        
-                        if(!isSelected && (wasSelected != inLasso))
+                        if(link)
                         {
-                            m_selection->add(link, false);
-                            changed = true;
-                        }
-                        else if(isSelected && (wasSelected == inLasso))
-                        {
-                            m_selection->remove(link, false);
-                            changed = true;
+                            const bool isSelected = selection->has(link);
+                            const bool wasSelected = m_links.find(link) != m_links.end();
+                            const bool inLasso = find(lassoLinks.begin(), lassoLinks.end(), link) != lassoLinks.end();
+                            
+                            if(!isSelected && (wasSelected != inLasso))
+                            {
+                                selection->add(link, false);
+                                changed = true;
+                            }
+                            else if(isSelected && (wasSelected == inLasso))
+                            {
+                                selection->remove(link, false);
+                                changed = true;
+                            }
                         }
                     }
                 }
+                
+                if(changed)
+                {
+                    int todo_notify_changes;
+                    //selectionChanged();
+                }
             }
-            
-            if(changed)
+            else
             {
-                int todo_notify_changes;
-                //selectionChanged();
-            }
-        }
-        else
-        {
-            m_selection->removeAll(false);
-            if(includeObjects)
-            {
-                vector<sObject> lassoObjects;
-                int todo_lassoHitTest;
-                //knockObjects(getBounds(), lassoObjects);
-                m_selection->add(lassoObjects);
-            }
-            
-            if(includeLinks)
-            {
-                vector<sLink> lassoLinks;
-                int todo_lassoHitTest;
-                //knockLinks(getBounds(), lassoLinks);
-                m_selection->add(lassoLinks);
+                selection->removeAll(false);
+                if(includeObjects)
+                {
+                    vector<sObject> lassoObjects;
+                    int todo_lassoHitTest;
+                    //knockObjects(getBounds(), lassoObjects);
+                    selection->add(lassoObjects);
+                }
+                
+                if(includeLinks)
+                {
+                    vector<sLink> lassoLinks;
+                    int todo_lassoHitTest;
+                    //knockLinks(getBounds(), lassoLinks);
+                    selection->add(lassoLinks);
+                }
             }
         }
     }
@@ -770,7 +786,7 @@ namespace Kiwi
             {
                 Color color = Color(0.96, 0.96, 0.96);
                 
-                if (pctrl != m_owner_ctrl)
+                if (pctrl != m_owner_ctrl.lock())
                 {
                     color = Color(0.96, 0.4, 0.96);
                     //color = m_patcher->getUIColorFor(m_owner_ctrl);

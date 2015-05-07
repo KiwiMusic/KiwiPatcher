@@ -64,8 +64,6 @@ namespace Kiwi
         typedef weak_ptr<const Lasso>           wcLasso;
         
     private:
-        friend class Controller;
-        friend class Selection;
         const wInstance             m_instance;
         vector<sObject>             m_objects;
         vector<sLink>               m_links;

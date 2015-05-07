@@ -234,9 +234,6 @@ namespace Kiwi
     class Patcher::Selection
     {
     private:
-        friend Patcher;
-        friend Patcher::Controller;
-
         const wPatcher          m_patcher;
         set<wObject,
         owner_less<wObject>>    m_objects;
@@ -425,9 +422,9 @@ namespace Kiwi
     class Patcher::Lasso : public GuiSketcher
     {
     private:
-        const sPatcher          m_patcher;
-        const sController       m_owner_ctrl;
-        const sSelection    	m_selection;
+        const wPatcher          m_patcher;
+        const wcController      m_owner_ctrl;
+        const wSelection    	m_selection;
         bool                    m_dragging;
         bool                    m_active;
         Point                   m_startpos;
