@@ -143,7 +143,7 @@ namespace Kiwi
     /**
      The object is a graphical class that aims to be instantiate in a patcher.
      */
-    class Object : virtual public Beacon::Castaway, public GuiSketcher
+        class Object : virtual public Beacon::Castaway, public GuiSketcher, public Attr::Manager
     {
     public:
         friend class Patcher;
@@ -224,7 +224,7 @@ namespace Kiwi
          */
         sObject getShared() noexcept
         {
-            return static_pointer_cast<Object>(GuiSketcher::shared_from_this());
+            return static_pointer_cast<Object>(Attr::Manager::shared_from_this());
         }
         
         //! Retrieve the shared pointer of the attribute manager.
@@ -233,7 +233,7 @@ namespace Kiwi
          */
         scObject getShared() const noexcept
         {
-            return static_pointer_cast<const Object>(GuiSketcher::shared_from_this());
+            return static_pointer_cast<const Object>(Attr::Manager::shared_from_this());
         }
         
         //! Retrieve the shared pointer of the ...
@@ -242,7 +242,7 @@ namespace Kiwi
          */
         template <class T> shared_ptr<T> getShared() noexcept
         {
-            return dynamic_pointer_cast<T>(GuiSketcher::shared_from_this());
+            return dynamic_pointer_cast<T>(Attr::Manager::shared_from_this());
         }
         
         //! Retrieve the shared pointer of the attribute manager.
@@ -251,7 +251,7 @@ namespace Kiwi
          */
         template <class T> shared_ptr<const T> getShared() const noexcept
         {
-            return dynamic_pointer_cast<const T>(GuiSketcher::shared_from_this());
+            return dynamic_pointer_cast<const T>(Attr::Manager::shared_from_this());
         }
         
         //! Adds a error.
@@ -508,31 +508,31 @@ namespace Kiwi
         
     public:
         
-        //! Retrieves if the box should be hidden when the patcher is locked.
-        /** The function retrieves if the box should be hidden when the patcher is locked.
-         @return True if the box should be hidden when the patcher is locked, false otherwise.
+        //! Retrieves the position of the sketcher.
+        /** The function retrieves the position of the sketcher.
+         @return The position of the sketcher.
          */
-        inline bool isHiddenOnLock() const noexcept
+        inline Point getPosition() const noexcept
         {
-            return getAttrValue<bool>(Tags::hidden);
+            return getAttrValue<Point>(Tags::position);
         }
         
-        //! Retrieve if the box should be displayed in presentation.
-        /** The function retrieves if the box should be displayed in presentation.
-         @return True if the box should be displayed in presentation, otherwise false.
+        //! Retrieves the size of the sketcher.
+        /** The function retrieves the size of the sketcher.
+         @return The size of the sketcher.
          */
-        inline bool isIncludeInPresentation() const noexcept
+        inline Size getSize() const noexcept
         {
-            return getAttrValue<bool>(Tags::presentation);
+            return getAttrValue<Size>(Tags::size);
         }
         
-        //! Retrieve the "ignoreclick" attribute value of the box.
-        /** The function retrieves the "ignoreclick" attribute value of the box.
-         @return The "ignoreclick" attribute value of the box.
+        //! Retrieves the bounds of the sketcher.
+        /** The function retrieves the bounds of the sketcher.
+         @return The bounds of the sketcher.
          */
-        inline bool getIgnoreClick() const noexcept
+        inline Rectangle getBounds() const noexcept
         {
-            return getAttrValue<bool>(Tags::ignoreclick);
+            return Rectangle(getPosition(), getSize());
         }
         
         //! Retrieve the position of the box when the patcherview is in presentation mode.
@@ -560,6 +560,89 @@ namespace Kiwi
         inline Rectangle getPresentationBounds() const noexcept
         {
             return Rectangle(getPresentationPosition(), getPresentationSize());
+        }
+        
+        //! Retrieves if the box should be hidden when the patcher is locked.
+        /** The function retrieves if the box should be hidden when the patcher is locked.
+         @return True if the box should be hidden when the patcher is locked, false otherwise.
+         */
+        inline bool isHiddenOnLock() const noexcept
+        {
+            return getAttrValue<bool>(Tags::hidden);
+        }
+        
+        //! Retrieve if the box should be displayed in presentation.
+        /** The function retrieves if the box should be displayed in presentation.
+         @return True if the box should be displayed in presentation, otherwise false.
+         */
+        inline bool isIncludeInPresentation() const noexcept
+        {
+            return getAttrValue<bool>(Tags::presentation);
+        }
+        
+        //! Retrieve the "ignoreclick" attribute value of the box.
+        /** The function retrieves the "ignoreclick" attribute value of the box.
+         @return The "ignoreclick" attribute value of the box.
+         */
+        inline bool getIgnoreClick() const noexcept
+        {
+            return getAttrValue<bool>(Tags::ignoreclick);
+        }
+        
+        //! Sets the position of the sketcher.
+        /** The function sets the position of the sketcher.
+         @param position The position of the sketcher.
+         */
+        inline void setPosition(Point const& position) noexcept
+        {
+            setAttrValue(Tags::position, position);
+        }
+        
+        //! Sets the size of the sketcher.
+        /** The function sets the size of the sketcher.
+         @param size The size of the sketcher.
+         */
+        inline void setSize(Size const& size) noexcept
+        {
+            setAttrValue(Tags::size, size);
+        }
+        
+        //! Sets the bounds of the sketcher.
+        /** The function sets the bounds of the sketcher.
+         @param bounds The bounds of the sketcher.
+         */
+        inline void setBounds(Rectangle const& bounds) noexcept
+        {
+            setAttrValue(Tags::position, bounds.position());
+            setAttrValue(Tags::size, bounds.size());
+        }
+        
+        //! Sets the position of the box when the patcherview is in presentation mode.
+        /** The function sets the position of the box when the patcherview is in presentation mode.
+         @param position The position of the box when the patcherview is in presentation mode.
+         */
+        inline void setPresentationPosition(Point const& position) noexcept
+        {
+            setAttrValue(Tags::presentation_position, position);
+        }
+        
+        //! Sets the size of the box when the patcherview is in presentation mode.
+        /** The function sets the size of the box when the patcherview is in presentation mode.
+         @param size The size of the box when the patcherview is in presentation mode.
+         */
+        inline void setPresentationSize(Size const& size) noexcept
+        {
+            setAttrValue(Tags::presentation_size, size);
+        }
+        
+        //! Sets the bounds of the box when the patcherview is in presentation mode.
+        /** The function sets the bounds of the box when the patcherview is in presentation mode.
+         @param bounds The bounds of the box when the patcherview is in presentation mode.
+         */
+        inline void setPresentationBounds(Rectangle const& bounds) noexcept
+        {
+            setAttrValue(Tags::presentation_position, bounds.position());
+            setAttrValue(Tags::presentation_size, bounds.size());
         }
     };
     

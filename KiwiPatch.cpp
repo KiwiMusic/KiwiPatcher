@@ -38,8 +38,8 @@ namespace Kiwi
     DspChain(instance),
     m_instance(instance)
     {
-        setPosition(Point(30., 30.));
-        setSize(Size(800., 600.));
+        createAttr(Tags::position,          "Position",                     "Appearance", Point(30., 30.));
+        createAttr(Tags::size,              "Size",                         "Appearance", Size(800., 600.));
         createAttr(Tags::unlocked_bgcolor,  "Unlocked Background Color",    "Appearance",   Color(0.88, 0.89, 0.88, 1.));
         createAttr(Tags::locked_bgcolor,    "Locked Background Color",      "Appearance",   Color(0.88, 0.89, 0.88, 1.));
         createAttr(Tags::gridsize,          "Grid Size",                    "Editing",      long(20ul));
@@ -393,7 +393,7 @@ namespace Kiwi
     {
         sketch.fillAll(Color(0.96, 0.96, 0.96, 0.4));
         sketch.setColor(Color(0.96, 0.96, 0.96, 1.));
-        sketch.drawRectangle(getBounds().withZeroOrigin(), 1.);
+        sketch.drawRectangle(view->getBounds().withZeroOrigin(), 1.);
     }
 }
 

@@ -36,10 +36,12 @@ namespace Kiwi
     m_patcher(patcher),
     m_viewport(make_shared<GuiViewPort>(patcher->GuiSketcher::getContext()))
     {
+        /*
         setPosition(patcher->getPosition());
         setSize(Size(patcher->getSize().width(), patcher->getSize().height() + 24.));
         m_viewport->setPosition(Point(0., 24.));
         m_viewport->setSize(patcher->getSize());
+         */
         m_viewport->setContent(patcher);
         m_viewport->setContentPosition(Point());
         addChild(m_viewport);

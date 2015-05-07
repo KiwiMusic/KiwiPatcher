@@ -213,6 +213,8 @@ namespace Kiwi
     m_id(detail.lid),
     m_stack_count(0)
     {
+        createAttr(Tags::position,              "Position",                 "Appearance", Point(0., 0.));
+        createAttr(Tags::size,                  "Size",                     "Appearance", Size(10., 10.));
         createAttr(Tags::presentation_position, "Presentation Position",    "Appearance", Point(0., 0.));
         createAttr(Tags::presentation_size,     "Presentation Size",        "Appearance", Size(10., 10.));
         createAttr(Tags::hidden,                "Hide on Lock",             "Appearance", bool(false));

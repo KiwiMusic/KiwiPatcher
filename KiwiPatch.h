@@ -36,7 +36,7 @@ namespace Kiwi
     /**
      The patcher is... ??
      */
-    class Patcher : public GuiSketcher, public DspChain
+    class Patcher : public GuiSketcher, public DspChain, public Attr::Manager
 	{
     public:
         class Controller;
@@ -199,6 +199,33 @@ namespace Kiwi
          @return The window.
          */
         sGuiWindow createWindow();
+        
+        //! Retrieves the position of the sketcher.
+        /** The function retrieves the position of the sketcher.
+         @return The position of the sketcher.
+         */
+        inline Point getPosition() const noexcept
+        {
+            return getAttrValue<Point>(Tags::position);
+        }
+        
+        //! Retrieves the size of the sketcher.
+        /** The function retrieves the size of the sketcher.
+         @return The size of the sketcher.
+         */
+        inline Size getSize() const noexcept
+        {
+            return getAttrValue<Size>(Tags::size);
+        }
+        
+        //! Retrieves the bounds of the sketcher.
+        /** The function retrieves the bounds of the sketcher.
+         @return The bounds of the sketcher.
+         */
+        inline Rectangle getBounds() const noexcept
+        {
+            return Rectangle(getPosition(), getSize());
+        }
         
         //! Retrieve the "gridsize" attribute value of the patcher.
         /** The function retrieves the "gridsize" attribute value of the patcher.

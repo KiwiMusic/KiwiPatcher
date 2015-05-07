@@ -47,30 +47,6 @@ namespace Kiwi
     //										PRESENTATION                                //
     // ================================================================================ //
     
-    Point Object::Controller::getPosition() const noexcept
-    {
-        if(!m_presentation)
-        {
-            return m_object->getPosition();
-        }
-        else
-        {
-            return m_object->getPresentationPosition();
-        }
-    }
-    
-    Size Object::Controller::getSize() const noexcept
-    {
-        if(!m_presentation)
-        {
-            return m_object->getSize();
-        }
-        else
-        {
-            return m_object->getPresentationSize();
-        }
-    }
-    
     void Object::Controller::setZoom(ulong zoom)
     {
         m_zoom = clip(zoom, 1ul, 1000ul);
