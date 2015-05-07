@@ -68,6 +68,18 @@ namespace Kiwi
         //										PRESENTATION                                //
         // ================================================================================ //
         
+        //! Retrieve the position of the object.
+        /** The function retrieves the position of the object.
+         @return The position of the object.
+         */
+        Point getPosition() const noexcept override;
+        
+        //! Retrieve the size of the object.
+        /** The function retrieves the size of the object.
+         @return The size of the object.
+         */
+        Size getSize() const noexcept override;
+        
         //! Retrieve the zoom of the object.
         /** The function retrieves the zoom of the object.
          @return the zoom of the object in percent.
@@ -106,9 +118,10 @@ namespace Kiwi
         
         //! The paint method that can be override.
         /** The function shoulds draw some stuff in the sketch.
+         @param view    The view that ask to draw.
          @param sketch  A sketch to draw.
          */
-        void draw(Sketch& sketch) override;
+        void draw(sGuiView view, Sketch& sketch) override;
     };
 }
 
