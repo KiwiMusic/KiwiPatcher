@@ -32,12 +32,12 @@ namespace Kiwi
     //                              PATCHER CONTROLLER                                  //
     // ================================================================================ //
 
-    class Patcher::Controller : public GuiController, public enable_shared_from_this<Patcher::Controller>
+    class Patcher::Controller : public GuiController
     {
     private:
         const sPatcher      m_patcher;
         const sSelection    m_selection;
-        const sLasso        m_lasso;
+        sLasso              m_lasso;
         ulong               m_zoom;
         bool                m_locked;
         bool                m_presentation;
@@ -426,6 +426,7 @@ namespace Kiwi
     {
     private:
         const sPatcher          m_patcher;
+        const sController       m_owner_ctrl;
         const sSelection    	m_selection;
         bool                    m_dragging;
         bool                    m_active;
@@ -449,7 +450,7 @@ namespace Kiwi
          @param patcher     The patcher that will hold it.
          @param selection   The patcher's selection.
          */
-        Lasso(sPatcher patcher, sSelection selection) noexcept;
+        Lasso(sPatcher patcher, sController controller, sSelection selection) noexcept;
         
         //! Destructor.
         inline ~Lasso() noexcept {}

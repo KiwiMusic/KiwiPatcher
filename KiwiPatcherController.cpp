@@ -32,10 +32,8 @@ namespace Kiwi
     // ================================================================================ //
     
     Patcher::Controller::Controller(sPatcher patcher) noexcept :
-    GuiController(patcher),
-    m_patcher(patcher),
-    m_selection(make_shared<Selection>(patcher)),
-    m_lasso(make_shared<Lasso>(patcher, m_selection))
+    GuiController(patcher), m_patcher(patcher),
+    m_selection(make_shared<Selection>(patcher))
     {
         assert(m_patcher);
     }
@@ -52,7 +50,7 @@ namespace Kiwi
     
     void Patcher::Controller::created() noexcept
     {
-        ;
+        m_lasso = make_shared<Lasso>(m_patcher, static_pointer_cast<Patcher::Controller>(shared_from_this()), m_selection);
     }
     
     Patcher::Controller::~Controller() noexcept
@@ -74,6 +72,14 @@ namespace Kiwi
         if(m_locked != locked)
         {
             m_locked = locked;
+            
+            if(m_lasso->isDragging())
+            {
+                m_lasso->end();
+            }
+            
+            m_selection->removeAll();
+            
             /*
             m_listeners_mutex.lock();
             auto it = m_listeners.begin();
@@ -157,8 +163,12 @@ namespace Kiwi
     
     bool Patcher::Controller::mouseDrag(MouseEvent const& event)
     {
-        m_lasso->drag(event.getPosition(), true, event.hasAlt(), event.hasShift());
-        return true;
+        if(!m_locked)
+        {
+            m_lasso->drag(event.getPosition(), true, event.hasAlt(), event.hasShift());
+            return true;
+        }
+        return false;
     }
 
     bool Patcher::Controller::mouseMove(MouseEvent const& event)
@@ -168,13 +178,17 @@ namespace Kiwi
     
     bool Patcher::Controller::mouseDown(MouseEvent const& event)
     {
-        m_lasso->start(event.getPosition(), false);
-        return true;
+        if(!m_locked)
+        {
+            m_lasso->start(event.getPosition(), false);
+            return true;
+        }
+        return false;
     }
     
     bool Patcher::Controller::mouseUp(MouseEvent const& event)
     {
-        if (m_lasso->isDragging())
+        if(m_lasso->isDragging())
         {
             m_lasso->end();
             return true;
@@ -583,8 +597,8 @@ namespace Kiwi
     //                                  PATCHER LASSO                                   //
     // ================================================================================ //
     
-    Patcher::Lasso::Lasso(sPatcher patcher, sSelection selection) noexcept :
-    GuiSketcher(patcher->GuiSketcher::getContext()), m_patcher(patcher), m_selection(selection)
+    Patcher::Lasso::Lasso(sPatcher patcher, sController pctrl, sSelection selection) noexcept :
+    GuiSketcher(patcher->GuiSketcher::getContext()), m_patcher(patcher), m_owner_ctrl(pctrl), m_selection(selection)
     {
         assert(m_patcher);
         assert(m_selection);
@@ -748,9 +762,24 @@ namespace Kiwi
     
     void Patcher::Lasso::draw(scGuiView view, Sketch& sketch) const
     {
-        sketch.fillAll(Color(0.96, 0.96, 0.96, 0.4));
-        sketch.setColor(Color(0.96, 0.96, 0.96, 1.));
-        sketch.drawRectangle(getBounds().withZeroOrigin(), 1.);
+        scGuiView parent = view->getParent();
+        if(parent)
+        {
+            Patcher::scController pctrl = dynamic_pointer_cast<Patcher::Controller>(parent->getController());
+            if (pctrl && !pctrl->getLockStatus())
+            {
+                Color color = Color(0.96, 0.96, 0.96);
+                
+                if (pctrl != m_owner_ctrl)
+                {
+                    //color = m_patcher->getUIColorFor(m_owner_ctrl);
+                }
+                
+                sketch.fillAll(color.withAlpha(0.4));
+                sketch.setColor(color);
+                sketch.drawRectangle(getBounds().withZeroOrigin(), 1.);
+            }
+        }
     }
 }
 
