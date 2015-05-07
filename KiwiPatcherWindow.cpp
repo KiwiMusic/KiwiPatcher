@@ -41,6 +41,7 @@ namespace Kiwi
         m_viewport->setPosition(Point(0., 24.));
         m_viewport->setSize(patcher->getSize());
         m_viewport->setContent(patcher);
+        m_viewport->setContentPosition(Point());
         addChild(m_viewport);
     }
     
