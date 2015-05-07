@@ -772,6 +772,7 @@ namespace Kiwi
                 
                 if (pctrl != m_owner_ctrl)
                 {
+                    color = Color(0.96, 0.4, 0.96);
                     //color = m_patcher->getUIColorFor(m_owner_ctrl);
                 }
                 
