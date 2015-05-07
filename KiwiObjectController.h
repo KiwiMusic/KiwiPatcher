@@ -35,7 +35,7 @@ namespace Kiwi
     class Object::Controller : public GuiController
     {
     private:
-        //const sObject   m_object;
+        const sObject   m_object;
         ulong           m_zoom;
         bool            m_locked;
         bool            m_presentation;

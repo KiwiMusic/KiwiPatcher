@@ -32,7 +32,7 @@ namespace Kiwi
     // ================================================================================ //
     
     Object::Controller::Controller(sObject object) noexcept :
-    GuiController(object)
+    GuiController(object), m_object(object)
     {
         ;
     }
