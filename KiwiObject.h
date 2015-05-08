@@ -169,16 +169,16 @@ namespace Kiwi
         class Iolet;
         
         class Inlet;
-        typedef shared_ptr<Inlet>       sInlet;
-        typedef weak_ptr<Inlet>         wInlet;
-        typedef shared_ptr<const Inlet> scInlet;
-        typedef weak_ptr<const Inlet>   wcInlet;
+        typedef shared_ptr<Inlet>               sInlet;
+        typedef weak_ptr<Inlet>                 wInlet;
+        typedef shared_ptr<const Inlet>         scInlet;
+        typedef weak_ptr<const Inlet>           wcInlet;
         
         class Outlet;
-        typedef shared_ptr<Outlet>      sOutlet;
-        typedef weak_ptr<Outlet>        wOutlet;
-        typedef shared_ptr<const Outlet>scOutlet;
-        typedef weak_ptr<const Outlet>  wcOutlet;
+        typedef shared_ptr<Outlet>              sOutlet;
+        typedef weak_ptr<Outlet>                wOutlet;
+        typedef shared_ptr<const Outlet>        scOutlet;
+        typedef weak_ptr<const Outlet>          wcOutlet;
         
         class Controller;
         typedef shared_ptr<Controller>          sController;

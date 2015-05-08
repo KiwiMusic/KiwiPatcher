@@ -26,40 +26,93 @@
 #include "KiwiConsole.h"
 
 namespace Kiwi
-{    
+{
     // ================================================================================ //
     //                              PATCHER CONTROLLER                                  //    
     // ================================================================================ //
     
     Patcher::Controller::Controller(sPatcher patcher) noexcept :
-    GuiController(patcher), m_patcher(patcher),
-    m_selection(make_shared<Selection>(patcher))
+    GuiController(patcher), m_patcher(patcher)
     {
         assert(m_patcher);
     }
     
     Patcher::sController Patcher::Controller::create(sPatcher patcher) noexcept
     {
-        sController ctrl = make_shared<Controller>(patcher);
+        sController ctrl = make_shared<Patcher::Controller>(patcher);
         if(ctrl)
         {
-            ctrl->created();
+            patcher->addListener(ctrl);
+            ctrl->m_selection = make_shared<Selection>(patcher, ctrl);
+            ctrl->m_lasso = make_shared<Lasso>(patcher, ctrl, ctrl->m_selection);
         }
         return ctrl;
     }
     
-    void Patcher::Controller::created() noexcept
-    {
-        m_lasso = make_shared<Lasso>(m_patcher, static_pointer_cast<Patcher::Controller>(shared_from_this()), m_selection);
-    }
-    
     Patcher::Controller::~Controller() noexcept
     {
-        ;
+        m_object_handlers.clear();
+        m_link_handlers.clear();
+    }
+    
+    void Patcher::Controller::objectCreated(sPatcher patcher, sObject object)
+    {
+        if (patcher && object && patcher == m_patcher)
+        {
+            Patcher::Controller::sObjectHandler handler = make_shared<Patcher::Controller::ObjectHandler>(patcher, object);
+            m_object_handlers.push_back(handler);
+            patcher->GuiSketcher::addChild(handler);
+        }
+    }
+    
+    void Patcher::Controller::objectRemoved(sPatcher patcher, sObject object)
+    {
+        if (patcher && object && patcher == m_patcher)
+        {
+            for(auto it = m_object_handlers.begin(); it != m_object_handlers.end(); it++)
+            {
+                sObjectHandler handler = (*it);
+                if(handler && handler->getObject() == object)
+                {
+                    patcher->removeChild(handler);
+                    m_object_handlers.erase(it);
+                }
+            }
+        }
+    }
+    
+    void Patcher::Controller::linkCreated(sPatcher patcher, sLink link)
+    {
+        /*
+        if (patcher && link && patcher == m_patcher)
+        {
+            Patcher::Controller::sLinkHandler handler = make_shared<Patcher::Controller::LinkHandler>(patcher, link);
+            m_link_handlers.push_back(handler);
+            patcher->GuiSketcher::addChild(handler);
+        }
+        */
+    }
+    
+    void Patcher::Controller::linkRemoved(sPatcher patcher, sLink link)
+    {
+        /*
+        if (patcher && link && patcher == m_patcher)
+        {
+            for(auto it = m_link_handlers.begin(); it != m_link_handlers.end(); it++)
+            {
+                sLinkHandler handler = (*it);
+                if(handler && handler->getLink() == link)
+                {
+                    patcher->removeChild(handler);
+                    m_link_handlers.erase(it);
+                }
+            }
+        }
+        */
     }
     
     // ================================================================================ //
-    //										PRESENTATION                                //
+    //									PRESENTATION                                    //
     // ================================================================================ //
     
     void Patcher::Controller::setZoom(ulong zoom)
@@ -79,6 +132,7 @@ namespace Kiwi
             }
             
             m_selection->removeAll();
+            redraw();
             
             /*
             m_listeners_mutex.lock();
@@ -100,14 +154,9 @@ namespace Kiwi
             */
             //unselectAll();
             //lockStatusChanged();
-            redraw();
         }
     }
     
-    //! The paint method that can be override.
-    /** The function shoulds draw some stuff in the sketch.
-     @param sketch  A sketch to draw.
-     */
     void Patcher::Controller::draw(sGuiView view, Sketch& sketch)
     {
         const bool locked = getLockStatus();
@@ -797,6 +846,26 @@ namespace Kiwi
                 sketch.drawRectangle(getBounds().withZeroOrigin(), 1.);
             }
         }
+    }
+    
+    
+    
+    Patcher::Controller::ObjectHandler::ObjectHandler(sPatcher patcher, sObject object) noexcept :
+    GuiSketcher(patcher->GuiSketcher::getContext()), m_patcher(patcher), m_object(object)
+    {
+        setBounds(object->getBounds().expanded(2));
+        object->setPosition(Point(2, 2));
+        addChild(object);
+    }
+    
+    Patcher::Controller::ObjectHandler::~ObjectHandler() noexcept
+    {
+        
+    }
+    
+    void Patcher::Controller::ObjectHandler::draw(scGuiView view, Sketch& sketch) const
+    {
+        sketch.fillAll(Colors::blue.withAlpha(0.5));
     }
 }
 

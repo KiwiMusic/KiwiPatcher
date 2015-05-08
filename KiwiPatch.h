@@ -29,7 +29,7 @@
 namespace Kiwi
 {
     // ================================================================================ //
-    //                                      PAGE                                        //
+    //                                      PATCHER                                     //
     // ================================================================================ //
     
     //! The patcher manages objects and links.
@@ -63,12 +63,19 @@ namespace Kiwi
         typedef shared_ptr<const Lasso>         scLasso;
         typedef weak_ptr<const Lasso>           wcLasso;
         
+        class Listener;
+        typedef shared_ptr<Listener>            sListener;
+        typedef weak_ptr<Listener>              wListener;
+        typedef shared_ptr<const Listener>      scListener;
+        typedef weak_ptr<const Listener>        wcListener;
+        
     private:
         const wInstance             m_instance;
         vector<sObject>             m_objects;
         vector<sLink>               m_links;
         vector<ulong>               m_free_ids;
         mutable mutex               m_mutex;
+        ListenerSet<Listener>       m_listeners;
 
         //! @internal Object and link creation.
         void createObject(Dico& dico);
@@ -92,6 +99,26 @@ namespace Kiwi
          @return The patcher.
          */
         static sPatcher create(sInstance instance, Dico& dico);
+        
+        //! Add a patcher's listener.
+        /** The function adds a patcher's listener.
+         If the listener was already listening the patcher, the function has no effect.
+         @param listener The listener to add.
+         */
+        void addListener(sListener listener) noexcept
+        {
+            m_listeners.add(listener);
+        }
+        
+        //! Remove a patcher's listener.
+        /** The function removes a patcher's listener.
+         If the listener wasn't listening the patcher, the function has no effect.
+         @param listener The listener to add.
+         */
+        void removeListener(sListener listener) noexcept
+        {
+            m_listeners.remove(listener);
+        }
 		
         //! Retrieve the instance that manages the patcher.
         /** The function retrieves the instance that manages the patcher.
@@ -239,6 +266,45 @@ namespace Kiwi
          @return The controller.
          */
         sGuiController createController() override;
+    };
+    
+    // ================================================================================ //
+    //                                  PATCHER LISTENER                                //
+    // ================================================================================ //
+    
+    //! The patcher listener is an abstract class that subclasses should inherit from to receive notifications.
+    /**
+     The patcher listener is an abstract class that subclasses should inherit from to receive notifications related to object and link creation and deletion
+     */
+    class Patcher::Listener
+    {
+    public:
+        //! The destructor.
+        virtual ~Listener() {}
+        
+        //! Receive the notification that an object has been created.
+        /** The function is called by the patcher when an object has been created.
+         @param object     The object.
+         */
+        virtual void objectCreated(sPatcher patcher, sObject object) = 0;
+        
+        //! Receive the notification that an object has been removed.
+        /** The function is called by the patcher when an object has been removed.
+         @param object     The object.
+         */
+        virtual void objectRemoved(sPatcher patcher, sObject object) = 0;
+        
+        //! Receive the notification that a link has been created.
+        /** The function is called by the patcher when a link has been created.
+         @param link     The link.
+         */
+        virtual void linkCreated(sPatcher patcher, sLink link) = 0;
+        
+        //! Receive the notification that a link has been removed.
+        /** The function is called by the patcher when a link has been removed.
+         @param link    The link.
+         */
+        virtual void linkRemoved(sPatcher patcher, sLink link) = 0;
     };
 }
 

@@ -32,22 +32,38 @@ namespace Kiwi
     //                              PATCHER CONTROLLER                                  //
     // ================================================================================ //
 
-    class Patcher::Controller : public GuiController
+    class Patcher::Controller : public GuiController, public Patcher::Listener
     {
-    private:
-        const sPatcher      m_patcher;
-        const sSelection    m_selection;
-        sLasso              m_lasso;
-        ulong               m_zoom;
-        bool                m_locked;
-        bool                m_presentation;
-        bool                m_display_grid;
-        bool                m_snap_to_grid;
+    public:
+        class Listener;
+        typedef shared_ptr<Listener>            sListener;
+        typedef weak_ptr<Listener>              wListener;
+        typedef shared_ptr<const Listener>      scListener;
+        typedef weak_ptr<const Listener>        wcListener;
         
-        //! Called after the controller has been created.
-        /** This function is called after the controller has been created (via the create method).
-         */
-        void created() noexcept;
+        class ObjectHandler;
+        typedef shared_ptr<ObjectHandler>       sObjectHandler;
+        typedef weak_ptr<ObjectHandler>         wObjectHandler;
+        typedef shared_ptr<const ObjectHandler> scObjectHandler;
+        typedef weak_ptr<const ObjectHandler>   wcObjectHandler;
+        
+        class LinkHandler;
+        typedef shared_ptr<LinkHandler>         sLinkHandler;
+        typedef weak_ptr<LinkHandler>           wLinkHandler;
+        typedef shared_ptr<const LinkHandler>   scLinkHandler;
+        typedef weak_ptr<const LinkHandler>     wcLinkHandler;
+        
+    private:
+        const sPatcher          m_patcher;
+        vector<sObjectHandler>  m_object_handlers;
+        vector<sLinkHandler>    m_link_handlers;
+        sSelection              m_selection;
+        sLasso                  m_lasso;
+        ulong                   m_zoom;
+        bool                    m_locked;
+        bool                    m_presentation;
+        bool                    m_display_grid;
+        bool                    m_snap_to_grid;
 
     public:
         
@@ -204,6 +220,30 @@ namespace Kiwi
          */
         bool performAction(const ulong code) override;
         
+        //! Receive the notification that an object has been created.
+        /** The function is called by the patcher when an object has been created.
+         @param object     The object.
+         */
+        void objectCreated(sPatcher patcher, sObject object) override;
+        
+        //! Receive the notification that an object has been removed.
+        /** The function is called by the patcher when an object has been removed.
+         @param object     The object.
+         */
+        void objectRemoved(sPatcher patcher, sObject object) override;
+        
+        //! Receive the notification that a link has been created.
+        /** The function is called by the patcher when a link has been created.
+         @param link     The link.
+         */
+        void linkCreated(sPatcher patcher, sLink link) override;
+        
+        //! Receive the notification that a link has been removed.
+        /** The function is called by the patcher when a link has been removed.
+         @param link    The link.
+         */
+        void linkRemoved(sPatcher patcher, sLink link) override;
+        
     private:
         
         //@internal
@@ -235,6 +275,7 @@ namespace Kiwi
     {
     private:
         const wPatcher          m_patcher;
+        const wcController      m_owner_ctrl;
         set<wObject,
         owner_less<wObject>>    m_objects;
         set<wLink,
@@ -251,7 +292,7 @@ namespace Kiwi
         //! The patcher selection constructor.
         /** The function allocates a patcher selection and initializes memory.
          */
-        Selection(sPatcher patcher) noexcept : m_patcher(patcher)
+        Selection(sPatcher patcher, sController controller) noexcept : m_patcher(patcher), m_owner_ctrl(controller)
         {
             ;
         }
@@ -481,6 +522,39 @@ namespace Kiwi
         
         //! The lasso drawing method.
         /** The function draws the lasso.
+         @param view    The view that ask to draw.
+         @param sketch  A sketch to draw.
+         */
+        void draw(scGuiView view, Sketch& sketch) const override;
+    };
+    
+    class Patcher::Controller::ObjectHandler : public GuiSketcher
+    {
+    private:
+        const wPatcher  m_patcher;
+        const wObject   m_object;
+        
+    public:
+        
+        //! The object's holder constructor.
+        /** The function does nothing.
+         @param object The object.
+         */
+        ObjectHandler(sPatcher patcher, sObject object) noexcept;
+        
+        //! The object's holder destructor.
+        /** The function does nothing.
+         */
+        ~ObjectHandler() noexcept;
+        
+        //! Retrieve the object that this handler handles.
+        /** The function retrieves the object that this handler handles.
+         @return The object.
+         */
+        inline sObject getObject() const noexcept { return m_object.lock(); }
+        
+        //! The overrided drawing method.
+        /** The function draws the object's borders and inlets.
          @param view    The view that ask to draw.
          @param sketch  A sketch to draw.
          */

@@ -82,7 +82,7 @@ namespace Kiwi
                     DspChain::add(dspnode);
                 }
                 m_objects.push_back(object);
-                GuiSketcher::addChild(object);
+                m_listeners.call(&Listener::objectCreated, getShared(), object);
                 object->loaded();
             }
         }
@@ -142,8 +142,8 @@ namespace Kiwi
                                 shared_ptr<Link::SignalLink> link = make_shared<Link::SignalLink>(getShared(), from, vfrom[1], to, vto[1], type, pfrom, poutlet, pto, pinlet);
                                 
                                 DspChain::add(link);
-                                m_links.push_back(static_pointer_cast<Link>(link));
-
+                                m_links.push_back(link);
+                                m_listeners.call(&Listener::linkCreated, getShared(), link);
                             }
                         }
                         else if(outlet->getType() == inlet->getType() || inlet->getType() == Object::Io::Both || outlet->getType() == Object::Io::Both)
@@ -153,6 +153,7 @@ namespace Kiwi
                             inlet->append(from, vto[1]);
                             sLink link = make_shared<Link>(getShared(), from, vfrom[1], to, vto[1], Object::Io::Message);
                             m_links.push_back(link);
+                            m_listeners.call(&Listener::linkCreated, getShared(), link);
                         }
                     }
                 }
@@ -251,13 +252,15 @@ namespace Kiwi
                         ++li;
                     }
                 }
+                
                 sDspNode dspnode = dynamic_pointer_cast<DspNode>(object);
                 if(dspnode)
                 {
                     DspChain::remove(dspnode);
                 }
+                
+                m_listeners.call(&Listener::objectRemoved, getShared(), object);
                 m_objects.erase(it);
-                GuiSketcher::removeChild(object);
                 m_free_ids.push_back(object->getId());
             }
         }
@@ -276,6 +279,8 @@ namespace Kiwi
                 {
                     DspChain::remove(dsplink);
                 }
+                
+                m_listeners.call(&Listener::linkRemoved, getShared(), link);
                 m_links.erase(it);
             }
         }
@@ -372,7 +377,6 @@ namespace Kiwi
     sGuiController Patcher::createController()
     {
         return Patcher::Controller::create(getShared());
-        //return make_shared<Patcher::Controller>(getShared());
     }
 }
 
