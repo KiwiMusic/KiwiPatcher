@@ -57,6 +57,7 @@ namespace Kiwi
         const sPatcher          m_patcher;
         vector<sObjectHandler>  m_object_handlers;
         vector<sLinkHandler>    m_link_handlers;
+        mutable mutex           m_mutex;
         sSelection              m_selection;
         sLasso                  m_lasso;
         ulong                   m_zoom;

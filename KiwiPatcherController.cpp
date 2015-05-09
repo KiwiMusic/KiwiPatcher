@@ -57,11 +57,12 @@ namespace Kiwi
     
     void Patcher::Controller::objectCreated(sPatcher patcher, sObject object)
     {
-        if (patcher && object && patcher == m_patcher)
+        if (patcher && patcher == m_patcher)
         {
-            Patcher::Controller::sObjectHandler handler = make_shared<Patcher::Controller::ObjectHandler>(patcher, object);
+            lock_guard<mutex> guard(m_mutex);
+            Patcher::Controller::sObjectHandler handler = make_shared<Patcher::Controller::ObjectHandler>(m_patcher, object);
             m_object_handlers.push_back(handler);
-            patcher->GuiSketcher::addChild(handler);
+            m_patcher->addChildForView(getView(), handler);
         }
     }
     
@@ -69,12 +70,13 @@ namespace Kiwi
     {
         if (patcher && object && patcher == m_patcher)
         {
+            lock_guard<mutex> guard(m_mutex);
             for(auto it = m_object_handlers.begin(); it != m_object_handlers.end(); it++)
             {
                 sObjectHandler handler = (*it);
                 if(handler && handler->getObject() == object)
                 {
-                    patcher->removeChild(handler);
+                    patcher->removeChildForView(getView(), handler);
                     m_object_handlers.erase(it);
                 }
             }
@@ -309,9 +311,9 @@ namespace Kiwi
         }
     }
     
-    void Patcher::Controller::createObject(string const& name, Point const& position)
+    void Patcher::Controller::createObject(string const& name, Point const& pos)
     {
-        const Dico dico({pair<sTag, Atom>(Tags::objects, Vector({Dico({pair<sTag, Atom>(Tags::name, Tag::create(name)), pair<sTag, Atom>(Tags::text, Tag::create(name)), pair<sTag, Atom>(Tags::position, {position.x(), position.y()})})}))});
+        const Dico dico({pair<sTag, Atom>(Tags::objects, Vector({Dico({pair<sTag, Atom>(Tags::name, Tag::create(name)), pair<sTag, Atom>(Tags::text, Tag::create(name)), pair<sTag, Atom>(Tags::position, {pos.x(), pos.y()})})}))});
         m_patcher->add(dico);
     }
     
