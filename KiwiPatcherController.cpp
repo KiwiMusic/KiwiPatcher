@@ -32,7 +32,7 @@ namespace Kiwi
     // ================================================================================ //
     
     Patcher::Controller::Controller(sPatcher patcher) noexcept :
-    GuiController(patcher),
+    GuiController(patcher->GuiModel::getContext()),
     m_patcher(patcher)
     {
         ;

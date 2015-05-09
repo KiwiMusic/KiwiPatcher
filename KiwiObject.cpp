@@ -205,7 +205,7 @@ namespace Kiwi
     // ================================================================================ //
     
     Object::Object(Infos const& detail, const sTag name) noexcept :
-    GuiSketcher(detail.instance),
+    GuiModel(detail.instance),
     m_instance(detail.instance),
     m_patcher(detail.patcher),
     m_name(name),

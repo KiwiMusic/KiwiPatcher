@@ -95,10 +95,10 @@ namespace Kiwi
         
     protected:
         
-        //! The paint method that can be override.
-        /** The function shoulds draw some stuff in the sketch.
-         @param view    The view that ask to draw.
-         @param sketch  A sketch to draw.
+        //! The draw method that should be override.
+        /** The function shoulds draw some stuff.
+         @param view    The view that owns the controller.
+         @param sketch  The sketch to draw.
          */
         void draw(sGuiView view, Sketch& sketch) override;
     };

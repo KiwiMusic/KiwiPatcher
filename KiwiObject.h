@@ -143,7 +143,7 @@ namespace Kiwi
     /**
      The object is a graphical class that aims to be instantiate in a patcher.
      */
-        class Object : virtual public Beacon::Castaway, public GuiSketcher, public Attr::Manager
+        class Object : virtual public Beacon::Castaway, public GuiModel, public Attr::Manager
     {
     public:
         friend class Patcher;
@@ -508,27 +508,27 @@ namespace Kiwi
         
     public:
         
-        //! Retrieves the position of the sketcher.
-        /** The function retrieves the position of the sketcher.
-         @return The position of the sketcher.
+        //! Retrieves the position of the model.
+        /** The function retrieves the position of the model.
+         @return The position of the model.
          */
         inline Point getPosition() const noexcept
         {
             return getAttrValue<Point>(Tags::position);
         }
         
-        //! Retrieves the size of the sketcher.
-        /** The function retrieves the size of the sketcher.
-         @return The size of the sketcher.
+        //! Retrieves the size of the model.
+        /** The function retrieves the size of the model.
+         @return The size of the model.
          */
         inline Size getSize() const noexcept
         {
             return getAttrValue<Size>(Tags::size);
         }
         
-        //! Retrieves the bounds of the sketcher.
-        /** The function retrieves the bounds of the sketcher.
-         @return The bounds of the sketcher.
+        //! Retrieves the bounds of the model.
+        /** The function retrieves the bounds of the model.
+         @return The bounds of the model.
          */
         inline Rectangle getBounds() const noexcept
         {
@@ -589,27 +589,27 @@ namespace Kiwi
             return getAttrValue<bool>(Tags::ignoreclick);
         }
         
-        //! Sets the position of the sketcher.
-        /** The function sets the position of the sketcher.
-         @param position The position of the sketcher.
+        //! Sets the position of the model.
+        /** The function sets the position of the model.
+         @param position The position of the model.
          */
         inline void setPosition(Point const& position) noexcept
         {
             setAttrValue(Tags::position, position);
         }
         
-        //! Sets the size of the sketcher.
-        /** The function sets the size of the sketcher.
-         @param size The size of the sketcher.
+        //! Sets the size of the model.
+        /** The function sets the size of the model.
+         @param size The size of the model.
          */
         inline void setSize(Size const& size) noexcept
         {
             setAttrValue(Tags::size, size);
         }
         
-        //! Sets the bounds of the sketcher.
-        /** The function sets the bounds of the sketcher.
-         @param bounds The bounds of the sketcher.
+        //! Sets the bounds of the model.
+        /** The function sets the bounds of the model.
+         @param bounds The bounds of the model.
          */
         inline void setBounds(Rectangle const& bounds) noexcept
         {
@@ -868,7 +868,7 @@ namespace Kiwi
             return getAttrValue<Color>(Tags::textcolor);
         }
     private:
-        void draw(scGuiView view, Sketch& sketch) const override;
+        void draw(scGuiView view, Sketch& sketch) const;
         void textChanged(sGuiTextEditor editor) override;
         void tabKeyPressed(sGuiTextEditor editor) override;
         void returnKeyPressed(sGuiTextEditor editor) override;
@@ -915,7 +915,7 @@ namespace Kiwi
             return getAttrValue<Color>(Tags::textcolor);
         }
     private:
-        void draw(scGuiView view, Sketch& sketch) const override;
+        void draw(scGuiView view, Sketch& sketch) const;
         void textChanged(sGuiTextEditor editor) override;
         void tabKeyPressed(sGuiTextEditor editor) override;
         void returnKeyPressed(sGuiTextEditor editor) override;

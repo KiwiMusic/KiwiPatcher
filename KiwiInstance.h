@@ -251,7 +251,7 @@ namespace Kiwi
         static void add(sTag name = Tag::create(""))
         {
             static_assert(is_base_of<Object, T>::value, "The class must inherit from object.");
-            static_assert(is_base_of<GuiSketcher, T>::value, "The class must inherit from sketcher.");
+            static_assert(is_base_of<GuiModel, T>::value, "The class must inherit from model.");
             static_assert(!is_abstract<T>::value, "The class must not be abstract.");
             static_assert(is_constructible<T, Infos const&>::value, "The class must be constructible with Infos.");
             

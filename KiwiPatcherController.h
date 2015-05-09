@@ -59,18 +59,18 @@ namespace Kiwi
         //										BEHAVIOR                                    //
         // ================================================================================ //
         
-        //! Retrieve the position of the sketcher.
-        /** The function retrieves the position of the sketcher.
-         @return The position of the sketcher.
+        //! Retrieve the position of the model.
+        /** The function retrieves the position of the model.
+         @return The position of the model.
          */
         virtual Point getPosition() const noexcept
         {
             return Point();
         }
         
-        //! Retrieve the size of the sketcher.
-        /** The function retrieves the size of the sketcher.
-         @return The size of the sketcher.
+        //! Retrieve the size of the model.
+        /** The function retrieves the size of the model.
+         @return The size of the model.
          */
         virtual Size getSize() const noexcept
         {
@@ -81,7 +81,7 @@ namespace Kiwi
         /** This function retrieves if the controller wants the mouse.
          @return true if the controller wants the mouse, othrewise false.
          */
-        inline bool wantMouse() const noexcept override
+        inline bool wantMouse() const noexcept
         {
             return true;
         }
@@ -90,7 +90,7 @@ namespace Kiwi
         /** This function retrieves if the controller wants the keyboard.
          @return true if the controller wants the keyboard, othrewise false.
          */
-        inline bool wantKeyboard() const noexcept override
+        inline bool wantKeyboard() const noexcept
         {
             return true;
         }
@@ -99,7 +99,7 @@ namespace Kiwi
         /** This function retrieves if the controller wants the actions.
          @return true if the controller wants the actions, othrewise false.
          */
-        inline bool wantActions() const noexcept override
+        inline bool wantActions() const noexcept
         {
             return true;
         }
@@ -144,28 +144,29 @@ namespace Kiwi
         
     protected:
         
-        //! The paint method that can be override.
-        /** The function shoulds draw some stuff in the sketch.
-         @param sketch  A sketch to draw.
+        //! The draw method that should be override.
+        /** The function shoulds draw some stuff.
+         @param view    The view that owns the controller.
+         @param sketch  The sketch to draw.
          */
         void draw(sGuiView view, Sketch& sketch) override;
         
         //! The mouse receive method.
-        /** The function pass the mouse event to the sketcher if it inherits from mouser.
+        /** The function pass the mouse event to the model if it inherits from mouser.
          @param event    A mouser event.
          @return true if the class has done something with the event otherwise false
          */
         bool receive(sGuiView view, MouseEvent const& event) override;
         
         //! The keyboard receive method.
-        /** The function pass the keyboard event to the sketcher if it inherits from keyboarder.
+        /** The function pass the keyboard event to the model if it inherits from keyboarder.
          @param event    A keyboard event.
          @return true if the class has done something with the event otherwise false
          */
         bool receive(sGuiView view, KeyboardEvent const& event) override;
         
         //! The keyboard focus receive method.
-        /** The function pass the keyboard event to the sketcher if it inherits from keyboarder.
+        /** The function pass the keyboard event to the model if it inherits from keyboarder.
          @param event    A focus event.
          @return true if the class has done something with the event otherwise false
          */

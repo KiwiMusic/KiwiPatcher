@@ -32,7 +32,7 @@ namespace Kiwi
     // ================================================================================ //
     
     Object::Controller::Controller(sObject object) noexcept :
-    GuiController(object),
+    GuiController(object->getContext()),
     m_object(object)
     {
         ;
@@ -83,7 +83,7 @@ namespace Kiwi
     
     void Object::Controller::draw(sGuiView view, Sketch& sketch)
     {
-        m_object->draw(view, sketch);
+        //m_object->draw(view, sketch);
         if(!m_locked)
         {
             Size size = getSize();

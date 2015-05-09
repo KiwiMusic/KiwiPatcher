@@ -34,7 +34,7 @@ namespace Kiwi
     // ================================================================================ //
     
     Patcher::Patcher(sInstance instance) noexcept :
-    GuiSketcher(instance),
+    GuiModel(instance),
     DspChain(instance),
     m_instance(instance)
     {
@@ -82,7 +82,7 @@ namespace Kiwi
                     DspChain::add(dspnode);
                 }
                 m_objects.push_back(object);
-                GuiSketcher::addChild(object);
+                GuiModel::addChild(object);
                 object->loaded();
             }
         }
@@ -257,7 +257,7 @@ namespace Kiwi
                     DspChain::remove(dspnode);
                 }
                 m_objects.erase(it);
-                GuiSketcher::removeChild(object);
+                GuiModel::removeChild(object);
                 m_free_ids.push_back(object->getId());
             }
         }
@@ -362,7 +362,8 @@ namespace Kiwi
             if(window)
             {
                 window->initialize();
-                window->display();
+                window->addToDesktop();
+                instance->addTopLevelModel(window);
             }
             return window;
         }
@@ -376,17 +377,17 @@ namespace Kiwi
     
     Patcher::sLasso Patcher::createLasso()
     {
-        sLasso lasso = make_shared<Lasso>(GuiSketcher::getContext());
+        sLasso lasso = make_shared<Lasso>(GuiModel::getContext());
         if(lasso)
         {
-            GuiSketcher::addChild(lasso);
+            GuiModel::addChild(lasso);
         }
         return lasso;
     }
     
     void Patcher::removeLasso(sLasso lasso)
     {
-        GuiSketcher::removeChild(lasso);
+        GuiModel::removeChild(lasso);
     }
     
     void Patcher::Lasso::draw(scGuiView view, Sketch& sketch) const

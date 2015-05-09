@@ -36,7 +36,7 @@ namespace Kiwi
     /**
      The patcher is... ??
      */
-    class Patcher : public GuiSketcher, public DspChain, public Attr::Manager
+    class Patcher : public GuiModel, public DspChain, public Attr::Manager
 	{
     public:
         class Controller;
@@ -192,7 +192,7 @@ namespace Kiwi
         /** The function shoulds draw some stuff in the sketch.
          @param sketch A sketch to draw.
          */
-        void draw(scGuiView view, Sketch& sketch) const override;
+        void draw(scGuiView view, Sketch& sketch) const;
         
         //! Create a new window for the patcher.
         /** The function creates a new window for the patcher.
@@ -200,27 +200,27 @@ namespace Kiwi
          */
         sGuiWindow createWindow();
         
-        //! Retrieves the position of the sketcher.
-        /** The function retrieves the position of the sketcher.
-         @return The position of the sketcher.
+        //! Retrieves the position of the model.
+        /** The function retrieves the position of the model.
+         @return The position of the model.
          */
         inline Point getPosition() const noexcept
         {
             return getAttrValue<Point>(Tags::position);
         }
         
-        //! Retrieves the size of the sketcher.
-        /** The function retrieves the size of the sketcher.
-         @return The size of the sketcher.
+        //! Retrieves the size of the model.
+        /** The function retrieves the size of the model.
+         @return The size of the model.
          */
         inline Size getSize() const noexcept
         {
             return getAttrValue<Size>(Tags::size);
         }
         
-        //! Retrieves the bounds of the sketcher.
-        /** The function retrieves the bounds of the sketcher.
-         @return The bounds of the sketcher.
+        //! Retrieves the bounds of the model.
+        /** The function retrieves the bounds of the model.
+         @return The bounds of the model.
          */
         inline Rectangle getBounds() const noexcept
         {
@@ -267,7 +267,7 @@ namespace Kiwi
         sGuiController createController() override;
     };
     
-    class Patcher::Lasso : public GuiSketcher
+    class Patcher::Lasso : public GuiModel
     {
     private:
         bool						dragging;
@@ -278,7 +278,7 @@ namespace Kiwi
         
     public:
         
-        Lasso(sGuiContext context) noexcept : GuiSketcher(context)
+        Lasso(sGuiContext context) noexcept : GuiModel(context)
         {
             ;
         }
@@ -294,7 +294,12 @@ namespace Kiwi
          @param ctrl    The controller that ask the draw.
          @param sketch  A sketch to draw.
          */
-        void draw(scGuiView view, Sketch& sketch) const override;
+        void draw(scGuiView view, Sketch& sketch) const;
+        
+        sGuiController createController() override
+        {
+            return nullptr;
+        }
     };
 }
 
