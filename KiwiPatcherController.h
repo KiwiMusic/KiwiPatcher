@@ -41,6 +41,18 @@ namespace Kiwi
         typedef shared_ptr<const Listener>      scListener;
         typedef weak_ptr<const Listener>        wcListener;
         
+        class Selection;
+        typedef shared_ptr<Selection>           sSelection;
+        typedef weak_ptr<Selection>             wSelection;
+        typedef shared_ptr<const Selection>     scSelection;
+        typedef weak_ptr<const Selection>       wcSelection;
+        
+        class Lasso;
+        typedef shared_ptr<Lasso>               sLasso;
+        typedef weak_ptr<Lasso>                 wLasso;
+        typedef shared_ptr<const Lasso>         scLasso;
+        typedef weak_ptr<const Lasso>           wcLasso;
+        
         class ObjectHandler;
         typedef shared_ptr<ObjectHandler>       sObjectHandler;
         typedef weak_ptr<ObjectHandler>         wObjectHandler;
@@ -65,6 +77,9 @@ namespace Kiwi
         bool                    m_presentation;
         bool                    m_display_grid;
         bool                    m_snap_to_grid;
+        ListenerSet<Listener>   m_listeners;
+        
+        void selectionChanged() noexcept;
 
     public:
         
@@ -84,6 +99,44 @@ namespace Kiwi
          @return The controller.
          */
         static sController create(sPatcher patcher) noexcept;
+        
+        //! Retrieve the shared pointer of the controller.
+        /** The function retrieves the shared pointer of the controller.
+         @return The shared pointer of the controller.
+         */
+        inline scController getShared() const noexcept
+        {
+            return static_pointer_cast<const Controller>(shared_from_this());
+        }
+        
+        //! Retrieve the shared pointer of the controller.
+        /** The function retrieves the shared pointer of the controller.
+         @return The shared pointer of the controller.
+         */
+        inline sController getShared() noexcept
+        {
+            return static_pointer_cast<Controller>(shared_from_this());
+        }
+        
+        //! Add a patcher controller listener.
+        /** The function adds a patcher controller listener.
+         If the listener was already listening the patcher controller, the function has no effect.
+         @param listener The listener to add.
+         */
+        void addListener(sListener listener) noexcept
+        {
+            m_listeners.add(listener);
+        }
+        
+        //! Remove a patcher controller listener.
+        /** The function removes a patcher controller listener.
+         If the listener wasn't listening the patcher controller, the function has no effect.
+         @param listener The listener to add.
+         */
+        void removeListener(sListener listener) noexcept
+        {
+            m_listeners.remove(listener);
+        }
         
         // ================================================================================ //
         //										BEHAVIOR                                    //
@@ -269,23 +322,46 @@ namespace Kiwi
     };
     
     // ================================================================================ //
+    //                           PATCHER CONTROLLER LISTENER                            //
+    // ================================================================================ //
+    
+    //! The patcher controller listener is a pure virtual class that subclasses should inherit from to receive notifications.
+    /**
+     The patcher controller listener is a pure virtual class that subclasses should inherit from to receive notifications related to :
+      - object and link selection
+     */
+    class Patcher::Controller::Listener
+    {
+    public:
+        //! The destructor.
+        virtual ~Listener() {}
+        
+        //! Receive the notification that a selection has changed.
+        /** The function is called by the controller when its selection has changed.
+         @param controller The controller.
+         @param selection The selection.
+         */
+        virtual void selectionChanged(sController controller, sSelection selection) = 0;
+    };
+    
+    // ================================================================================ //
     //                                PATCHER SELECTION                                 //
     // ================================================================================ //
     
-    class Patcher::Selection
+    class Patcher::Controller::Selection
     {
     private:
         const wPatcher          m_patcher;
-        const wcController      m_owner_ctrl;
+        const wController      m_owner_ctrl;
         set<wObject,
         owner_less<wObject>>    m_objects;
         set<wLink,
         owner_less<wLink>>      m_links;
         mutable mutex           m_mutex;
         
-        void selectionChanged()
+        void selectionChanged() noexcept
         {
-            int todo_notify_changes;
+            m_owner_ctrl.lock()->selectionChanged();
         }
         
     public:
@@ -461,12 +537,12 @@ namespace Kiwi
     //                                  PATCHER LASSO                                   //
     // ================================================================================ //
     
-    class Patcher::Lasso : public GuiSketcher
+    class Patcher::Controller::Lasso : public GuiSketcher
     {
     private:
         const wPatcher          m_patcher;
         const wcController      m_owner_ctrl;
-        const wSelection    	m_selection;
+        const wSelection        m_selection;
         bool                    m_dragging;
         bool                    m_active;
         Point                   m_startpos;
@@ -489,7 +565,7 @@ namespace Kiwi
          @param patcher     The patcher that will hold it.
          @param selection   The patcher's selection.
          */
-        Lasso(sPatcher patcher, sController controller, sSelection selection) noexcept;
+        Lasso(sPatcher patcher, sController controller, Controller::sSelection selection) noexcept;
         
         //! Destructor.
         inline ~Lasso() noexcept {}
@@ -528,6 +604,10 @@ namespace Kiwi
          */
         void draw(scGuiView view, Sketch& sketch) const override;
     };
+    
+    // ================================================================================ //
+    //                                  OBJECT HANDLER                                  //
+    // ================================================================================ //
     
     class Patcher::Controller::ObjectHandler : public GuiSketcher
     {

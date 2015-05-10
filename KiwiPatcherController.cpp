@@ -113,6 +113,11 @@ namespace Kiwi
         */
     }
     
+    void Patcher::Controller::selectionChanged() noexcept
+    {
+        m_listeners.call(&Listener::selectionChanged, getShared(), m_selection);
+    }
+    
     // ================================================================================ //
     //									PRESENTATION                                    //
     // ================================================================================ //
@@ -275,7 +280,7 @@ namespace Kiwi
     
     vector<Action::Code> Patcher::Controller::getActionCodes()
     {
-        return vector<Action::Code>({newBang, newObject, editModeSwitch});
+        return vector<Action::Code>({newBang, newObject, editModeSwitch, selectAll});
     }
     
     Action Patcher::Controller::getAction(const ulong code)
@@ -321,17 +326,17 @@ namespace Kiwi
     //                                PATCHER SELECTION                                 //
     // ================================================================================ //
     
-    bool Patcher::Selection::has(sObject object)
+    bool Patcher::Controller::Selection::has(sObject object)
     {
         return object && (m_objects.find(object) != m_objects.end());
     }
     
-    bool Patcher::Selection::has(sLink link)
+    bool Patcher::Controller::Selection::has(sLink link)
     {
         return link && (m_links.find(link) != m_links.end());
     }
     
-    bool Patcher::Selection::addAllObjects()
+    bool Patcher::Controller::Selection::addAllObjects()
     {
         sPatcher patcher = getPatcher();
         if (patcher)
@@ -359,7 +364,7 @@ namespace Kiwi
         return false;
     }
     
-    bool Patcher::Selection::addAllLinks()
+    bool Patcher::Controller::Selection::addAllLinks()
     {
         sPatcher patcher = getPatcher();
         if (patcher)
@@ -388,7 +393,7 @@ namespace Kiwi
         return false;
     }
     
-    void Patcher::Selection::removeAll(const bool notify)
+    void Patcher::Controller::Selection::removeAll(const bool notify)
     {
         if(isAnythingSelected())
         {
@@ -402,7 +407,7 @@ namespace Kiwi
         }
     }
     
-    bool Patcher::Selection::removeAllObjects(const bool notify)
+    bool Patcher::Controller::Selection::removeAllObjects(const bool notify)
     {
         bool sendChange = false;
         if(!m_objects.empty())
@@ -433,7 +438,7 @@ namespace Kiwi
         return false;
     }
     
-    bool Patcher::Selection::removeAllLinks(const bool notify)
+    bool Patcher::Controller::Selection::removeAllLinks(const bool notify)
     {
         bool sendChange = false;
         if(!m_links.empty())
@@ -464,7 +469,7 @@ namespace Kiwi
         return false;
     }
     
-    void Patcher::Selection::add(vector<sObject>& objects)
+    void Patcher::Controller::Selection::add(vector<sObject>& objects)
     {
         bool notify = false;
         if(!objects.empty())
@@ -484,7 +489,7 @@ namespace Kiwi
         }
     }
     
-    void Patcher::Selection::add(vector<sLink>& links)
+    void Patcher::Controller::Selection::add(vector<sLink>& links)
     {
         bool notify = false;
         if(!links.empty())
@@ -504,7 +509,7 @@ namespace Kiwi
         }
     }
     
-    bool Patcher::Selection::add(sObject object, const bool notify)
+    bool Patcher::Controller::Selection::add(sObject object, const bool notify)
     {
         if(object)
         {
@@ -526,7 +531,7 @@ namespace Kiwi
         return false;
     }
     
-    bool Patcher::Selection::add(sLink link, const bool notify)
+    bool Patcher::Controller::Selection::add(sLink link, const bool notify)
     {
         if(link)
         {
@@ -548,19 +553,19 @@ namespace Kiwi
         return false;
     }
     
-    bool Patcher::Selection::set(sObject object)
+    bool Patcher::Controller::Selection::set(sObject object)
     {
         removeAll();
         return add(object, true);
     }
     
-    bool Patcher::Selection::set(sLink link)
+    bool Patcher::Controller::Selection::set(sLink link)
     {
         removeAll();
         return add(link, true);
     }
     
-    void Patcher::Selection::remove(vector<sObject>& objects)
+    void Patcher::Controller::Selection::remove(vector<sObject>& objects)
     {
         bool notify = false;
         if(isAnyObjectSelected() && !objects.empty())
@@ -580,7 +585,7 @@ namespace Kiwi
         }
     }
     
-    void Patcher::Selection::remove(vector<sLink>& links)
+    void Patcher::Controller::Selection::remove(vector<sLink>& links)
     {
         bool notify = false;
         if(isAnyLinkSelected() && !links.empty())
@@ -600,7 +605,7 @@ namespace Kiwi
         }
     }
     
-    bool Patcher::Selection::remove(sObject object, const bool notify)
+    bool Patcher::Controller::Selection::remove(sObject object, const bool notify)
     {
         if(object)
         {
@@ -622,7 +627,7 @@ namespace Kiwi
         return false;
     }
     
-    bool Patcher::Selection::remove(sLink link, const bool notify)
+    bool Patcher::Controller::Selection::remove(sLink link, const bool notify)
     {
         if(link)
         {
@@ -648,13 +653,13 @@ namespace Kiwi
     //                                  PATCHER LASSO                                   //
     // ================================================================================ //
     
-    Patcher::Lasso::Lasso(sPatcher patcher, sController pctrl, sSelection selection) noexcept :
+    Patcher::Controller::Lasso::Lasso(sPatcher patcher, sController pctrl, sSelection selection) noexcept :
     GuiSketcher(patcher->GuiSketcher::getContext()), m_patcher(patcher), m_owner_ctrl(pctrl), m_selection(selection)
     {
         ;
     }
     
-    void Patcher::Lasso::addToPatcher() noexcept
+    void Patcher::Controller::Lasso::addToPatcher() noexcept
     {
         if(!m_active)
         {
@@ -667,7 +672,7 @@ namespace Kiwi
         }
     }
     
-    void Patcher::Lasso::removeFromPatcher() noexcept
+    void Patcher::Controller::Lasso::removeFromPatcher() noexcept
     {
         if(m_active)
         {
@@ -680,7 +685,7 @@ namespace Kiwi
         }
     }
     
-    void Patcher::Lasso::start(Point const& point, const bool preserve) noexcept
+    void Patcher::Controller::Lasso::start(Point const& point, const bool preserve) noexcept
     {
         // You need to call end() before to call start again to avoid this assertion.
         assert(!m_dragging);
@@ -723,7 +728,7 @@ namespace Kiwi
         m_dragging = true;
     }
     
-    void Patcher::Lasso::drag(Point const& point, const bool includeObjects, const bool includeLinks, const bool preserve) noexcept
+    void Patcher::Controller::Lasso::drag(Point const& point, const bool includeObjects, const bool includeLinks, const bool preserve) noexcept
     {
         const scPatcher patcher = m_patcher.lock();
         const sSelection selection = m_selection.lock();
@@ -819,7 +824,7 @@ namespace Kiwi
         }
     }
     
-    void Patcher::Lasso::end() noexcept
+    void Patcher::Controller::Lasso::end() noexcept
     {
         m_objects.clear();
         m_links.clear();
@@ -827,7 +832,7 @@ namespace Kiwi
         removeFromPatcher();
     }
     
-    void Patcher::Lasso::draw(scGuiView view, Sketch& sketch) const
+    void Patcher::Controller::Lasso::draw(scGuiView view, Sketch& sketch) const
     {
         scGuiView parent = view->getParent();
         if(parent)

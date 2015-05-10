@@ -51,18 +51,6 @@ namespace Kiwi
         typedef shared_ptr<const Controller>    scController;
         typedef weak_ptr<const Controller>      wcController;
         
-        class Selection;
-        typedef shared_ptr<Selection>           sSelection;
-        typedef weak_ptr<Selection>             wSelection;
-        typedef shared_ptr<const Selection>     scSelection;
-        typedef weak_ptr<const Selection>       wcSelection;
-        
-        class Lasso;
-        typedef shared_ptr<Lasso>               sLasso;
-        typedef weak_ptr<Lasso>                 wLasso;
-        typedef shared_ptr<const Lasso>         scLasso;
-        typedef weak_ptr<const Lasso>           wcLasso;
-        
         class Listener;
         typedef shared_ptr<Listener>            sListener;
         typedef weak_ptr<Listener>              wListener;
