@@ -45,17 +45,12 @@ namespace Kiwi
         m_viewport->setContent(patcher);
         m_viewport->setContentPosition(Point());
         addChild(m_viewport);
+        setHeader(make_shared<GuiWindow::Header>(getContext(), "patcher"));
     }
     
     Patcher::Window::~Window() noexcept
     {
         ;
-    }
-    
-    void Patcher::Window::initialize() noexcept
-    {
-        m_header = GuiWindow::Header::create(dynamic_pointer_cast<GuiWindow>(shared_from_this()), "Zaza");
-        addChild(m_header);
     }
 }
 

@@ -37,7 +37,6 @@ namespace Kiwi
     private:
         const sPatcher      m_patcher;
         const sGuiViewPort  m_viewport;
-        GuiWindow::sHeader  m_header;
     public:
         
         //! The patcher controller constructor.
@@ -50,11 +49,6 @@ namespace Kiwi
         /** The function does nothing.
          */
         ~Window() noexcept;
-        
-        //! Initialize
-        /**
-         */
-        void initialize() noexcept;
     };
 }
 

@@ -361,7 +361,6 @@ namespace Kiwi
             shared_ptr<Window> window = make_shared<Window>(getShared());
             if(window)
             {
-                window->initialize();
                 window->addToDesktop();
                 instance->addTopLevelModel(window);
             }
