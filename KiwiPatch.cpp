@@ -362,7 +362,6 @@ namespace Kiwi
             if(window)
             {
                 window->addToDesktop();
-                instance->addTopLevelModel(window);
             }
             return window;
         }
