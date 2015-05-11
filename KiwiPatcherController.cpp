@@ -34,7 +34,9 @@ namespace Kiwi
     Patcher::Controller::Controller(sPatcher patcher) noexcept :
     GuiController(patcher), m_patcher(patcher)
     {
-        assert(m_patcher);
+        shouldReceiveMouse(true);
+        shouldReceiveKeyboard(true);
+        shouldReceiveActions(true);
     }
     
     Patcher::sController Patcher::Controller::create(sPatcher patcher) noexcept
@@ -62,7 +64,7 @@ namespace Kiwi
             lock_guard<mutex> guard(m_mutex);
             Patcher::Controller::sObjectHandler handler = make_shared<Patcher::Controller::ObjectHandler>(m_patcher, object);
             m_object_handlers.push_back(handler);
-            m_patcher->addChildForView(getView(), handler);
+            //m_patcher->addChildForView(getView(), handler);
         }
     }
     
@@ -76,7 +78,7 @@ namespace Kiwi
                 sObjectHandler handler = (*it);
                 if(handler && handler->getObject() == object)
                 {
-                    patcher->removeChildForView(getView(), handler);
+                    //patcher->removeChildForView(getView(), handler);
                     m_object_handlers.erase(it);
                 }
             }
@@ -90,7 +92,7 @@ namespace Kiwi
         {
             Patcher::Controller::sLinkHandler handler = make_shared<Patcher::Controller::LinkHandler>(patcher, link);
             m_link_handlers.push_back(handler);
-            patcher->GuiSketcher::addChild(handler);
+            patcher->GuiModel::addChild(handler);
         }
         */
     }
@@ -280,7 +282,7 @@ namespace Kiwi
     
     vector<Action::Code> Patcher::Controller::getActionCodes()
     {
-        return vector<Action::Code>({newBang, newObject, editModeSwitch, selectAll});
+        return vector<Action::Code>({newBang, newObject, editModeSwitch});
     }
     
     Action Patcher::Controller::getAction(const ulong code)
@@ -654,7 +656,7 @@ namespace Kiwi
     // ================================================================================ //
     
     Patcher::Controller::Lasso::Lasso(sPatcher patcher, sController pctrl, sSelection selection) noexcept :
-    GuiSketcher(patcher->GuiSketcher::getContext()), m_patcher(patcher), m_owner_ctrl(pctrl), m_selection(selection)
+    GuiModel(patcher->GuiModel::getContext()), m_patcher(patcher), m_owner_ctrl(pctrl), m_selection(selection)
     {
         ;
     }
@@ -666,7 +668,7 @@ namespace Kiwi
             sPatcher p = m_patcher.lock();
             if(p)
             {
-                p->addChild(static_pointer_cast<GuiSketcher>(shared_from_this()));
+                p->addChild(static_pointer_cast<GuiModel>(shared_from_this()));
                 m_active = true;
             }
         }
@@ -679,7 +681,7 @@ namespace Kiwi
             sPatcher p = m_patcher.lock();
             if(p)
             {
-                p->removeChild(static_pointer_cast<GuiSketcher>(shared_from_this()));
+                p->removeChild(static_pointer_cast<GuiModel>(shared_from_this()));
                 m_active = false;
             }
         }
@@ -694,7 +696,8 @@ namespace Kiwi
         if(selection)
         {
             m_startpos = point;
-            setBounds(Rectangle(point, Size()));
+            int todo;
+            //setBounds(Rectangle(point, Size()));
             addToPatcher();
             
             if(!preserve)
@@ -734,7 +737,8 @@ namespace Kiwi
         const sSelection selection = m_selection.lock();
         if(patcher && selection)
         {
-            setBounds(Rectangle::withCorners(m_startpos, point));
+            int todo;
+            //setBounds(Rectangle::withCorners(m_startpos, point));
             bool changed = false;
             
             if(preserve)
@@ -850,7 +854,7 @@ namespace Kiwi
                 
                 sketch.fillAll(color.withAlpha(0.4));
                 sketch.setColor(color);
-                sketch.drawRectangle(getBounds().withZeroOrigin(), 1.);
+                //sketch.drawRectangle(getBounds().withZeroOrigin(), 1.);
             }
         }
     }
@@ -858,9 +862,9 @@ namespace Kiwi
     
     
     Patcher::Controller::ObjectHandler::ObjectHandler(sPatcher patcher, sObject object) noexcept :
-    GuiSketcher(patcher->GuiSketcher::getContext()), m_patcher(patcher), m_object(object)
+    GuiModel(patcher->GuiModel::getContext()), m_patcher(patcher), m_object(object)
     {
-        setBounds(object->getBounds().expanded(2));
+        //setBounds(object->getBounds().expanded(2));
         object->setPosition(Point(2, 2));
         addChild(object);
     }

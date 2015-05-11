@@ -36,7 +36,7 @@ namespace Kiwi
     /**
      The patcher is... ??
      */
-    class Patcher : public GuiSketcher, public DspChain
+    class Patcher : public GuiModel, public DspChain, public Attr::Manager
 	{
     public:
         class Window;
@@ -207,12 +207,6 @@ namespace Kiwi
          @param dico The dico.
          */
         void write(Dico& dico) const;
-        
-        //! The draw method that should be override.
-        /** The function shoulds draw some stuff in the sketch.
-         @param sketch A sketch to draw.
-         */
-        void draw(scGuiView view, Sketch& sketch) const override;
         
         //! Create a new window for the patcher.
         /** The function creates a new window for the patcher.

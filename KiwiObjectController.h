@@ -61,7 +61,7 @@ namespace Kiwi
          */
         inline sObject getObject() const noexcept
         {
-            return dynamic_pointer_cast<Object>(getSketcher());
+            return dynamic_pointer_cast<Object>(getModel());
         }
         
         // ================================================================================ //
@@ -100,7 +100,7 @@ namespace Kiwi
         /** The function retrieves if the object is visible.
          @param true if the object is visible, otherwise false.
          */
-        bool isVisible() const noexcept override;
+        bool isVisible() const noexcept;
         
     protected:
         

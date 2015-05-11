@@ -139,55 +139,6 @@ namespace Kiwi
         }
         
         // ================================================================================ //
-        //										BEHAVIOR                                    //
-        // ================================================================================ //
-        
-        //! Retrieve the position of the model.
-        /** The function retrieves the position of the model.
-         @return The position of the model.
-         */
-        virtual Point getPosition() const noexcept
-        {
-            return Point();
-        }
-        
-        //! Retrieve the size of the model.
-        /** The function retrieves the size of the model.
-         @return The size of the model.
-         */
-        virtual Size getSize() const noexcept
-        {
-            return m_patcher->getSize();
-        }
-        
-        //! Receives if the controller wants the mouse.
-        /** This function retrieves if the controller wants the mouse.
-         @return true if the controller wants the mouse, othrewise false.
-         */
-        inline bool wantMouse() const noexcept
-        {
-            return true;
-        }
-        
-        //! Receives if the controller wants the keyboard.
-        /** This function retrieves if the controller wants the keyboard.
-         @return true if the controller wants the keyboard, othrewise false.
-         */
-        inline bool wantKeyboard() const noexcept
-        {
-            return true;
-        }
-        
-        //! Receives if the controller wants actions.
-        /** This function retrieves if the controller wants the actions.
-         @return true if the controller wants the actions, othrewise false.
-         */
-        inline bool wantActions() const noexcept
-        {
-            return true;
-        }
-        
-        // ================================================================================ //
         //										PRESENTATION                                //
         // ================================================================================ //
         
@@ -538,7 +489,7 @@ namespace Kiwi
     //                                  PATCHER LASSO                                   //
     // ================================================================================ //
     
-    class Patcher::Controller::Lasso : public GuiSketcher
+    class Patcher::Controller::Lasso : public GuiModel
     {
     private:
         const wPatcher          m_patcher;
@@ -603,14 +554,20 @@ namespace Kiwi
          @param view    The view that ask to draw.
          @param sketch  A sketch to draw.
          */
-        void draw(scGuiView view, Sketch& sketch) const override;
+        void draw(scGuiView view, Sketch& sketch) const;
+        
+        //! Create the controller.
+        /** The function creates a controller depending on the inheritance.
+         @return The controller.
+         */
+        sGuiController createController() override {return nullptr;}
     };
     
     // ================================================================================ //
     //                                  OBJECT HANDLER                                  //
     // ================================================================================ //
     
-    class Patcher::Controller::ObjectHandler : public GuiSketcher
+    class Patcher::Controller::ObjectHandler : public GuiModel
     {
     private:
         const wPatcher  m_patcher;
@@ -640,7 +597,13 @@ namespace Kiwi
          @param view    The view that ask to draw.
          @param sketch  A sketch to draw.
          */
-        void draw(scGuiView view, Sketch& sketch) const override;
+        void draw(scGuiView view, Sketch& sketch) const;
+        
+        //! Create the controller.
+        /** The function creates a controller depending on the inheritance.
+         @return The controller.
+         */
+        sGuiController createController() override {return nullptr;}
     };
 }
 

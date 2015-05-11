@@ -34,12 +34,10 @@ namespace Kiwi
     // ================================================================================ //
     
     Patcher::Patcher(sInstance instance) noexcept :
-    GuiSketcher(instance),
+    GuiModel(instance),
     DspChain(instance),
     m_instance(instance)
     {
-        setPosition(Point(30., 30.));
-        setSize(Size(800., 600.));
         createAttr(Tags::unlocked_bgcolor,  "Unlocked Background Color",    "Appearance",   Color(0.88, 0.89, 0.88, 1.));
         createAttr(Tags::locked_bgcolor,    "Locked Background Color",      "Appearance",   Color(0.88, 0.89, 0.88, 1.));
         createAttr(Tags::gridsize,          "Grid Size",                    "Editing",      long(20ul));
@@ -352,11 +350,6 @@ namespace Kiwi
 			}*/
         }
     }
-     
-    void Patcher:: draw(scGuiView ctrl, Sketch& sketch) const
-    {
-        ;
-    }
     
     sGuiWindow Patcher::createWindow()
     {
@@ -366,8 +359,7 @@ namespace Kiwi
             shared_ptr<Window> window = make_shared<Window>(getShared());
             if(window)
             {
-                window->initialize();
-                window->display();
+                ;
             }
             return window;
         }
