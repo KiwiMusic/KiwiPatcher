@@ -33,7 +33,7 @@ namespace Kiwi
     //                                      INSTANCE                                    //
     // ================================================================================ //
     
-    Instance::Instance(sGuiDeviceManager guiDevice, sDspDeviceManager dspDevice, string const& name) noexcept :
+    Instance::Instance(sGuiDeviceManager guiDevice, sDspDeviceManager dspDevice, sTag name) noexcept :
     GuiContext(guiDevice),
     DspContext(dspDevice),
     m_name(name)
@@ -43,44 +43,14 @@ namespace Kiwi
     
     Instance::~Instance()
     {
+        lock_guard<mutex> guard(m_patchers_mutex);
         m_patchers.clear();
-        m_lists.clear();
-#ifdef __KIWI_VERBOSE__
-        Console::post("The instance \"" + m_name + "\" has been deleted.");
-#endif
+        m_listeners.clear();
     }
     
     sInstance Instance::create(sGuiDeviceManager guiDevice, sDspDeviceManager dspDevice, string const& name)
     {
-        sInstance instance;
-        if(!name.empty())
-        {
-            sTag tname = Tag::create(name);
-            if(!libraries_loaded)
-            {
-                libraries_loaded = ObjectsInitialize();
-            }
-            //if(Console::m_instances.find(tname) == Console::m_instances.end())
-            {
-                instance = make_shared<Instance>(guiDevice, dspDevice, name);
-                if(instance)
-                {
-                    //Console::m_instances[tname] = instance;
-#ifdef __KIWI_VERBOSE__
-                    Console::post("The instance \"" + name + "\" has been created.");
-#endif
-                }
-            }
-            //else
-            {
-                Console::error("The instance's name \"" + instance->getName() + "\" already exists.");
-            }
-        }
-        else
-        {
-            Console::error("The instance needs a name to be created.");
-        }
-        return instance;
+        return make_shared<Instance>(guiDevice, dspDevice, Tag::create(name));
     }
     
     sPatcher Instance::createPatcher()
@@ -91,64 +61,38 @@ namespace Kiwi
 
     sPatcher Instance::createPatcher(Dico& dico)
     {
-        sPatcher patcher = Patcher::create(getShared(), dico);
-        if(patcher)
+        sPatcher patcher;
+        bool state(false);
         {
-            m_patchers_mutex.lock();
-            m_patchers.insert(patcher);
-            m_patchers_mutex.unlock();
-            DspContext::add(patcher);
-            
-            m_lists_mutex.lock();
-            auto it = m_lists.begin();
-            while(it != m_lists.end())
+            patcher = Patcher::create(getShared(), dico);
+            lock_guard<mutex> guard(m_patchers_mutex);
+            if(patcher && m_patchers.insert(patcher).second)
             {
-                if((*it).expired())
-                {
-                    it = m_lists.erase(it);
-                }
-                else
-                {
-                    Instance::sListener listener = (*it).lock();
-                    listener->patcherCreated(getShared(), patcher);
-                    ++it;
-                }
+                DspContext::add(patcher);
+                state = true;
             }
-            m_lists_mutex.unlock();
+        }
+        if(state)
+        {
+            m_listeners.call(&Listener::patcherCreated, getShared(), patcher);
         }
         return patcher;
     }
     
     void Instance::removePatcher(sPatcher patcher)
     {
-        m_patchers_mutex.lock();
-        if(m_patchers.find(patcher) != m_patchers.end())
+        bool state(false);
         {
-            DspContext::remove(patcher);
-            
-            m_patchers.erase(patcher);
-            m_patchers_mutex.unlock();
-            
-            m_lists_mutex.lock();
-            auto it = m_lists.begin();
-            while(it != m_lists.end())
+            lock_guard<mutex> guard(m_patchers_mutex);
+            if(m_patchers.erase(patcher))
             {
-                if((*it).expired())
-                {
-                    it = m_lists.erase(it);
-                }
-                else
-                {
-                    Instance::sListener listener = (*it).lock();
-                    listener->patcherRemoved(getShared(), patcher);
-                    ++it;
-                }
+                DspContext::remove(patcher);
+                state = true;
             }
-            m_lists_mutex.unlock();
         }
-        else
+        if(state)
         {
-            m_patchers_mutex.unlock();
+            m_listeners.call(&Listener::patcherRemoved, getShared(), patcher);
         }
     }
     
@@ -160,20 +104,22 @@ namespace Kiwi
     
     void Instance::addListener(sListener listener)
     {
-        if(listener)
-        {
-            lock_guard<mutex> guard(m_lists_mutex);
-            m_lists.insert(listener);
-        }
+        m_listeners.add(listener);
     }
     
     void Instance::removeListener(sListener listener)
     {
-        if(listener)
+        m_listeners.remove(listener);
+    }
+    
+    sGuiWindow Instance::createWindow()
+    {
+        sWindow window(make_shared<Window>(getShared()));
+        if(window)
         {
-            lock_guard<mutex> guard(m_lists_mutex);
-            m_lists.erase(listener);
+            window->addToDesktop();
         }
+        return window;
     }
     
     // ================================================================================ //

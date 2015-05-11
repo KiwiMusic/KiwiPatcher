@@ -42,12 +42,6 @@ namespace Kiwi
     class Console : public enable_shared_from_this<Console>
     {
     public:
-        friend sInstance Instance::create(sGuiDeviceManager, sDspDeviceManager, string const&);
-        //static map<sTag, sInstance> m_instances;
-        
-        //static sDspDeviceManager            m_dsp_device;
-        //static sGuiDeviceManager            m_gui_device;
-        
         class Listener;
         typedef shared_ptr<Listener>        sListener;
         typedef weak_ptr<Listener>          wListener;
@@ -57,7 +51,6 @@ namespace Kiwi
         class Message;
             
     private:
-        
         
         static set<wListener,
         owner_less<wListener>> m_listeners;
@@ -183,8 +176,8 @@ namespace Kiwi
         {
             Empty   = 0,
             Post    = 1,
-            Error   = 2,
-            Warning = 3
+            Warning = 2,
+            Error   = 3
         };
         
         const string        content;

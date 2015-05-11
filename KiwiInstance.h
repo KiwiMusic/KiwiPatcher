@@ -45,6 +45,12 @@ namespace Kiwi
     class Instance : public Beacon::Factory, public GuiContext, public DspContext
     {
     public:
+        class Window;
+        typedef shared_ptr<Window>        sWindow;
+        typedef weak_ptr<Window>          wWindow;
+        typedef shared_ptr<const Window>  scWindow;
+        typedef weak_ptr<const Window>    wcWindow;
+        
         class Listener;
         typedef shared_ptr<Listener>        sListener;
         typedef weak_ptr<Listener>          wListener;
@@ -52,12 +58,10 @@ namespace Kiwi
         typedef weak_ptr<const Listener>    wcListener;
         
     private:
-        const string            m_name;
+        const sTag              m_name;
         set<sPatcher>           m_patchers;
         mutex                   m_patchers_mutex;
-        set<wListener,
-        owner_less<wListener>>  m_lists;
-        mutable mutex           m_lists_mutex;
+        ListenerSet<Listener>   m_listeners;
         
     public:
         
@@ -67,7 +71,7 @@ namespace Kiwi
          @param dspDevice The dsp device manager.
          @param name      The instance name.
          */
-        Instance(sGuiDeviceManager guiDevice, sDspDeviceManager dspDevice, string const& name) noexcept;
+        Instance(sGuiDeviceManager guiDevice, sDspDeviceManager dspDevice, sTag name) noexcept;
         
         //! The destructor.
         /** You should never use this method.
@@ -105,7 +109,7 @@ namespace Kiwi
         /** The function retrieves the name of the instance.
          @return The name of the instance.
          */
-        inline string getName() const noexcept
+        inline sTag getName() const noexcept
         {
             return m_name;
         }
@@ -155,10 +159,16 @@ namespace Kiwi
          @see bind
          */
         void removeListener(sListener listener);
+        
+        //! Create a new window for the instance.
+        /** The function creates a new window for the instance.
+         @return The window.
+         */
+        sGuiWindow createWindow();
     };
     
     // ================================================================================ //
-    //                              INSTANCE LISTENER                                   //
+    //                                  INSTANCE LISTENER                               //
     // ================================================================================ //
     
     //! The instance listener is a virtual class that can bind itself to an instance and be notified of several changes.
@@ -168,21 +178,10 @@ namespace Kiwi
     class Instance::Listener
     {
     public:
-        //! The constructor.
-        /** The constructor does nothing.
-         */
-        Listener()
-        {
-            ;
-        }
-        
         //! The destructor.
         /** The destructor does nothing.
          */
-        virtual ~Listener()
-        {
-            ;
-        }
+        virtual inline ~Listener() {}
         
         //! Receive the notification that a patcher has been created.
         /** The function is called by the instance when a patcher has been created.
@@ -212,11 +211,43 @@ namespace Kiwi
     };
     
     // ================================================================================ //
+    //                                  INSTANCE WINDOW                                 //
+    // ================================================================================ //
+    
+    class Instance::Window : public GuiWindow
+    {
+    public:
+        Window(sGuiContext context) : GuiWindow(context)
+        {
+            setHeader(make_shared<GuiWindow::Header>(context, "Kiwi Studio"));
+        }
+        
+        inline ~Window() {}
+        
+        //! Receives the notification that a view has been created.
+        /** The function notfies the model that a view has been created.
+         @param view The view.
+         */
+        void viewCreated(sGuiView view) noexcept override
+        {
+            sGuiContext ctxt(getContext());
+            if(view && ctxt)
+            {
+                sGuiController ctrl(view->getController());
+                if(ctrl)
+                {
+                    ctrl->setBounds(ctxt->getScreenBounds(ctrl->getBounds().centre()));
+                }
+            }
+        }
+    };
+    
+    // ================================================================================ //
     //                                      OBJECT FACTORY                              //
     // ================================================================================ //
     
     //! The factory
-    /** The factory is the kiwi's counterpart of Andy Warhol factory.
+    /** The factory is the kiwi's counterpart of Andy Warhol's factory.
      */
     class Factory
     {
