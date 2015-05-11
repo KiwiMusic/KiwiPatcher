@@ -29,34 +29,33 @@
 namespace Kiwi
 {
     // ================================================================================ //
-    //                                      PAGE                                        //
+    //                                      PATCHER                                     //
     // ================================================================================ //
     
     //! The patcher manages objects and links.
     /**
      The patcher is... ??
      */
-    class Patcher : public GuiModel, public DspChain, public Attr::Manager
+    class Patcher : public GuiSketcher, public DspChain
 	{
     public:
-        class Controller;
-        typedef shared_ptr<Controller>          sController;
-        typedef weak_ptr<Controller>            wController;
-        typedef shared_ptr<const Controller>    scController;
-        typedef weak_ptr<const Controller>      wcController;
-        
         class Window;
         typedef shared_ptr<Window>              sWindow;
         typedef weak_ptr<Window>                wWindow;
         typedef shared_ptr<const Window>        scWindow;
         typedef weak_ptr<const Window>          wcWindow;
         
-        class Lasso;
-        typedef shared_ptr<Lasso>               sLasso;
-        typedef weak_ptr<Lasso>                 wLasso;
-        typedef shared_ptr<const Lasso>         scLasso;
-        typedef weak_ptr<const Lasso>           wcLasso;
+        class Controller;
+        typedef shared_ptr<Controller>          sController;
+        typedef weak_ptr<Controller>            wController;
+        typedef shared_ptr<const Controller>    scController;
+        typedef weak_ptr<const Controller>      wcController;
         
+        class Listener;
+        typedef shared_ptr<Listener>            sListener;
+        typedef weak_ptr<Listener>              wListener;
+        typedef shared_ptr<const Listener>      scListener;
+        typedef weak_ptr<const Listener>        wcListener;
         
     private:
         const wInstance             m_instance;
@@ -64,7 +63,8 @@ namespace Kiwi
         vector<sLink>               m_links;
         vector<ulong>               m_free_ids;
         mutable mutex               m_mutex;
-        
+        ListenerSet<Listener>       m_listeners;
+
         //! @internal Object and link creation.
         void createObject(Dico& dico);
         void createLink(Dico const& dico);
@@ -87,6 +87,26 @@ namespace Kiwi
          @return The patcher.
          */
         static sPatcher create(sInstance instance, Dico& dico);
+        
+        //! Add a patcher's listener.
+        /** The function adds a patcher's listener.
+         If the listener was already listening the patcher, the function has no effect.
+         @param listener The listener to add.
+         */
+        void addListener(sListener listener) noexcept
+        {
+            m_listeners.add(listener);
+        }
+        
+        //! Remove a patcher's listener.
+        /** The function removes a patcher's listener.
+         If the listener wasn't listening the patcher, the function has no effect.
+         @param listener The listener to add.
+         */
+        void removeListener(sListener listener) noexcept
+        {
+            m_listeners.remove(listener);
+        }
 		
         //! Retrieve the instance that manages the patcher.
         /** The function retrieves the instance that manages the patcher.
@@ -144,12 +164,12 @@ namespace Kiwi
         
         //! Get the links.
         /** The function retrieves the links from the patcher.
-         @param links   A vector of links.
+         @return A vector of links.
          */
-        void getLinks(vector<sLink>& links) const noexcept
+        vector<sLink> getLinks() const noexcept
         {
             lock_guard<mutex> guard(m_mutex);
-            links = m_links;
+            return m_links;
         }
         
         //! Append a dico.
@@ -192,40 +212,13 @@ namespace Kiwi
         /** The function shoulds draw some stuff in the sketch.
          @param sketch A sketch to draw.
          */
-        void draw(scGuiView view, Sketch& sketch) const;
+        void draw(scGuiView view, Sketch& sketch) const override;
         
         //! Create a new window for the patcher.
         /** The function creates a new window for the patcher.
          @return The window.
          */
         sGuiWindow createWindow();
-        
-        //! Retrieves the position of the model.
-        /** The function retrieves the position of the model.
-         @return The position of the model.
-         */
-        inline Point getPosition() const noexcept
-        {
-            return getAttrValue<Point>(Tags::position);
-        }
-        
-        //! Retrieves the size of the model.
-        /** The function retrieves the size of the model.
-         @return The size of the model.
-         */
-        inline Size getSize() const noexcept
-        {
-            return getAttrValue<Size>(Tags::size);
-        }
-        
-        //! Retrieves the bounds of the model.
-        /** The function retrieves the bounds of the model.
-         @return The bounds of the model.
-         */
-        inline Rectangle getBounds() const noexcept
-        {
-            return Rectangle(getPosition(), getSize());
-        }
         
         //! Retrieve the "gridsize" attribute value of the patcher.
         /** The function retrieves the "gridsize" attribute value of the patcher.
@@ -254,10 +247,6 @@ namespace Kiwi
             return getAttrValue<Color>(Tags::unlocked_bgcolor);
         }
         
-        sLasso createLasso();
-        
-        void removeLasso(sLasso lasso);
-        
     private:
         
         //! Create the controller.
@@ -267,39 +256,43 @@ namespace Kiwi
         sGuiController createController() override;
     };
     
-    class Patcher::Lasso : public GuiModel
+    // ================================================================================ //
+    //                                  PATCHER LISTENER                                //
+    // ================================================================================ //
+    
+    //! The patcher listener is an abstract class that subclasses should inherit from to receive notifications.
+    /**
+     The patcher listener is an abstract class that subclasses should inherit from to receive notifications related to object and link creation and deletion
+     */
+    class Patcher::Listener
     {
-    private:
-        bool						dragging;
-        set<wObject,
-        owner_less<wObject>>        objects;
-        set<wLink,
-        owner_less<wLink>>          links;
-        
     public:
+        //! The destructor.
+        virtual ~Listener() {}
         
-        Lasso(sGuiContext context) noexcept : GuiModel(context)
-        {
-            ;
-        }
-        
-        virtual ~Lasso() noexcept
-        {
-            objects.clear();
-            links.clear();
-        }
-        
-        //! The draw method that should be override.
-        /** The function shoulds draw some stuff in the sketch.
-         @param ctrl    The controller that ask the draw.
-         @param sketch  A sketch to draw.
+        //! Receive the notification that an object has been created.
+        /** The function is called by the patcher when an object has been created.
+         @param object     The object.
          */
-        void draw(scGuiView view, Sketch& sketch) const;
+        virtual void objectCreated(sPatcher patcher, sObject object) = 0;
         
-        sGuiController createController() override
-        {
-            return nullptr;
-        }
+        //! Receive the notification that an object has been removed.
+        /** The function is called by the patcher when an object has been removed.
+         @param object     The object.
+         */
+        virtual void objectRemoved(sPatcher patcher, sObject object) = 0;
+        
+        //! Receive the notification that a link has been created.
+        /** The function is called by the patcher when a link has been created.
+         @param link     The link.
+         */
+        virtual void linkCreated(sPatcher patcher, sLink link) = 0;
+        
+        //! Receive the notification that a link has been removed.
+        /** The function is called by the patcher when a link has been removed.
+         @param link    The link.
+         */
+        virtual void linkRemoved(sPatcher patcher, sLink link) = 0;
     };
 }
 

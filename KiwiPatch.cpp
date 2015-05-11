@@ -34,12 +34,12 @@ namespace Kiwi
     // ================================================================================ //
     
     Patcher::Patcher(sInstance instance) noexcept :
-    GuiModel(instance),
+    GuiSketcher(instance),
     DspChain(instance),
     m_instance(instance)
     {
-        createAttr(Tags::position,          "Position",                     "Appearance", Point(30., 30.));
-        createAttr(Tags::size,              "Size",                         "Appearance", Size(800., 600.));
+        setPosition(Point(30., 30.));
+        setSize(Size(800., 600.));
         createAttr(Tags::unlocked_bgcolor,  "Unlocked Background Color",    "Appearance",   Color(0.88, 0.89, 0.88, 1.));
         createAttr(Tags::locked_bgcolor,    "Locked Background Color",      "Appearance",   Color(0.88, 0.89, 0.88, 1.));
         createAttr(Tags::gridsize,          "Grid Size",                    "Editing",      long(20ul));
@@ -82,7 +82,7 @@ namespace Kiwi
                     DspChain::add(dspnode);
                 }
                 m_objects.push_back(object);
-                GuiModel::addChild(object);
+                m_listeners.call(&Listener::objectCreated, getShared(), object);
                 object->loaded();
             }
         }
@@ -142,8 +142,8 @@ namespace Kiwi
                                 shared_ptr<Link::SignalLink> link = make_shared<Link::SignalLink>(getShared(), from, vfrom[1], to, vto[1], type, pfrom, poutlet, pto, pinlet);
                                 
                                 DspChain::add(link);
-                                m_links.push_back(static_pointer_cast<Link>(link));
-
+                                m_links.push_back(link);
+                                m_listeners.call(&Listener::linkCreated, getShared(), link);
                             }
                         }
                         else if(outlet->getType() == inlet->getType() || inlet->getType() == Object::Io::Both || outlet->getType() == Object::Io::Both)
@@ -153,6 +153,7 @@ namespace Kiwi
                             inlet->append(from, vto[1]);
                             sLink link = make_shared<Link>(getShared(), from, vfrom[1], to, vto[1], Object::Io::Message);
                             m_links.push_back(link);
+                            m_listeners.call(&Listener::linkCreated, getShared(), link);
                         }
                     }
                 }
@@ -251,13 +252,15 @@ namespace Kiwi
                         ++li;
                     }
                 }
+                
                 sDspNode dspnode = dynamic_pointer_cast<DspNode>(object);
                 if(dspnode)
                 {
                     DspChain::remove(dspnode);
                 }
+                
+                m_listeners.call(&Listener::objectRemoved, getShared(), object);
                 m_objects.erase(it);
-                GuiModel::removeChild(object);
                 m_free_ids.push_back(object->getId());
             }
         }
@@ -276,6 +279,8 @@ namespace Kiwi
                 {
                     DspChain::remove(dsplink);
                 }
+                
+                m_listeners.call(&Listener::linkRemoved, getShared(), link);
                 m_links.erase(it);
             }
         }
@@ -361,7 +366,8 @@ namespace Kiwi
             shared_ptr<Window> window = make_shared<Window>(getShared());
             if(window)
             {
-                window->addToDesktop();
+                window->initialize();
+                window->display();
             }
             return window;
         }
@@ -370,29 +376,7 @@ namespace Kiwi
     
     sGuiController Patcher::createController()
     {
-        return make_shared<Patcher::Controller>(getShared());
-    }
-    
-    Patcher::sLasso Patcher::createLasso()
-    {
-        sLasso lasso = make_shared<Lasso>(GuiModel::getContext());
-        if(lasso)
-        {
-            GuiModel::addChild(lasso);
-        }
-        return lasso;
-    }
-    
-    void Patcher::removeLasso(sLasso lasso)
-    {
-        GuiModel::removeChild(lasso);
-    }
-    
-    void Patcher::Lasso::draw(scGuiView view, Sketch& sketch) const
-    {
-        sketch.fillAll(Color(0.96, 0.96, 0.96, 0.4));
-        sketch.setColor(Color(0.96, 0.96, 0.96, 1.));
-        sketch.drawRectangle(view->getBounds().withZeroOrigin(), 1.);
+        return Patcher::Controller::create(getShared());
     }
 }
 

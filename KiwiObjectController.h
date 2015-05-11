@@ -55,6 +55,15 @@ namespace Kiwi
          */
         ~Controller() noexcept;
         
+        //! Retrieve the object of the controller.
+        /** The function retrieves the object of the controller.
+         @return The object.
+         */
+        inline sObject getObject() const noexcept
+        {
+            return dynamic_pointer_cast<Object>(getSketcher());
+        }
+        
         // ================================================================================ //
         //										PRESENTATION                                //
         // ================================================================================ //
@@ -64,10 +73,7 @@ namespace Kiwi
          @return the zoom of the object in percent.
          @see setZoom
          */
-        inline ulong getZoom() const noexcept
-        {
-            return m_zoom;
-        }
+        inline ulong getZoom() const noexcept { return m_zoom; }
         
         //! Set the zoom of the object.
         /** The function sets the zoom of the object.
@@ -81,10 +87,7 @@ namespace Kiwi
          @return True if the object is locked, false if it is unlocked.
          @see setLockStatus
          */
-        inline bool getLockStatus() const noexcept
-        {
-            return m_locked;
-        }
+        inline bool getLockStatus() const noexcept { return m_locked; }
         
         //! Lock or unlock the object.
         /** The function locks or unlocks the object.
@@ -92,6 +95,12 @@ namespace Kiwi
          @see getLockStatus
          */
         void setLockStatus(const bool locked);
+        
+        //! Retrieve if the object is visible.
+        /** The function retrieves if the object is visible.
+         @param true if the object is visible, otherwise false.
+         */
+        bool isVisible() const noexcept override;
         
     protected:
         
