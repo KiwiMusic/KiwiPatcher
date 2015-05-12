@@ -123,6 +123,38 @@ namespace Kiwi
     }
     
     // ================================================================================ //
+    //                                  INSTANCE WINDOW                                 //
+    // ================================================================================ //
+    
+    Instance::Window::Window(sInstance instance) : GuiWindow(instance),
+    m_instance(instance)
+    {
+        setHeader(make_shared<GuiWindow::Header>(instance, "Kiwi Studio"));
+        setContent(make_shared<GuiViewPort>(instance));
+    }
+    
+    void Instance::Window::viewCreated(sGuiView view) noexcept
+    {
+        sGuiContext ctxt(getContext());
+        if(view && ctxt)
+        {
+            sGuiController ctrl(view->getController());
+            if(ctrl)
+            {
+                ctrl->setBounds(ctxt->getScreenBounds(ctrl->getBounds().centre()));
+            }
+        }
+    }
+    
+    void Instance::Window::patcherCreated(sInstance instance, sPatcher patcher) {}
+    
+    void Instance::Window::patcherRemoved(sInstance instance, sPatcher patcher) {}
+    
+    void Instance::Window::dspStarted(sInstance instance) {}
+    
+    void Instance::Window::dspStopped(sInstance instance) {}
+    
+    // ================================================================================ //
     //                                      OBJECT FACTORY                              //
     // ================================================================================ //
     

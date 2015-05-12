@@ -43,8 +43,7 @@ namespace Kiwi
         m_viewport->setSize(patcher->getSize());
          */
         m_viewport->setContent(patcher);
-        m_viewport->setContentPosition(Point());
-        //addChild(m_viewport);
+        addChild(m_viewport);
         setHeader(make_shared<GuiWindow::Header>(getContext(), "patcher"));
     }
     
