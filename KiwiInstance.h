@@ -139,10 +139,10 @@ namespace Kiwi
         
         //! Retreive all the patchers of the instance.
         /** The function retreives all the patchers of the instance.
-         @param patchers A vector that will be filled with the patchers.
+         @return A vector of patchers.
          @see createPatcher, removePatcher
          */
-        void getPatchers(vector<sPatcher>& patchers);
+        vector<sPatcher> getPatchers();
         
         //! Add an instance listener in the binding list of the instance.
         /** The function adds an instance listener in the binding list of the instance. 

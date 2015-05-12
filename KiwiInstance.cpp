@@ -81,25 +81,22 @@ namespace Kiwi
     
     void Instance::removePatcher(sPatcher patcher)
     {
-        bool state(false);
+        bool success = false;
         {
             lock_guard<mutex> guard(m_patchers_mutex);
-            if(m_patchers.erase(patcher))
-            {
-                DspContext::remove(patcher);
-                state = true;
-            }
+            success = m_patchers.erase(patcher);
         }
-        if(state)
+        if(success)
         {
+            DspContext::remove(patcher);
             m_listeners.call(&Listener::patcherRemoved, getShared(), patcher);
         }
     }
     
-    void Instance::getPatchers(vector<sPatcher>& patchers)
+    vector<sPatcher> Instance::getPatchers()
     {
         lock_guard<mutex> guard(m_patchers_mutex);
-        patchers.assign(m_patchers.begin(), m_patchers.end());
+        return vector<sPatcher>(m_patchers.begin(), m_patchers.end());
     }
     
     void Instance::addListener(sListener listener)
@@ -165,19 +162,4 @@ namespace Kiwi
         return names;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
