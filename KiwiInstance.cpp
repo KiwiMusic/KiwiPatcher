@@ -138,7 +138,8 @@ namespace Kiwi
             sGuiController ctrl(view->getController());
             if(ctrl)
             {
-                ctrl->setBounds(ctxt->getScreenBounds(ctrl->getBounds().centre()));
+                //ctrl->setBounds(ctxt->getScreenBounds(ctrl->getBounds().centre()));
+                ctrl->setBounds(Rectangle(30., 30., 800, 600));
             }
         }
     }
