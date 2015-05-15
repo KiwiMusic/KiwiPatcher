@@ -23,110 +23,24 @@
 
 
 #include "KiwiConsole.h"
+#include "KiwiInstance.h"
 
 namespace Kiwi
 {
-    //sDspDeviceManager Console::m_dsp_device;
-    //sGuiDeviceManager Console::m_gui_device;
-    //map<sTag, sInstance> Console::m_instances;
-    
-    set<Console::wListener,
-    owner_less<Console::wListener>> Console::m_listeners;
-    mutex Console::m_mutex;
-    
     // ================================================================================ //
     //                                      CONSOLE                                     //
     // ================================================================================ //
-    
-    void Console::bind(shared_ptr<Console::Listener> listener)
-    {
-        if(listener)
-        {
-            lock_guard<mutex> guard(m_mutex);
-            m_listeners.insert(listener);
-        }
-    }
-    
-    void Console::unbind(shared_ptr<Console::Listener> listener)
-    {
-        if(listener)
-        {
-            lock_guard<mutex> guard(m_mutex);
-            m_listeners.erase(listener);
-        }
-    }
 
-    bool Console::receive(string const& message)
+    void Console::addListener(sListener listener) noexcept
     {
-        sInstance instance;
-        Vector args;//(Atom::createVector(message));
-        if(!args.empty())
-        {
-            
-        }
-        string target;
-        string command;
-        string word;
-        //vector<string> args;
-        istringstream iss(message);
-        iss >> command;
-        iss >> target;
-        /*
-        if(command == "exit")
-        {
-            return false;
-        }
-        if(target == "instance")
-        {
-            if(command == "create")
-            {
-                string name;
-                iss >> name;
-                Instance::create(m_gui_device, m_dsp_device, name);
-            }
-            else if(command == "delete")
-            {
-                
-            }
-        }
-        else
-        {
-            auto it = m_instances.find(Tag::create(target));
-            if(it != m_instances.end())
-            {
-                instance = it->second;
-            }
-            else
-            {
-                error("The target \"" + target + "\" doesn't exist.");
-            }
-        }
-        if(instance)
-        {
-            if(command == "create")
-            {
-                
-            }
-            else if(command == "delete")
-            {
-                
-            }
-            else if(command == "set")
-            {
-                Vector inputs;
-                instance->set(inputs);
-            }
-            else if(command == "get")
-            {
-                
-            }
-            else
-            {
-                error("The console accepts only the commands \"create\", \"delete\", \"set\", \"get\" and \"exit\".");
-            }
-        }*/
-        
-        return true;
+        ListenerSet<Listener>& listeners(getListeners());
+        listeners.add(listener);
+    }
+    
+    void Console::removeListener(sListener listener) noexcept
+    {
+        ListenerSet<Listener>& listeners(getListeners());
+        listeners.remove(listener);
     }
     
     void Console::post(string const& message) noexcept
@@ -135,21 +49,9 @@ namespace Kiwi
         cout << message << endl;
 #endif
         shared_ptr<const Message> mess = make_shared<Message>(nullptr, nullptr, nullptr, Message::Post, message);
-        lock_guard<mutex> guard(m_mutex);
-        for(auto it = m_listeners.begin(); it !=  m_listeners.end(); ++it)
-        {
-            
-            shared_ptr<Console::Listener> to = (*it).lock();
-            if(to)
-            {
-                to->receive(mess);
-            }
-            else
-            {
-                ++it;
-                m_listeners.erase(to);
-            }
-        }
+        
+        ListenerSet<Listener>& listeners(getListeners());
+        listeners.call(&Listener::receive, mess);
     }
         
     void Console::post(scObject object, string const& message) noexcept
@@ -165,20 +67,9 @@ namespace Kiwi
             patcher = object->getPatcher();
         }
         shared_ptr<const Message> mess = make_shared<Message>(instance, patcher, object, Message::Post, message);
-        lock_guard<mutex> guard(m_mutex);
-        for(auto it = m_listeners.begin(); it !=  m_listeners.end(); ++it)
-        {
-            shared_ptr<Console::Listener> to = (*it).lock();
-            if(to)
-            {
-                to->receive(mess);
-            }
-            else
-            {
-                ++it;
-                m_listeners.erase(to);
-            }
-        }
+        
+        ListenerSet<Listener>& listeners(getListeners());
+        listeners.call(&Listener::receive, mess);
     }
         
     void Console::warning(string const& message) noexcept
@@ -187,21 +78,9 @@ namespace Kiwi
         cerr << "warning : " << message << endl;
 #endif
         shared_ptr<const Message> mess = make_shared<Message>(nullptr, nullptr, nullptr, Message::Warning, message);
-        lock_guard<mutex> guard(m_mutex);
-        for(auto it = m_listeners.begin(); it !=  m_listeners.end(); ++it)
-        {
-            
-            shared_ptr<Console::Listener> to = (*it).lock();
-            if(to)
-            {
-                to->receive(mess);
-            }
-            else
-            {
-                ++it;
-                m_listeners.erase(to);
-            }
-        }
+        
+        ListenerSet<Listener>& listeners(getListeners());
+        listeners.call(&Listener::receive, mess);
     }
         
     void Console::warning(scObject object, string const& message) noexcept
@@ -217,20 +96,9 @@ namespace Kiwi
             patcher     = object->getPatcher();
         }
         shared_ptr<const Message> mess = make_shared<Message>(instance, patcher, object, Message::Warning, message);
-        lock_guard<mutex> guard(m_mutex);
-        for(auto it = m_listeners.begin(); it !=  m_listeners.end(); ++it)
-        {
-            shared_ptr<Console::Listener> to = (*it).lock();
-            if(to)
-            {
-                to->receive(mess);
-            }
-            else
-            {
-                ++it;
-                m_listeners.erase(to);
-            }
-        }
+        
+        ListenerSet<Listener>& listeners(getListeners());
+        listeners.call(&Listener::receive, mess);
     }
         
     void Console::error(string const& message) noexcept
@@ -239,21 +107,9 @@ namespace Kiwi
         cerr << "error : " << message << endl;
 #endif
         shared_ptr<const Message> mess = make_shared<Message>(nullptr, nullptr, nullptr, Message::Error, message);
-        lock_guard<mutex> guard(m_mutex);
-        for(auto it = m_listeners.begin(); it !=  m_listeners.end(); ++it)
-        {
-            
-            shared_ptr<Console::Listener> to = (*it).lock();
-            if(to)
-            {
-                to->receive(mess);
-            }
-            else
-            {
-                ++it;
-                m_listeners.erase(to);
-            }
-        }
+        
+        ListenerSet<Listener>& listeners(getListeners());
+        listeners.call(&Listener::receive, mess);
     }
         
     void Console::error(scObject object, string const& message) noexcept
@@ -269,20 +125,9 @@ namespace Kiwi
             patcher        = object->getPatcher();
         }
         shared_ptr<const Message> mess = make_shared<Message>(instance, patcher, object, Message::Error, message);
-        lock_guard<mutex> guard(m_mutex);
-        for(auto it = m_listeners.begin(); it !=  m_listeners.end(); ++it)
-        {
-            shared_ptr<Console::Listener> to = (*it).lock();
-            if(to)
-            {
-                to->receive(mess);
-            }
-            else
-            {
-                ++it;
-                m_listeners.erase(to);
-            }
-        }
+        
+        ListenerSet<Listener>& listeners(getListeners());
+        listeners.call(&Listener::receive, mess);
     }
     
 }

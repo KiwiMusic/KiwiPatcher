@@ -24,10 +24,34 @@
 #ifndef __DEF_KIWI_CONSOLE__
 #define __DEF_KIWI_CONSOLE__
 
-#include "KiwiInstance.h"
+#include "../KiwiCore/KiwiCore.h"
 
 namespace Kiwi
 {
+    class Object;
+    typedef shared_ptr<Object>          sObject;
+    typedef weak_ptr<Object>            wObject;
+    typedef shared_ptr<const Object>    scObject;
+    typedef weak_ptr<const Object>      wcObject;
+    
+    class Link;
+    typedef shared_ptr<Link>            sLink;
+    typedef shared_ptr<const Link>      scLink;
+    typedef weak_ptr<Link>              wLink;
+    typedef weak_ptr<const Link>        wcLink;
+    
+    class Patcher;
+    typedef shared_ptr<Patcher>        sPatcher;
+    typedef weak_ptr<Patcher>          wPatcher;
+    typedef shared_ptr<const Patcher>  scPatcher;
+    typedef weak_ptr<const Patcher>    wcPatcher;
+    
+    class Instance;
+    typedef shared_ptr<Instance>        sInstance;
+    typedef weak_ptr<Instance>          wInstance;
+    typedef shared_ptr<const Instance>  scInstance;
+    typedef weak_ptr<const Instance>    wcInstance;
+    
     // ================================================================================ //
     //                                      CONSOLE                                     //
     // ================================================================================ //
@@ -37,7 +61,6 @@ namespace Kiwi
      The console is created with a kiwi instance then retrieve it and bind a console listener to get the posts, warnings and errors.
      @see Console::Message
      @see Console::Listener
-     @see Console::History
      */
     class Console : public enable_shared_from_this<Console>
     {
@@ -52,29 +75,38 @@ namespace Kiwi
             
     private:
         
-        static set<wListener,
-        owner_less<wListener>> m_listeners;
-        static mutex           m_mutex;
+        static inline ListenerSet<Listener>& getListeners() noexcept
+        {
+            static ListenerSet<Listener> _listeners;
+            return _listeners;
+        }
+        
+        static inline vector<Message>& getMessages() noexcept
+        {
+            static vector<Message> _messages;
+            return _messages;
+        }
+        
+        static inline mutex& getMutex() noexcept
+        {
+            static mutex _mutex;
+            return _mutex;
+        }
     public:
         
-        //! ...
-        /** ...
+        //! Adds an console listener in the binding list of the console.
+        /** The function adds an console listener in the binding list of the console.
+         @param listener The listener.
+         @see unbind
          */
-        static bool receive(string const& message);
+        void addListener(sListener listener) noexcept;
         
-        //! Add an console listener in the binding list of the console.
-        /** The function adds an console listener in the binding list of the console. If the console listener is already in the binding list, the function doesn't do anything.
-         @param listener  The pointer of the console listener.
-         @see              unbind()
+        //! Removed an console listener from the binding list of the console.
+        /** The function removes an console listener from the binding list of the console.
+         @param listener  The listener.
+         @see bind
          */
-        static void bind(shared_ptr<Listener> listener);
-        
-        //! Remove an console listener from the binding list of the console.
-        /** The function removes an console listener from the binding list of the console. If the console listener isn't in the binding list, the function doesn't do anything.
-         @param object  The pointer of the console listener.
-         @see           bind()
-         */
-        static void unbind(shared_ptr<Listener> listener);
+        void removeListener(sListener listener) noexcept;
         
         //! Post a standard message.
         /** The function post a message and notify the console listeners that a message has been received.
@@ -125,37 +157,21 @@ namespace Kiwi
      The console listener is a very light class with three methods that can receive the post, warning and error messages notifications from consoles.
      @see Console
      @see Console::Message
-     @see Console::History
      */
     class Console::Listener
     {
     public:
-        
-        //! The constructor.
-        /** The constructor does nothing.
-         */
-        Listener()
-        {
-            ;
-        }
-        
         //! The destructor.
         /** The destructor does nothing.
          */
-        virtual ~Listener()
-        {
-            ;
-        }
+        virtual inline ~Listener() {}
         
         //! Receive the messages.
         /** The function is called by the console when a message has been received.
          @param console The console that received the message.
          @param message The message.
          */
-        virtual void receive(shared_ptr<const Message> message)
-        {
-            ;
-        }
+        virtual void receive(shared_ptr<const Message> message) = 0;
     };
     
     // ================================================================================ //
@@ -204,7 +220,7 @@ namespace Kiwi
         }
     };
     
-        typedef shared_ptr<const Console::Message> scConsoleMessage;
+    typedef shared_ptr<const Console::Message> scConsoleMessage;
 
 };
 
