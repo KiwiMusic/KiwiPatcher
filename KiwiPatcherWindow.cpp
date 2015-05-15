@@ -34,7 +34,7 @@ namespace Kiwi
     Patcher::Window::Window(sPatcher patcher) noexcept :
     GuiWindow(patcher->GuiModel::getContext()),
     m_patcher(patcher),
-    m_viewport(make_shared<GuiViewPort>(patcher->GuiModel::getContext()))
+    m_viewport(make_shared<GuiViewport>(patcher->GuiModel::getContext()))
     {
         /*
         setPosition(patcher->getPosition());
