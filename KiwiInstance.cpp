@@ -151,48 +151,5 @@ namespace Kiwi
     void Instance::Window::dspStarted(sInstance instance) {}
     
     void Instance::Window::dspStopped(sInstance instance) {}
-    
-    // ================================================================================ //
-    //                                      OBJECT FACTORY                              //
-    // ================================================================================ //
-    
-    map<sTag, shared_ptr<Factory::Creator>> Factory::m_creators;
-    mutex Factory::m_mutex;
-    
-    sObject Factory::create(sTag name, Infos const& detail)
-    {
-        auto it = m_creators.find(name);
-        if(it != m_creators.end())
-        {
-            sObject obj = it->second->create(detail);
-            if(obj)
-            {
-                obj->read(detail.dico);
-            }
-            return obj;
-        }
-        else
-        {
-            Console::error("The factory doesn't know the object " + name->getName());
-            return nullptr;
-        }
-    }
-    
-    bool Factory::has(sTag name)
-    {
-        lock_guard<mutex> guard(m_mutex);
-        return m_creators.find(name) != m_creators.end();
-    }
-    
-    vector<sTag> Factory::names()
-    {
-        lock_guard<mutex> guard(m_mutex);
-        vector<sTag> names;
-        for(auto it = m_creators.begin(); it !=  m_creators.end(); ++it)
-        {
-            names.push_back(it->first);
-        }
-        return names;
-    }
 }
 
