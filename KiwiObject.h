@@ -26,33 +26,10 @@
 
 #include "../KiwiDsp/KiwiDsp.h"
 #include "../KiwiGui/KiwiGui.h"
+#include "KiwiConsole.h"
 
 namespace Kiwi
 {
-    class Object;
-    typedef shared_ptr<Object>          sObject;
-    typedef weak_ptr<Object>            wObject;
-    typedef shared_ptr<const Object>    scObject;
-    typedef weak_ptr<const Object>      wcObject;
-    
-    class Link;
-    typedef shared_ptr<Link>            sLink;
-    typedef shared_ptr<const Link>      scLink;
-    typedef weak_ptr<Link>              wLink;
-    typedef weak_ptr<const Link>        wcLink;
-    
-    class Patcher;
-    typedef shared_ptr<Patcher>        sPatcher;
-    typedef weak_ptr<Patcher>          wPatcher;
-    typedef shared_ptr<const Patcher>  scPatcher;
-    typedef weak_ptr<const Patcher>    wcPatcher;
-    
-    class Instance;
-    typedef shared_ptr<Instance>        sInstance;
-    typedef weak_ptr<Instance>          wInstance;
-    typedef shared_ptr<const Instance>  scInstance;
-    typedef weak_ptr<const Instance>    wcInstance;
-    
     namespace ActionCategories
     {
         static const char* const general       = "General";
