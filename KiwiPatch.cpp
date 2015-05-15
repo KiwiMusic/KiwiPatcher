@@ -23,6 +23,7 @@
 
 #include "KiwiPatch.h"
 #include "KiwiInstance.h"
+#include "KiwiFactory.h"
 #include "KiwiConsole.h"
 #include "KiwiPatcherController.h"
 #include "KiwiPatcherWindow.h"
