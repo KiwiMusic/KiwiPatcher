@@ -127,7 +127,12 @@ namespace Kiwi
     m_instance(instance)
     {
         setHeader(make_shared<GuiWindow::Header>(instance, "Kiwi Studio"));
-        setContent(make_shared<GuiViewport>(instance));
+        /*
+        sGuiButton btn = make_shared<GuiButton>(instance, Colors::red.withAlpha(0.8));
+        sGuiViewport viewport = make_shared<GuiViewport>(instance);
+        setContent(viewport);
+        viewport->setContent(btn);
+        */
     }
     
     void Instance::Window::viewCreated(sGuiView view) noexcept
