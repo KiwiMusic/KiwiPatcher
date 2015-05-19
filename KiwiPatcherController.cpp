@@ -263,7 +263,7 @@ namespace Kiwi
     
     bool Patcher::Controller::mouseWeel(MouseEvent const& event)
     {
-        return true;
+        return false;
     }
     
     bool Patcher::Controller::receive(sGuiView view, KeyboardEvent const& event)
