@@ -120,7 +120,7 @@ namespace Kiwi
     /**
      The object is a graphical class that aims to be instantiate in a patcher.
      */
-        class Object : virtual public Beacon::Castaway, public GuiModel, public Attr::Manager
+    class Object : virtual public Beacon::Castaway, public GuiModel, public Attr::Manager
     {
     public:
         friend class Patcher;
@@ -129,9 +129,9 @@ namespace Kiwi
         {
             enum Type
             {
-                Message = 0,
-                Signal  = 1,
-                Both    = 2
+                Message = 0u,
+                Signal  = 1u,
+                Both    = 2u
             };
             
             enum Polarity
@@ -664,7 +664,7 @@ namespace Kiwi
         //! Constructor.
         /** You should never call this method except if you really know what you're doing.
          */
-        Iolet(Io::Type type, Io::Polarity polarity, string const& description) noexcept :
+        inline Iolet(Io::Type type, Io::Polarity polarity, string const& description) noexcept :
         m_type(type),
         m_polarity(polarity),
         m_description(description)
@@ -675,8 +675,9 @@ namespace Kiwi
         //! Destructor.
         /** You should never call this method except if you really know what you're doing.
          */
-        ~Iolet()
+        inline ~Iolet() noexcept
         {
+            lock_guard<mutex> guard(m_mutex);
             m_connections.clear();
         }
         

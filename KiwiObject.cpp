@@ -224,6 +224,7 @@ namespace Kiwi
     
     Object::~Object() noexcept
     {
+        lock_guard<mutex> guard(m_mutex);
         m_outlets.clear();
         m_inlets.clear();
     }
