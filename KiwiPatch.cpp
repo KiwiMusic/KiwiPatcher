@@ -360,7 +360,9 @@ namespace Kiwi
             shared_ptr<Window> window = make_shared<Window>(getShared());
             if(window)
             {
-                ;
+                sGuiViewport viewport = make_shared<GuiViewport>(instance);
+                window->setContent(viewport);
+                viewport->setContent(static_pointer_cast<Patcher>(GuiModel::shared_from_this()));
             }
             return window;
         }

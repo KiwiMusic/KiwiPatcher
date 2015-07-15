@@ -36,7 +36,7 @@ namespace Kiwi
     {
     private:
         const sPatcher      m_patcher;
-        const sGuiViewPort  m_viewport;
+        const sGuiViewport  m_viewport;
     public:
         
         //! The patcher controller constructor.
