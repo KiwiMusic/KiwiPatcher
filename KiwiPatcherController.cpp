@@ -349,7 +349,7 @@ namespace Kiwi
             {
                 if(object && m_objects.insert(object).second)
                 {
-                    int todo_setSelectedStatus;
+                    //int todo_setSelectedStatus;
                     //object->setSelectedStatus(true);
                     changed = true;
                 }
@@ -378,7 +378,7 @@ namespace Kiwi
             {
                 if(link && m_links.insert(link).second)
                 {
-                    int todo_setSelectedStatus;
+                    //int todo_setSelectedStatus;
                     //link->setSelectedStatus(true);
                     changed = true;
                 }
@@ -419,7 +419,7 @@ namespace Kiwi
                 sObject object = elem.lock();
                 if(object)
                 {
-                    int todo_setSelectedStatus;
+                    //int todo_setSelectedStatus;
                     //object->setSelectedStatus(false);
                     sendChange = true;
                 }
@@ -450,7 +450,7 @@ namespace Kiwi
                 sLink link = elem.lock();
                 if(link)
                 {
-                    int todo_setSelectedStatus;
+                    //int todo_setSelectedStatus;
                     //link->setSelectedStatus(false);
                     sendChange = true;
                 }
@@ -519,7 +519,7 @@ namespace Kiwi
                 lock_guard<mutex> guard(m_mutex);
                 if(m_objects.insert(object).second)
                 {
-                    int todo_setSelectedStatus;
+                    //int todo_setSelectedStatus;
                     //object->setSelectedStatus(true);
                 }
             }
@@ -541,7 +541,7 @@ namespace Kiwi
                 lock_guard<mutex> guard(m_mutex);
                 if(m_links.insert(link).second)
                 {
-                    int todo_setSelectedStatus;
+                    //int todo_setSelectedStatus;
                     //link->setSelectedStatus(true);
                 }
             }
@@ -615,7 +615,7 @@ namespace Kiwi
                 lock_guard<mutex> guard(m_mutex);
                 if(m_objects.erase(object))
                 {
-                    int todo_setSelectedStatus;
+                    //int todo_setSelectedStatus;
                     //object->setSelectedStatus(false);
                 }
             }
@@ -637,7 +637,7 @@ namespace Kiwi
                 lock_guard<mutex> guard(m_mutex);
                 if(m_links.erase(link))
                 {
-                    int todo_setSelectedStatus;
+                    //int todo_setSelectedStatus;
                     //link->setSelectedStatus(false);
                 }
             }
@@ -696,7 +696,7 @@ namespace Kiwi
         if(selection)
         {
             m_startpos = point;
-            int todo;
+            //int todo;
             //setBounds(Rectangle(point, Size()));
             addToPatcher();
             
@@ -737,7 +737,7 @@ namespace Kiwi
         const sSelection selection = m_selection.lock();
         if(patcher && selection)
         {
-            int todo;
+            //int todo;
             //setBounds(Rectangle::withCorners(m_startpos, point));
             bool changed = false;
             
@@ -746,7 +746,7 @@ namespace Kiwi
                 if(includeObjects)
                 {
                     vector<sObject> lassoObjects;
-                    int todo_lassoHitTest;
+                    //int todo_lassoHitTest;
                     //knockObjects(getBounds(), lassoObjects);
                     
                     lock_guard<mutex> guard(m_mutex);
@@ -774,7 +774,7 @@ namespace Kiwi
                 if(includeLinks)
                 {
                     vector<sLink> lassoLinks;
-                    int todo_lassoHitTest;
+                    //int todo_lassoHitTest;
                     //knockObjects(getBounds(), lassoLinks);
                     
                     lock_guard<mutex> guard(m_mutex);
@@ -802,7 +802,7 @@ namespace Kiwi
                 
                 if(changed)
                 {
-                    int todo_notify_changes;
+                    //int todo_notify_changes;
                     //selectionChanged();
                 }
             }
@@ -812,7 +812,7 @@ namespace Kiwi
                 if(includeObjects)
                 {
                     vector<sObject> lassoObjects;
-                    int todo_lassoHitTest;
+                    //int todo_lassoHitTest;
                     //knockObjects(getBounds(), lassoObjects);
                     selection->add(lassoObjects);
                 }
@@ -820,7 +820,7 @@ namespace Kiwi
                 if(includeLinks)
                 {
                     vector<sLink> lassoLinks;
-                    int todo_lassoHitTest;
+                    //int todo_lassoHitTest;
                     //knockLinks(getBounds(), lassoLinks);
                     selection->add(lassoLinks);
                 }
