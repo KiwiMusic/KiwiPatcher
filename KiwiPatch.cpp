@@ -26,7 +26,6 @@
 #include "KiwiFactory.h"
 #include "KiwiConsole.h"
 #include "KiwiPatcherController.h"
-#include "KiwiPatcherWindow.h"
 
 namespace Kiwi
 {    
@@ -350,23 +349,6 @@ namespace Kiwi
 				dico->set(Tags::patcher, subpatcher);
 			}*/
         }
-    }
-    
-    sGuiWindow Patcher::createWindow()
-    {
-        sInstance instance = getInstance();
-        if(instance)
-        {
-            shared_ptr<Window> window = make_shared<Window>(getShared());
-            if(window)
-            {
-                sGuiViewport viewport = make_shared<GuiViewport>(instance);
-                window->setContent(viewport);
-                viewport->setContent(static_pointer_cast<Patcher>(GuiModel::shared_from_this()));
-            }
-            return window;
-        }
-        return sGuiWindow();
     }
     
     sGuiController Patcher::createController()

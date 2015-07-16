@@ -208,12 +208,6 @@ namespace Kiwi
          */
         void write(Dico& dico) const;
         
-        //! Create a new window for the patcher.
-        /** The function creates a new window for the patcher.
-         @return The window.
-         */
-        sGuiWindow createWindow();
-        
         //! Retrieve the "gridsize" attribute value of the patcher.
         /** The function retrieves the "gridsize" attribute value of the patcher.
          @return The "gridsize" attribute value of the patcher.
