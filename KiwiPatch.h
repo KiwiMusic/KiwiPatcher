@@ -38,13 +38,7 @@ namespace Kiwi
      */
     class Patcher : public GuiModel, public DspChain, public Attr::Manager
 	{
-    public:
-        class Window;
-        typedef shared_ptr<Window>              sWindow;
-        typedef weak_ptr<Window>                wWindow;
-        typedef shared_ptr<const Window>        scWindow;
-        typedef weak_ptr<const Window>          wcWindow;
-        
+    public:        
         class Controller;
         typedef shared_ptr<Controller>          sController;
         typedef weak_ptr<Controller>            wController;

@@ -108,53 +108,5 @@ namespace Kiwi
     {
         m_listeners.remove(listener);
     }
-    
-    sGuiWindow Instance::createWindow()
-    {
-        sWindow window(make_shared<Window>(getShared()));
-        if(window)
-        {
-            window->addToDesktop();
-        }
-        return window;
-    }
-    
-    // ================================================================================ //
-    //                                  INSTANCE WINDOW                                 //
-    // ================================================================================ //
-    
-    Instance::Window::Window(sInstance instance) : GuiWindow(instance),
-    m_instance(instance)
-    {
-        setHeader(make_shared<GuiWindow::Header>(instance, "Kiwi Studio"));
-        /*
-        sGuiButton btn = make_shared<GuiButton>(instance, Colors::red.withAlpha(0.8));
-        sGuiViewport viewport = make_shared<GuiViewport>(instance);
-        setContent(viewport);
-        viewport->setContent(btn);
-        */
-    }
-    
-    void Instance::Window::viewCreated(sGuiView view) noexcept
-    {
-        sGuiContext ctxt(getContext());
-        if(view && ctxt)
-        {
-            sGuiController ctrl(view->getController());
-            if(ctrl)
-            {
-                //ctrl->setBounds(ctxt->getScreenBounds(ctrl->getBounds().centre()));
-                ctrl->setBounds(Rectangle(30., 30., 800, 600));
-            }
-        }
-    }
-    
-    void Instance::Window::patcherCreated(sInstance instance, sPatcher patcher) {}
-    
-    void Instance::Window::patcherRemoved(sInstance instance, sPatcher patcher) {}
-    
-    void Instance::Window::dspStarted(sInstance instance) {}
-    
-    void Instance::Window::dspStopped(sInstance instance) {}
 }
 

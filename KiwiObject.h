@@ -811,6 +811,7 @@ namespace Kiwi
     //                                      BOX                                         //
     // ================================================================================ //
     
+        
     class Box : public Object, public GuiTextEditor::Listener
     {
     private:

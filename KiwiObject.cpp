@@ -454,8 +454,8 @@ namespace Kiwi
     //                                      BOX                                         //
     // ================================================================================ //
     
-    Box::Box(Infos const& infos, const sTag name) : Object(infos, name),
-    m_editor(make_shared<GuiTextEditor>(infos.instance))
+    Box::Box(Infos const& infos, const sTag name) : Object(infos, name)
+    //m_editor(make_shared<GuiTextEditor>(infos.instance))
     {
         createAttr(Tags::bgcolor,   "Background Color",   "Color", Color(1., 1., 1., 1.));
         createAttr(Tags::bdcolor,   "Border Color",       "Color", Color(0.4, 0.4, 0.4, 1.));

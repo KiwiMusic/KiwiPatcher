@@ -45,12 +45,6 @@ namespace Kiwi
     class Instance : public Beacon::Factory, public GuiContext, public DspContext
     {
     public:
-        class Window;
-        typedef shared_ptr<Window>        sWindow;
-        typedef weak_ptr<Window>          wWindow;
-        typedef shared_ptr<const Window>  scWindow;
-        typedef weak_ptr<const Window>    wcWindow;
-        
         class Listener;
         typedef shared_ptr<Listener>        sListener;
         typedef weak_ptr<Listener>          wListener;
@@ -159,12 +153,6 @@ namespace Kiwi
          @see bind
          */
         void removeListener(sListener listener);
-        
-        //! Create a new window for the instance.
-        /** The function creates a new window for the instance.
-         @return The window.
-         */
-        sGuiWindow createWindow();
     };
     
     // ================================================================================ //
@@ -208,51 +196,6 @@ namespace Kiwi
          @param instance    The instance.
          */
         virtual void dspStopped(sInstance instance) = 0;
-    };
-    
-    // ================================================================================ //
-    //                                  INSTANCE WINDOW                                 //
-    // ================================================================================ //
-    
-    class Instance::Window : public GuiWindow, public Instance::Listener
-    {
-        const wInstance     m_instance;
-    public:
-        Window(sInstance instance);
-        
-        inline ~Window() {}
-        
-        //! Receives the notification that a view has been created.
-        /** The function notfies the model that a view has been created.
-         @param view The view.
-         */
-        void viewCreated(sGuiView view) noexcept override;
-        
-        //! Receive the notification that a patcher has been created.
-        /** The function is called by the instance when a patcher has been created.
-         @param instance    The instance.
-         @param patcher        The patcher.
-         */
-        void patcherCreated(sInstance instance, sPatcher patcher) override;
-        
-        //! Receive the notification that a patcher has been closed.
-        /** The function is called by the instance when a patcher has been closed.
-         @param instance    The instance.
-         @param patcher        The patcher.
-         */
-        void patcherRemoved(sInstance instance, sPatcher patcher) override;
-        
-        //! Receive the notification that the dsp has been started.
-        /** The function is called by the instance when the dsp has been started.
-         @param instance    The instance.
-         */
-        void dspStarted(sInstance instance) override;
-        
-        //! Receive the notification that the dsp has been stopped.
-        /** The function is called by the instance when the dsp has been stopped.
-         @param instance    The instance.
-         */
-        void dspStopped(sInstance instance) override;
     };
 }
 
