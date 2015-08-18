@@ -473,7 +473,7 @@ namespace Kiwi
         sketch.setColor(getBorderColor());
         sketch.setLineWidth(3.);
         sketch.drawRectangle(bounds);
-        sketch.setColor(getBakcgroundColor());
+        sketch.setColor(getBackgroundColor());
         sketch.fillRectangle(bounds);
         sketch.setColor(getTextColor());
         sketch.drawText(getText(), bounds, Font::Left);

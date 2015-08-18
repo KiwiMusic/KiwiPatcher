@@ -824,7 +824,7 @@ namespace Kiwi
         /** The function retrieves the background color of the box.
          @return The background color of the box.
          */
-        inline Color getBakcgroundColor() const noexcept
+        inline Color getBackgroundColor() const noexcept
         {
             return getAttrValue<Color>(Tags::bgcolor);
         }
