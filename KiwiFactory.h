@@ -111,10 +111,10 @@ namespace Kiwi
         //! Create an object.
         /** This function creates an object.
          @param name The name of the object.
-         @param node The detail to initialize the object.
+         @param infos The informations to initialize the object.
          @return An object.
          */
-        static sObject create(const sTag name, Infos const& detail);
+        static sObject create(const sTag name, Infos const& infos);
         
         //! Retrieves if an object exist.
         /** This function retrieves if an object exist.

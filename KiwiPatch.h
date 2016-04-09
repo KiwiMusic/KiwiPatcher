@@ -146,11 +146,11 @@ namespace Kiwi
         inline sObject getObjectWithId(ulong const _id) const noexcept
         {
             lock_guard<mutex> guard(m_mutex);
-            for(vector<sObject>::size_type i = 0; i < m_objects.size(); i++)
+            for(auto obj : m_objects)
             {
-                if(m_objects[i]->getId() == _id)
+                if(obj->getId() == _id)
                 {
-                    return m_objects[i];
+                    return obj;
                 }
             }
             return nullptr;
